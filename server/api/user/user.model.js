@@ -33,6 +33,9 @@ var UserSchema = new Schema({
     type: Boolean,
     default: true
   }
+},
+{
+  timestamps: true
 });
 
 /**
@@ -53,7 +56,11 @@ UserSchema
 UserSchema
   .virtual('public')
   .get(function() {
-    return _.extend(this, {salt: undefined, password: undefined});
+    return _.extend(this, {
+      salt: undefined,
+      password: undefined,
+      provider: undefined
+    });
   });
 
 /**
@@ -89,6 +96,9 @@ UserSchema
       .then(function(user) {
         if (user) {
           if (self.id === user.id) {
+            return respond(true);
+          }
+          if (!user.active) {
             return respond(true);
           }
           return respond(false);
