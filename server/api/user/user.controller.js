@@ -2,7 +2,6 @@
 
 import User from './user.model';
 import passport from 'passport';
-import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
 
 function validationError(res, statusCode) {
@@ -36,14 +35,12 @@ export function index(req, res) {
  */
 export function create(req, res, next) {
   var newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
+  if (req.user.role === 'admin' && ['admin', 'superadmin'].indexOf(newUser.role) >= 0) {
+    return res.status(403).end();
+  }
   newUser.save()
     .then(function(user) {
-      var token = jwt.sign({ _id: user._id }, config.secrets.session, {
-        expiresIn: 60 * 60 * 5
-      });
-      res.json({ token });
+      res.json(user);
     })
     .catch(validationError(res));
 }
