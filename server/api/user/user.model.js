@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import {Schema} from 'mongoose';
+import { userRoles } from '../../config/environment';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
@@ -15,7 +16,7 @@ var UserSchema = new Schema({
   },
   role: {
     type: String,
-    default: 'user'
+    default: 'manager'
   },
   password: String,
   provider: String,
@@ -93,6 +94,14 @@ UserSchema
         throw err;
       });
   }, 'The specified email address is already in use.');
+
+// Validate role
+UserSchema
+  .path('role')
+  .validate(function(role) {
+    return userRoles.indexOf(role) >= 0;
+  }, 'Invalid user role');
+
 
 var validatePresenceOf = function(value) {
   return value && value.length;
