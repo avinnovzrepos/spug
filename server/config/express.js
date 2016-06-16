@@ -74,6 +74,12 @@ export default function(app) {
     app.use(morgan('dev'));
   }
 
+  if ('uat' === env) {
+    app.use(favicon(path.join(config.root, 'client', 'favicon.ico')));
+    app.use(express.static(app.get('appPath')));
+    app.use(morgan('dev'));
+  }
+
   if ('development' === env) {
     app.use(require('connect-livereload')());
   }
