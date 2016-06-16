@@ -66,14 +66,26 @@ export function show(req, res, next) {
 
 /**
  * Deletes a user
- * restriction: 'admin'
+ * restriction: 'superadmin'
  */
 export function destroy(req, res) {
-  return User.findByIdAndRemove(req.params.id).exec()
-    .then(function() {
-      res.status(204).end();
-    })
-    .catch(handleError(res));
+  var userId = req.params.id;
+
+  return User.findById(userId).exec()
+    .then(user => {
+      if (!user) {
+        return res.status(404).end();
+      }
+      if (req.user.role === 'admin' && ['admin', 'superadmin'].indexOf(user.role) >= 0) {
+        return res.status(403).end();
+      }
+      user.active = false;
+      return user.save()
+        .then(() => {
+          res.status(204).end();
+        })
+        .catch(validationError(res));
+    });
 }
 
 /**
