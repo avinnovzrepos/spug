@@ -19,12 +19,19 @@ var UserSchema = new Schema({
     default: 'manager'
   },
   password: String,
-  provider: String,
+  provider: {
+    type: String,
+    default: 'local'
+  },
   salt: String,
   facebook: {},
   twitter: {},
   google: {},
-  github: {}
+  github: {},
+  active: {
+    type: Boolean,
+    default: true
+  }
 });
 
 /**
@@ -93,7 +100,7 @@ UserSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'The specified email address is already in use.');
+  }, 'The specified email address is already in use');
 
 // Validate role
 UserSchema
