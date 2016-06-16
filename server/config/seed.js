@@ -5,6 +5,7 @@
 
 'use strict';
 import Thing from '../api/thing/thing.model';
+import Supplier from '../api/supplier/supplier.model';
 import User from '../api/user/user.model';
 
 Thing.find({}).remove()
@@ -57,3 +58,7 @@ User.find({}).remove()
       console.log('finished populating users');
     });
   });
+
+Supplier.find({}).remove().then(() => {
+  // TODO
+});
