@@ -2,7 +2,7 @@
 (function(){
 
 class ItemComponent {
-  constructor($state) {
+  constructor($state, API) {
     this.message = 'Hello';
     this.itemType = $state.params.itemType === 'mechanical' ? true : false;
     this.capacities = [];
@@ -13,6 +13,7 @@ class ItemComponent {
     this.facilities = [];
     this.facilityTypes = [];
     this.outVoltages = [];
+    this.API = API;
   }
 
   $onInit() {
@@ -211,12 +212,39 @@ class ItemComponent {
   }
 
   submit(item) {
+    let itemCode = "";
     if(this.itemType) {
-      item.stockCode = item.mechanical + item.brand.value + item.capacity.value + item.mechSpares + item.num7th + item.category.value + item.compNo;
+      item.code = itemCode.concat(
+        item.mechanical,
+        item.brandDd.value,
+        item.capacityDd.value,
+        item.mechanicalSpares,
+        item.other,
+        item.category.value,
+        item.componentId
+      );
+      item.capacity = item.capacityDd.label;
+      item.brand = item.brandDd.label;
     } else {
-      item.stockCode = item.electrical + item.facility.value + item.facilityType.value + item.num6th + item.elecType.value + item.outVoltage.value + item.category.value + item.compNo;
+      item.code = itemCode.concat(
+        item.electrical,
+        item.facilityDd.value,
+        item.facilityTypeDd.value,
+        item.other,
+        item.elecType.value,
+        item.outVoltage.value,
+        item.category.value,
+        item.componentId
+      );
+      item.outputVoltage = item.outVoltage.label;
+      item.facilityType = item.facilityTypeDd.label;
+      item.facility = item.facilityDd.label;
+      item.electricalType = item.elecType.label;
     }
-    console.log(item);
+    item.categoryId = item.category.label;
+    this.API.doPost('items', item, function(resp) {
+      console.log(resp);
+    },{});
   }
 }
 

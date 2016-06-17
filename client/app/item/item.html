@@ -6,11 +6,11 @@
       <input type="text" class="form-control" id="itemName" placeholder="Item Name" ng-model="item.name">
     </div>
     <div class="form-group col-md-4">
-      <label for="stockCode">Stock Code</label>
-      <input type="text" class="form-control" id="stockCode" placeholder="Stock Code" ng-model="item.stockCode" disabled>
+      <label for="code">Stock Code</label>
+      <input type="text" class="form-control" id="code" placeholder="Stock Code" ng-model="item.code" disabled>
     </div>
     <div class="form-group col-md-12">
-      <textarea class="form-control" placeholder="Specifications" row="2" ng-model="item.specs"></textarea>
+      <textarea class="form-control" placeholder="Specifications" row="2" ng-model="item.specification"></textarea>
     </div>
     <div class="form-group col-md-6">
       <label for="partNo">Part No.</label>
@@ -22,7 +22,7 @@
     </div>
     <div class="form-group col-md-2">
       <label for="Measurement">Unit of Measurement</label>
-      <select class="form-control" ng-model="item.measurement">
+      <select class="form-control" ng-model="item.unitOfMeasurement">
         <option>pc(s)</option>
         <option>kg(s)</option>
       </select>
@@ -41,7 +41,7 @@
     </div>
     <div class="form-group col-md-4">
       <label for="Measurement">Component No.</label>
-      <select class="form-control" ng-model="item.compNo">
+      <select class="form-control" ng-model="item.componentId">
         <option ng-repeat="compNo in itemStock.compNos">{{compNo}}</option>
       </select>
     </div>
@@ -61,16 +61,16 @@
     </div>
     <div class="form-group col-md-4" ng-if="!itemStock.itemType">
       <label for="partNo">6th</label>
-      <input type="number" class="form-control" placeholder="6th" ng-model="item.num6th">
+      <input type="text" class="form-control" placeholder="6th" ng-model="item.other">
     </div>
     <div class="form-group col-md-4" ng-if="!itemStock.itemType">
       <label for="Measurement">Facility</label>
-      <select class="form-control" ng-model="item.facility" ng-options="facility as facility.label for facility in itemStock.facilities">
+      <select class="form-control" ng-model="item.facilityDd" ng-options="facility as facility.label for facility in itemStock.facilities">
       </select>
     </div>
     <div class="form-group col-md-4" ng-if="!itemStock.itemType">
       <label for="Measurement">Facility Type</label>
-      <select class="form-control" ng-model="item.facilityType" ng-options="facilityType as facilityType.label for facilityType in itemStock.facilityTypes">
+      <select class="form-control" ng-model="item.facilityTypeDd" ng-options="facilityType as facilityType.label for facilityType in itemStock.facilityTypes">
       </select>
     </div>
     <div class="form-group col-md-4" ng-if="!itemStock.itemType">
@@ -86,20 +86,20 @@
     </div>
     <div class="form-group col-md-4" ng-if="itemStock.itemType">
       <label for="partNo">Mechanical Spares</label>
-      <input type="text" class="form-control" placeholder="Mechanical Spares" ng-model="item.mechSpares">
+      <input type="text" class="form-control" placeholder="Mechanical Spares" ng-model="item.mechanicalSpares">
     </div>
     <div class="form-group col-md-4" ng-if="itemStock.itemType">
       <label for="partNo">7th</label>
-      <input type="number" class="form-control" placeholder="7th" ng-model="item.num7th">
+      <input type="number" class="form-control" placeholder="7th" ng-model="item.other">
     </div>
     <div class="form-group col-md-6" ng-if="itemStock.itemType">
       <label for="Measurement">Brands</label>
-      <select class="form-control" ng-model="item.brand" ng-options="brand as brand.label for brand in itemStock.brands">
+      <select class="form-control" ng-model="item.brandDd" ng-options="brand as brand.label for brand in itemStock.brands">
       </select>
     </div>
     <div class="form-group col-md-6" ng-if="itemStock.itemType">
       <label for="Measurement">Capacity</label>
-      <select class="form-control" ng-model="item.capacity" ng-options="capacity as capacity.label for capacity in itemStock.capacities">
+      <select class="form-control" ng-model="item.capacityDd" ng-options="capacity as capacity.label for capacity in itemStock.capacities">
       </select>
     </div>
     <button type="submit" class="btn btn-default btn-primary">Submit</button>

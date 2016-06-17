@@ -12,7 +12,7 @@ var ItemSchema = new mongoose.Schema({
   year: String,
   categoryId: String,
   componentId: String,
-  other: Number,
+  other: String,
 
   // Mechanical Fields
   mechanical: String,
