@@ -3,7 +3,9 @@
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
+import _ from 'lodash';
 import {Schema} from 'mongoose';
+import { userRoles } from '../../config/environment';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
@@ -15,30 +17,30 @@ var UserSchema = new Schema({
   },
   role: {
     type: String,
-    default: 'user'
+    default: 'manager'
   },
   password: String,
-  provider: String,
+  provider: {
+    type: String,
+    default: 'local'
+  },
   salt: String,
   facebook: {},
   twitter: {},
   google: {},
-  github: {}
+  github: {},
+  active: {
+    type: Boolean,
+    default: true
+  }
+},
+{
+  timestamps: true
 });
 
 /**
  * Virtuals
  */
-
-// Public profile information
-UserSchema
-  .virtual('profile')
-  .get(function() {
-    return {
-      'name': this.name,
-      'role': this.role
-    };
-  });
 
 // Non-sensitive info we'll be putting in the token
 UserSchema
@@ -48,6 +50,17 @@ UserSchema
       '_id': this._id,
       'role': this.role
     };
+  });
+
+// Public information salt and password removed
+UserSchema
+  .virtual('public')
+  .get(function() {
+    return _.extend(this, {
+      salt: undefined,
+      password: undefined,
+      provider: undefined
+    });
   });
 
 /**
@@ -85,6 +98,9 @@ UserSchema
           if (self.id === user.id) {
             return respond(true);
           }
+          if (!user.active) {
+            return respond(true);
+          }
           return respond(false);
         }
         return respond(true);
@@ -92,7 +108,15 @@ UserSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'The specified email address is already in use.');
+  }, 'The specified email address is already in use');
+
+// Validate role
+UserSchema
+  .path('role')
+  .validate(function(role) {
+    return userRoles.indexOf(role) >= 0;
+  }, 'Invalid user role');
+
 
 var validatePresenceOf = function(value) {
   return value && value.length;

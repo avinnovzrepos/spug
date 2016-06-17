@@ -1,9 +1,47 @@
 'use strict';
 
 import User from './user.model';
-import passport from 'passport';
-import config from '../../config/environment';
-import jwt from 'jsonwebtoken';
+import _ from 'lodash';
+
+function respondWithResult(res, statusCode) {
+  statusCode = statusCode || 200;
+  return function(entity) {
+    if (entity) {
+      res.status(statusCode).json(entity);
+    }
+  };
+}
+
+function saveUpdates(updates) {
+  return function(entity) {
+    var updated = _.merge(entity , updates);
+    return updated.save()
+      .then(updated => {
+        return updated;
+      });
+  };
+}
+
+function removeEntity(res) {
+  return function(entity) {
+    if (entity) {
+      return entity.remove()
+        .then(() => {
+          res.status(204).end();
+        });
+    }
+  };
+}
+
+function handleEntityNotFound(res) {
+  return function(entity) {
+    if (!entity) {
+      res.status(404).end();
+      return null;
+    }
+    return entity;
+  };
+}
 
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
@@ -24,10 +62,8 @@ function handleError(res, statusCode) {
  * restriction: 'admin'
  */
 export function index(req, res) {
-  return User.find({}, '-salt -password').exec()
-    .then(users => {
-      res.status(200).json(users);
-    })
+  return User.find({active: true}, '-salt -password').exec()
+    .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
@@ -35,84 +71,117 @@ export function index(req, res) {
  * Creates a new user
  */
 export function create(req, res, next) {
-  var newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-  newUser.save()
-    .then(function(user) {
-      var token = jwt.sign({ _id: user._id }, config.secrets.session, {
-        expiresIn: 60 * 60 * 5
-      });
-      res.json({ token });
-    })
-    .catch(validationError(res));
+  if (req.user.role === 'admin' && ['admin', 'superadmin'].indexOf(req.body.role) >= 0) {
+    return res.status(403).end();
+  }
+  User.create(req.body)
+    .catch(validationError(res))
+    .then(user => user.public)
+    .then(respondWithResult(res, 201));
 }
 
 /**
  * Get a single user
  */
-export function show(req, res, next) {
-  var userId = req.params.id;
-
-  return User.findById(userId).exec()
-    .then(user => {
-      if (!user) {
-        return res.status(404).end();
-      }
-      res.json(user.profile);
-    })
-    .catch(err => next(err));
+export function show(req, res) {
+  return User.findById(req.params.id).exec()
+    .catch(handleError(res))
+    .then(handleEntityNotFound(res))
+    .then(user => user && user.public)
+    .then(respondWithResult(res));
 }
 
 /**
  * Deletes a user
- * restriction: 'admin'
+ * restriction: 'superadmin'
  */
 export function destroy(req, res) {
-  return User.findByIdAndRemove(req.params.id).exec()
-    .then(function() {
-      res.status(204).end();
-    })
-    .catch(handleError(res));
+  return User.findById(req.params.id).exec()
+    .catch(handleError(res))
+    .then(handleEntityNotFound(res))
+    .then(user => (req.user.role === 'admin' && ['admin', 'superadmin'].indexOf(user.role) >= 0) ?
+      res.status(403).end() :
+      user
+    )
+    .then(saveUpdates({ active: false }))
+    .catch(err => validationError(err))
+    .then(user => user && user.public)
+    .then(respondWithResult(res, 204));
 }
 
 /**
  * Change a users password
  */
 export function changePassword(req, res, next) {
-  var userId = req.user._id;
-  var oldPass = String(req.body.oldPassword);
-  var newPass = String(req.body.newPassword);
+  return User.findById(req.params.id).exec()
+    .catch(handleError(res))
+    .then(handleEntityNotFound(res))
+    .then(user => user.authenticate(String(req.body.oldPassword)) ? user : res.status(403).end())
+    .then(saveUpdates({ password: String(req.body.newPassword) }))
+    .catch(err => validationError(err))
+    .then(user => user && user.public)
+    .then(respondWithResult(res, 204));
+}
 
-  return User.findById(userId).exec()
+/**
+ * Updates user info
+ */
+export function update(req, res) {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  if (req.body.password) {
+    delete req.body.password;
+  }
+  return User.findById(req.params.id).exec()
+    .catch(handleError(res))
+    .then(handleEntityNotFound(res))
     .then(user => {
-      if (user.authenticate(oldPass)) {
-        user.password = newPass;
-        return user.save()
-          .then(() => {
-            res.status(204).end();
-          })
-          .catch(validationError(res));
-      } else {
-        return res.status(403).end();
+      if (req.body.role && (req.body.role !== user.role)) {
+        switch (req.user.role) {
+          case 'superadmin': // superadmins can edit any user
+            return user;
+            break;
+          case 'admin': // admins cannot edit a superadmin & admin
+            switch (user.role) {
+              case 'superadmin':
+              case 'admin':
+                res.status(401).end();
+                break;
+              default: // admins should not be able to promote users to admin/superadmin
+                switch (req.body.role) {
+                  case 'superadmin':
+                  case 'admin':
+                    res.status(401).end();
+                    break;
+                  default:
+                    return user;
+                    break;
+                }
+                break;
+            }
+          default: // other users cannot edit user role
+            res.status(401).end();
+            break;
+        }
       }
-    });
+      return user;
+    })
+    .then(saveUpdates(req.body))
+    .catch(validationError(res))
+    .then(user => user && user.public)
+    .then(respondWithResult(res));
 }
 
 /**
  * Get my info
  */
 export function me(req, res, next) {
-  var userId = req.user._id;
-
-  return User.findOne({ _id: userId }, '-salt -password').exec()
-    .then(user => { // don't ever give out the password or salt
-      if (!user) {
-        return res.status(401).end();
-      }
-      res.json(user);
-    })
-    .catch(err => next(err));
+  return User.findById(req.user._id).exec()
+    .catch(handleError(res))
+    .then(handleEntityNotFound(res))
+    .then(user => user && user.public)
+    .then(respondWithResult(res));
 }
 
 /**
