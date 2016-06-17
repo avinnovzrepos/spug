@@ -5,6 +5,7 @@
 
 'use strict';
 import Thing from '../api/thing/thing.model';
+import Supplier from '../api/supplier/supplier.model';
 import User from '../api/user/user.model';
 
 Thing.find({}).remove()
@@ -43,17 +44,34 @@ User.find({}).remove()
   .then(() => {
     User.create({
       provider: 'local',
-      name: 'Test User',
-      email: 'test@example.com',
-      password: 'test'
+      role: 'manager',
+      name: 'Test Manager',
+      email: 'manager@spug.com',
+      password: 'manager'
     }, {
       provider: 'local',
+      role: 'warehouse',
+      name: 'Test Warehouse',
+      email: 'warehouse@spug.com',
+      password: 'warehouse'
+    },{
+      provider: 'local',
       role: 'admin',
-      name: 'Admin',
-      email: 'admin@example.com',
+      name: 'Test Admin',
+      email: 'admin@spug.com',
       password: 'admin'
+    }, {
+      provider: 'local',
+      role: 'superadmin',
+      name: 'Test Super Admin',
+      email: 'superadmin@spug.com',
+      password: 'superadmin'
     })
     .then(() => {
       console.log('finished populating users');
     });
   });
+
+Supplier.find({}).remove().then(() => {
+  // TODO
+});

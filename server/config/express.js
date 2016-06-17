@@ -51,7 +51,7 @@ export default function(app) {
    * Lusca - express server security
    * https://github.com/krakenjs/lusca
    */
-  if ('test' !== env) {
+  if ('production' === env) {
     app.use(lusca({
       csrf: {
         angular: true
@@ -69,6 +69,12 @@ export default function(app) {
   app.set('appPath', path.join(config.root, 'client'));
 
   if ('production' === env) {
+    app.use(favicon(path.join(config.root, 'client', 'favicon.ico')));
+    app.use(express.static(app.get('appPath')));
+    app.use(morgan('dev'));
+  }
+
+  if ('uat' === env) {
     app.use(favicon(path.join(config.root, 'client', 'favicon.ico')));
     app.use(express.static(app.get('appPath')));
     app.use(morgan('dev'));
