@@ -1,6 +1,6 @@
 <div class="container">
   <form ng-submit="itemStock.submit(item)">
-    <h2> Basic Info </h1>
+    <h2> Basic Info </h2>
     <div class="form-group col-md-8">
       <label for="itemName">Item Name</label>
       <input type="text" class="form-control" id="itemName" placeholder="Item Name" ng-model="item.name">
@@ -48,7 +48,7 @@
     <h2>
       <span ng-if="!itemStock.itemType"> Electrical Parts Info </span>
       <span ng-if="itemStock.itemType"> Mechanical Parts Info </span>
-    </h1>
+    </h2>
     <!-- Start Electrical Additional Form -->
     <div class="form-group col-md-4" ng-if="!itemStock.itemType">
       <label for="partNo">Electrical</label>

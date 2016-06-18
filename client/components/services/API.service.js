@@ -2,7 +2,7 @@
 
 angular.module('spugApp.auth')
   .factory('API', function ($http) {
-    var url = "http://localhost:9000/api/";
+    var url = "/api/";
     var defaultErrorMessage = "Server responded with an undefined error!";
     return {
       apiURL: function() {
