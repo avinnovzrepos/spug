@@ -1,0 +1,26 @@
+<div class="container">
+  <table class="table table-condensed">
+    <tr>
+      <th> Item Stock Code </th>
+      <th> Item Name </th>
+      <th> Item Year </th>
+      <th> Unit of Measurement </th>
+      <th></th>
+    </tr>
+    <tr ng-repeat="item in itemList.items">
+      <td>{{item.code}}</td>
+      <td>{{item.name}}</td>
+      <td>{{item.year}}</td>
+      <td>{{item.unitOfMeasurement}}</td>
+      <td>
+        <button class="btn btn-small btn-warning">
+          <i class="glyphicon glyphicon-edit"></i>
+        </button>
+        <button class="btn btn-small btn-danger">
+          <i class="glyphicon glyphicon-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </table>
+</div>
+
