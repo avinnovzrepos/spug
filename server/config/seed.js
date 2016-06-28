@@ -7,6 +7,9 @@
 import Thing from '../api/thing/thing.model';
 import Supplier from '../api/supplier/supplier.model';
 import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
+import Plant from '../api/plant/plant.model';
+import Item from '../api/item/item.model';
+import Inventory from '../api/inventory/inventory.model';
 import User from '../api/user/user.model';
 
 Thing.find({}).remove()
@@ -55,6 +58,75 @@ MeasurementUnit.find({}).remove()
     });
   });
 
+function generateItems(callback) {
+  Item.find({}).remove()
+    .then(() => {
+      Item.create({
+        code: "111111",
+        name: "SAMPLE MECHANICAL FROM SEED",
+        partNumber: "SAMPLE PART NUMBER",
+        specification: "SAMPLE SPECIFICATION",
+        unitOfMeasurement: "SAMPLE UNIT OF MEASUREMENT",
+        unitCost: 100,
+        year: "2016",
+        categoryId: "CATEGORY ID",
+        componentId: "COMPONENT ID",
+        other: 0,
+
+        mechanical: "M",
+        brand: "SAMPLE BRAND",
+        capacity: "SAMPLE CAPACITY",
+        mechanicalSpares: "SAMPLE MECHANICAL SPARES"
+      })
+      .then(() => {
+        console.log('finished populating items');
+        if (callback) callback();
+      });
+    });
+}
+
+function generateInventory(callback) {
+  Inventory.find({}).remove()
+    .then(() => {
+      User.findOne({}).then(user => {
+        Item.findOne({}).then(item => {
+          Plant.findOne({}).then(plant => {
+            var inventory = new Inventory({
+              plant: plant,
+              item: item,
+              history: [{
+                type: "create",
+                user: user
+              }]
+            });
+            inventory.save()
+              .then(() => {
+                console.log('finished populating inventory');
+                if (callback) callback();
+              });
+          });
+        });
+      });
+    });
+}
+
+function generatePlants(callback) {
+  Plant.find({}).remove()
+    .then(() => {
+      Plant.create({
+        name: 'Ortigas Plant',
+        description: 'Ortigas Pasig plant'
+      },{
+        name: 'Bulacan Plant',
+        description: 'Malolos Bulacan plant'
+      })
+      .then(() => {
+        console.log('finished populating plants');
+        if (callback) callback();
+      });
+    });
+}
+
 User.find({}).remove()
   .then(() => {
     User.create({
@@ -84,6 +156,11 @@ User.find({}).remove()
     })
     .then(() => {
       console.log('finished populating users');
+      generatePlants(function () {
+        generateItems(function () {
+          generateInventory();
+        });
+      });
     });
   });
 
