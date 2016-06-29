@@ -59,27 +59,11 @@ function handleError(res, statusCode) {
   };
 }
 
-
-function recordHistory(type, user, previousValue) {
-  return function(inventory) {
-    var history = inventory.history;
-    if (history.length >= 500) {
-      history = history.slice(0, 499);
-    }
-    inventory.history = history.unshift({
-      type: type,
-      newValue: inventory.value,
-      previousValue: previousValue,
-      user: user
-    })
-    return
-  };
-}
-
 // Gets a list of Inventorys
 export function index(req, res) {
-  return Inventory.find({active: true}, '-history')
-    .populate("plant item").exec()
+  return Inventory.find({active: true})
+    .populate("plant", "_id name description")
+    .populate("item", "_id code name unitOfMeasurement").exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -87,10 +71,9 @@ export function index(req, res) {
 // Gets a single Inventory from the DB
 export function show(req, res) {
   return Inventory.findById(req.params.id)
-    .populate("plant item history.user", "-salt -password").exec()
+    .populate("plant item").exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
-    .then(inventory => (req.query.history && req.user.role == 'superadmin') ? inventory : inventory.details)
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -98,8 +81,7 @@ export function show(req, res) {
 // Creates a new Inventory in the DB
 export function create(req, res) {
   return Inventory.create(req.body)
-    .then(recordHistory('create', req.user))
-    .then(inventory => inventory.details)
+    .then(inventory => Inventory.populate(inventory, "plant item"))
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
@@ -109,17 +91,11 @@ export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  var previousValue = undefined;
   return Inventory.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
-    .then(inventory => {
-      previousValue = previousValue;
-      return inventory;
-    })
     .then(saveUpdates(req.body))
-    .then(recordHistory('update', req.user, previousValue))
-    .then(inventory => inventory.details)
+    .then(inventory => Inventory.populate(inventory, "plant item"))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -130,7 +106,6 @@ export function destroy(req, res) {
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates({ active: false }))
-    .then(inventory => inventory.details)
     .then(respondWithResult(res, 204))
     .catch(handleError(res));
 }

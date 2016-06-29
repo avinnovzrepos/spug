@@ -21,7 +21,7 @@ function onConnect(socket) {
   require('../api/measurement-unit/measurement-unit.socket').register(socket);
   require('../api/supplier/supplier.socket').register(socket);
   require('../api/item/item.socket').register(socket);
-  require('../api/thing/thing.socket').register(socket);
+  require('../api/inventory/inventory.socket').register(socket);
 
 }
 

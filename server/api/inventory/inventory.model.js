@@ -15,27 +15,10 @@ var InventorySchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  history: [{
-    newValue: {
-      type: Number,
-      default: 0
-    },
-    previousValue: {
-      type: Number,
-      default: 0
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    type: {
-      type: { type: String}
-    },
-    timestamp: {
-      type: Date,
-      default: Date.now,
-    }
-  }],
+  critical: {
+    type: Number,
+    default: 0
+  },
   active: {
     type: Boolean,
     default: true
@@ -43,20 +26,6 @@ var InventorySchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-
-
-/**
- * Virtuals
- */
-
-// Non-sensitive Inventory Information
-InventorySchema
-  .virtual('details')
-  .get(function() {
-    return _.extend(this, {
-      history: undefined
-    });
-  });
 
 /**
  * Validations
@@ -76,7 +45,7 @@ InventorySchema
     return !!plant;
   }, 'Plant field should be provided');
 
-// Validate duplicate plant item
+// Validate duplicate inventory item
 InventorySchema
   .path('item')
   .validate(function(item, respond) {
@@ -87,7 +56,7 @@ InventorySchema
           if (self.id === inventory.id) {
             return respond(true);
           }
-          if (!plant.active) {
+          if (!inventory.active) {
             return respond(true);
           }
           return respond(false);

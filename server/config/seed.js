@@ -93,11 +93,7 @@ function generateInventory(callback) {
           Plant.findOne({}).then(plant => {
             var inventory = new Inventory({
               plant: plant,
-              item: item,
-              history: [{
-                type: "create",
-                user: user
-              }]
+              item: item
             });
             inventory.save()
               .then(() => {
