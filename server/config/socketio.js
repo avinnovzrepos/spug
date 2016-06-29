@@ -42,6 +42,8 @@ export default function(socketio) {
   // }));
 
   socketio.on('connection', function(socket) {
+    socket.setMaxListeners(20);
+
     socket.address = socket.request.connection.remoteAddress +
       ':' + socket.request.connection.remotePort;
 
