@@ -19,6 +19,10 @@ var UserSchema = new Schema({
     type: String,
     default: 'manager'
   },
+  plant: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Plant'
+  },
   password: String,
   provider: {
     type: String,

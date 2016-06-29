@@ -45,19 +45,21 @@ Thing.find({}).remove()
     });
   });
 
-MeasurementUnit.find({}).remove()
-  .then(() => {
-    MeasurementUnit.create({
-      name: 'kg(s)',
-      description: 'Kilograms'
-    },{
-      name: 'pc(s)',
-      description: 'Pieces'
-    })
+function generateMeasurementUnits(callback) {
+  MeasurementUnit.find({}).remove()
     .then(() => {
-      console.log('finished populating users');
+      MeasurementUnit.create({
+        name: 'kg(s)',
+        description: 'Kilograms'
+      },{
+        name: 'pc(s)',
+        description: 'Pieces'
+      })
+      .then(() => {
+        if (callback) callback();
+      });
     });
-  });
+}
 
 function generateItems(callback) {
   Item.find({}).remove()
@@ -80,7 +82,6 @@ function generateItems(callback) {
         mechanicalSpares: "SAMPLE MECHANICAL SPARES"
       })
       .then(() => {
-        console.log('finished populating items');
         if (callback) callback();
       });
     });
@@ -99,7 +100,6 @@ function generateInventory(callback) {
             });
             inventory.save()
               .then(() => {
-                console.log('finished populating inventory');
                 if (callback) callback();
               });
           });
@@ -119,54 +119,86 @@ function generatePlants(callback) {
         description: 'Malolos Bulacan plant'
       })
       .then(() => {
-        console.log('finished populating plants');
         if (callback) callback();
       });
     });
 }
 
 
-InventoryHistory.find({}).remove().then(() => {
-  // TODO
-});
-
-User.find({}).remove()
-  .then(() => {
-    User.create({
-      provider: 'local',
-      role: 'manager',
-      name: 'Test Manager',
-      email: 'manager@spug.com',
-      password: 'manager'
-    }, {
-      provider: 'local',
-      role: 'warehouse',
-      name: 'Test Warehouse',
-      email: 'warehouse@spug.com',
-      password: 'warehouse'
-    },{
-      provider: 'local',
-      role: 'admin',
-      name: 'Test Admin',
-      email: 'admin@spug.com',
-      password: 'admin'
-    }, {
-      provider: 'local',
-      role: 'superadmin',
-      name: 'Test Super Admin',
-      email: 'superadmin@spug.com',
-      password: 'superadmin'
-    })
+function generateInventoryHistory(callback) {
+  InventoryHistory.find({}).remove()
     .then(() => {
-      console.log('finished populating users');
-      generatePlants(function () {
-        generateItems(function () {
-          generateInventory();
+      // TODO
+      if (callback) callback();
+    });
+}
+
+function generateUsers(callback) {
+  Plant.findOne({}).then(plant => {
+    User.find({}).remove()
+      .then(() => {
+        User.create({
+          provider: 'local',
+          role: 'manager',
+          plant: plant._id,
+          name: 'Test Manager',
+          email: 'manager@spug.com',
+          password: 'manager'
+        }, {
+          provider: 'local',
+          role: 'warehouse',
+          plant: plant._id,
+          name: 'Test Warehouse',
+          email: 'warehouse@spug.com',
+          password: 'warehouse'
+        },{
+          provider: 'local',
+          role: 'admin',
+          plant: plant._id,
+          name: 'Test Admin',
+          email: 'admin@spug.com',
+          password: 'admin'
+        }, {
+          provider: 'local',
+          role: 'superadmin',
+          name: 'Test Super Admin',
+          email: 'superadmin@spug.com',
+          password: 'superadmin'
+        })
+        .then(() => {
+          if (callback) callback();
         });
+      });
+  });
+}
+
+
+function generateSuppliers(callback) {
+  Supplier.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
+generateMeasurementUnits(function () {
+  console.log("finished populating measurement-units");
+});
+generateSuppliers(function () {
+  console.log("finished populating suppliers");
+});
+generatePlants(function () {
+  console.log("finished populating plants");
+  generateUsers(function () {
+    console.log("finished populating users");
+    generateItems(function () {
+      console.log("finished populating items");
+      generateInventoryHistory(function () {
+        console.log("finished populating inventory-history");
+      });
+      generateInventory(function () {
+        console.log("finished populating inventory");
       });
     });
   });
-
-Supplier.find({}).remove().then(() => {
-  // TODO
-});
+})
