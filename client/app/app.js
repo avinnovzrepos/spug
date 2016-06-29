@@ -12,9 +12,20 @@ angular.module('spugApp', [
   'ui.bootstrap',
   'validation.match'
 ])
-  .config(function($urlRouterProvider, $locationProvider) {
+  .config(function($urlRouterProvider, $locationProvider, $stateProvider) {
     $urlRouterProvider
-      .otherwise('/');
+      .otherwise('/login');
+
+    $stateProvider
+      .state('internal', {
+        abstract: true,
+        views: {
+          'header': {
+            template: '<navbar></navbar>'
+          }
+        }
+      })
 
     $locationProvider.html5Mode(true);
+
   });

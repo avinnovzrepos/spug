@@ -9,6 +9,14 @@
  * App-wide Styles
  */
 
+body {
+  overflow-x: hidden;
+}
+
+.body-content {
+  padding: 20px;
+}
+
 .browserupgrade {
   margin: 0.2em 0;
   background: #ccc;
@@ -16,8 +24,16 @@
   padding: 0.2em 0;
 }
 
+#page-wrapper {
+  &.no-padding {
+    padding: 0px !important;
+  }
+}
+
 /* inject:less */
 @import 'admin/admin.less';
+@import 'inventory-list/inventory-list.less';
+@import 'inventory/inventory.less';
 @import 'item-list/item-list.less';
 @import 'item/item.less';
 @import 'main/main.less';

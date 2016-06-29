@@ -1,4 +1,4 @@
-<div class="container">
+<div>
   <form ng-submit="itemStock.submit(item)">
     <h2> Basic Info </h2>
     <div class="form-group col-md-8">
@@ -21,7 +21,7 @@
       <input type="number" class="form-control" placeholder="Unit Cost" ng-model="item.unitCost">
     </div>
     <div class="form-group col-md-2">
-      <label for="Measurement">Unit of Measurement</label>
+      <label for="Measurement">Measurements</label>
       <select class="form-control" ng-model="item.unitOfMeasurement">
         <option>pc(s)</option>
         <option>kg(s)</option>
@@ -102,6 +102,6 @@
       <select class="form-control" ng-model="item.capacityDd" ng-options="capacity as capacity.label for capacity in itemStock.capacities">
       </select>
     </div>
-    <button type="submit" class="btn btn-default btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary btn-long pull-right">Submit</button>
   </form>
 </div>

@@ -1,30 +1,28 @@
 <div>
   <span>
     <strong>
-      Items
+      Inventory
     </strong>
   </span>
-  <button class="btn btn-primary pull-right" ui-sref="item({itemType: 'mechanical'})">
-    Add Mechanical Item
-    <span class="fa fa-plus"> </span>
-  </button>
-  <button class="btn btn-primary pull-right" ui-sref="item({itemType: 'mechanical'})">
-    Add Electrical Item
+  <button class="btn btn-primary pull-right" ui-sref="inventory">
+    Add Inventory
     <span class="fa fa-plus"> </span>
   </button>
   <table class="table table-condensed">
     <tr>
       <th> Item Stock Code </th>
       <th> Item Name </th>
-      <th> Item Year </th>
+      <th> Quantity </th>
       <th> Unit of Measurement </th>
+      <th> Critical Level </th>
       <th></th>
     </tr>
-    <tr ng-repeat="item in itemList.items">
-      <td>{{item.code}}</td>
-      <td>{{item.name}}</td>
-      <td>{{item.year}}</td>
-      <td>{{item.unitOfMeasurement}}</td>
+    <tr>
+      <td>12345</td>
+      <td>VOLVO Bulb</td>
+      <td>1000</td>
+      <td>PCS</td>
+      <td>10</td>
       <td>
         <button class="btn btn-small btn-warning">
           <i class="glyphicon glyphicon-edit"></i>

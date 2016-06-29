@@ -13,23 +13,38 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
+      <link rel="stylesheet" href="bower_components/rdash-ui/dist/css/rdash.min.css" />
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
       <link rel="stylesheet" href="app/app.css">
+      <link rel="stylesheet" href="bower_components/rdash-ui/dist/css/rdash.css">
       <!-- injector:css -->
       <!-- endinjector -->
     <!-- endbuild -->
   </head>
   <body ng-app="spugApp">
+    <div id="page-wrapper" ng-class="{'open': toggle, 'no-padding': !layoutBg}" ng-cloak>
+      <div id="content-wrapper">
+        <div class="page-content">
+          <!-- Nav Bar -->
+          <div ui-view="header"></div>
+          <!-- End Nav Bar -->
+
+          <!-- Main Content -->
+          <div class="body-content" ui-view="container"></div>
+          <!-- End Main Content -->
+        </div><!-- End Page Content -->
+      </div><!-- End Content Wrapper -->
+    </div><!-- End Page Wrapper -->
     <!--[if lt IE 7]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <navbar></navbar>
+    <!-- <navbar></navbar>
     <div ui-view=""></div>
-    <footer></footer>
+    <footer></footer> -->
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
@@ -67,19 +82,23 @@
       <script src="app/admin/admin.module.js"></script>
       <script src="components/auth/auth.module.js"></script>
       <script src="components/util/util.module.js"></script>
-      <script src="components/auth/auth.service.js"></script>
+      <script src="app/main/main.js"></script>
       <script src="app/admin/admin.controller.js"></script>
       <script src="app/account/account.js"></script>
       <script src="app/admin/admin.router.js"></script>
       <script src="app/app.constant.js"></script>
+      <script src="app/inventory-list/inventory-list.controller.js"></script>
+      <script src="app/inventory-list/inventory-list.js"></script>
+      <script src="app/inventory/inventory.controller.js"></script>
+      <script src="app/inventory/inventory.js"></script>
       <script src="app/item-list/item-list.controller.js"></script>
       <script src="app/item-list/item-list.js"></script>
       <script src="app/item/item.controller.js"></script>
       <script src="app/item/item.js"></script>
       <script src="app/main/main.controller.js"></script>
-      <script src="app/main/main.js"></script>
-      <script src="app/account/settings/settings.controller.js"></script>
       <script src="app/account/login/login.controller.js"></script>
+      <script src="app/account/settings/settings.controller.js"></script>
+      <script src="components/auth/auth.service.js"></script>
       <script src="components/auth/interceptor.service.js"></script>
       <script src="components/auth/router.decorator.js"></script>
       <script src="components/auth/user.service.js"></script>

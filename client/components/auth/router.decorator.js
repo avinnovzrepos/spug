@@ -28,7 +28,7 @@ angular.module('spugApp.auth')
           }
 
           event.preventDefault();
-          $state.go('main');
+          $state.go('login');
         });
       }
     });

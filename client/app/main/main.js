@@ -5,6 +5,12 @@ angular.module('spugApp')
     $stateProvider
       .state('main', {
         url: '/',
-        template: '<main></main>'
+        parent: 'internal',
+        authenticate: true,
+        views: {
+          'container@': {
+            template: '<main></main>'
+          }
+        }
       });
   });

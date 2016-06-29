@@ -5,9 +5,14 @@ angular.module('spugApp')
     $stateProvider
       .state('login', {
         url: '/login',
-        templateUrl: 'app/account/login/login.html',
-        controller: 'LoginController',
-        controllerAs: 'vm'
+        views: {
+          'container@': {
+            templateUrl: 'app/account/login/login.html',
+            controller: 'LoginController',
+            controllerAs: 'vm'
+          }
+        },
+        authenticate: false
       })
       .state('logout', {
         url: '/logout?referrer',
@@ -37,8 +42,15 @@ angular.module('spugApp')
   })
   .run(function($rootScope) {
     $rootScope.$on('$stateChangeStart', function(event, next, nextParams, current) {
+
       if (next.name === 'logout' && current && current.name && !current.authenticate) {
         next.referrer = current.name;
+      }
+
+      if(next.parent) {
+        $rootScope.layoutBg = true;
+      } else {
+        $rootScope.layoutBg = false;
       }
     });
   });
