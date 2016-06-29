@@ -17,6 +17,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/inventory-history/inventory-history.socket').register(socket);
   require('../api/plant/plant.socket').register(socket);
   require('../api/measurement-unit/measurement-unit.socket').register(socket);
   require('../api/supplier/supplier.socket').register(socket);

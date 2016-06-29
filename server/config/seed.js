@@ -10,6 +10,7 @@ import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
 import Plant from '../api/plant/plant.model';
 import Item from '../api/item/item.model';
 import Inventory from '../api/inventory/inventory.model';
+import InventoryHistory from '../api/inventory-history/inventory-history.model';
 import User from '../api/user/user.model';
 
 Thing.find({}).remove()
@@ -92,8 +93,9 @@ function generateInventory(callback) {
         Item.findOne({}).then(item => {
           Plant.findOne({}).then(plant => {
             var inventory = new Inventory({
-              plant: plant,
-              item: item
+              plant: plant._id,
+              item: item._id,
+              createdBy: user._id
             });
             inventory.save()
               .then(() => {
@@ -122,6 +124,11 @@ function generatePlants(callback) {
       });
     });
 }
+
+
+InventoryHistory.find({}).remove().then(() => {
+  // TODO
+});
 
 User.find({}).remove()
   .then(() => {
