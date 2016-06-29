@@ -6,6 +6,11 @@
 'use strict';
 import Thing from '../api/thing/thing.model';
 import Supplier from '../api/supplier/supplier.model';
+import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
+import Plant from '../api/plant/plant.model';
+import Item from '../api/item/item.model';
+import Inventory from '../api/inventory/inventory.model';
+import InventoryHistory from '../api/inventory-history/inventory-history.model';
 import User from '../api/user/user.model';
 
 Thing.find({}).remove()
@@ -40,6 +45,91 @@ Thing.find({}).remove()
     });
   });
 
+MeasurementUnit.find({}).remove()
+  .then(() => {
+    MeasurementUnit.create({
+      name: 'kg(s)',
+      description: 'Kilograms'
+    },{
+      name: 'pc(s)',
+      description: 'Pieces'
+    })
+    .then(() => {
+      console.log('finished populating users');
+    });
+  });
+
+function generateItems(callback) {
+  Item.find({}).remove()
+    .then(() => {
+      Item.create({
+        code: "111111",
+        name: "SAMPLE MECHANICAL FROM SEED",
+        partNumber: "SAMPLE PART NUMBER",
+        specification: "SAMPLE SPECIFICATION",
+        unitOfMeasurement: "SAMPLE UNIT OF MEASUREMENT",
+        unitCost: 100,
+        year: "2016",
+        categoryId: "CATEGORY ID",
+        componentId: "COMPONENT ID",
+        other: 0,
+
+        mechanical: "M",
+        brand: "SAMPLE BRAND",
+        capacity: "SAMPLE CAPACITY",
+        mechanicalSpares: "SAMPLE MECHANICAL SPARES"
+      })
+      .then(() => {
+        console.log('finished populating items');
+        if (callback) callback();
+      });
+    });
+}
+
+function generateInventory(callback) {
+  Inventory.find({}).remove()
+    .then(() => {
+      User.findOne({}).then(user => {
+        Item.findOne({}).then(item => {
+          Plant.findOne({}).then(plant => {
+            var inventory = new Inventory({
+              plant: plant._id,
+              item: item._id,
+              createdBy: user._id
+            });
+            inventory.save()
+              .then(() => {
+                console.log('finished populating inventory');
+                if (callback) callback();
+              });
+          });
+        });
+      });
+    });
+}
+
+function generatePlants(callback) {
+  Plant.find({}).remove()
+    .then(() => {
+      Plant.create({
+        name: 'Ortigas Plant',
+        description: 'Ortigas Pasig plant'
+      },{
+        name: 'Bulacan Plant',
+        description: 'Malolos Bulacan plant'
+      })
+      .then(() => {
+        console.log('finished populating plants');
+        if (callback) callback();
+      });
+    });
+}
+
+
+InventoryHistory.find({}).remove().then(() => {
+  // TODO
+});
+
 User.find({}).remove()
   .then(() => {
     User.create({
@@ -69,6 +159,11 @@ User.find({}).remove()
     })
     .then(() => {
       console.log('finished populating users');
+      generatePlants(function () {
+        generateItems(function () {
+          generateInventory();
+        });
+      });
     });
   });
 

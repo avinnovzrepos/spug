@@ -17,9 +17,12 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/inventory-history/inventory-history.socket').register(socket);
+  require('../api/plant/plant.socket').register(socket);
+  require('../api/measurement-unit/measurement-unit.socket').register(socket);
   require('../api/supplier/supplier.socket').register(socket);
   require('../api/item/item.socket').register(socket);
-  require('../api/thing/thing.socket').register(socket);
+  require('../api/inventory/inventory.socket').register(socket);
 
 }
 
@@ -40,6 +43,8 @@ export default function(socketio) {
   // }));
 
   socketio.on('connection', function(socket) {
+    socket.setMaxListeners(20);
+
     socket.address = socket.request.connection.remoteAddress +
       ':' + socket.request.connection.remotePort;
 
