@@ -41,11 +41,14 @@ var RequestSchema = new mongoose.Schema({
     type: [{
       item: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Item'
+        ref: 'Item',
+        required: true
       },
-      quantity: Number
+      quantity: {
+        type: Number,
+        default: 0
+      }
     }],
-    default: []
   },
   status: {
     type: String,

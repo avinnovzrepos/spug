@@ -13,6 +13,7 @@ import Inventory from '../api/inventory/inventory.model';
 import InventoryHistory from '../api/inventory-history/inventory-history.model';
 import User from '../api/user/user.model';
 import Request from '../api/request/request.model';
+import Receiving from '../api/receiving/receiving.model';
 
 Thing.find({}).remove()
   .then(() => {
@@ -66,21 +67,21 @@ function generateItems(callback) {
   Item.find({}).remove()
     .then(() => {
       Item.create({
-        code: "111111",
-        name: "SAMPLE MECHANICAL FROM SEED",
-        partNumber: "SAMPLE PART NUMBER",
-        specification: "SAMPLE SPECIFICATION",
-        unitOfMeasurement: "SAMPLE UNIT OF MEASUREMENT",
+        code: '111111',
+        name: 'SAMPLE MECHANICAL FROM SEED',
+        partNumber: 'SAMPLE PART NUMBER',
+        specification: 'SAMPLE SPECIFICATION',
+        unitOfMeasurement: 'SAMPLE UNIT OF MEASUREMENT',
         unitCost: 100,
-        year: "2016",
-        categoryId: "CATEGORY ID",
-        componentId: "COMPONENT ID",
+        year: '2016',
+        categoryId: 'CATEGORY ID',
+        componentId: 'COMPONENT ID',
         other: 0,
 
-        mechanical: "M",
-        brand: "SAMPLE BRAND",
-        capacity: "SAMPLE CAPACITY",
-        mechanicalSpares: "SAMPLE MECHANICAL SPARES"
+        mechanical: 'M',
+        brand: 'SAMPLE BRAND',
+        capacity: 'SAMPLE CAPACITY',
+        mechanicalSpares: 'SAMPLE MECHANICAL SPARES'
       })
       .then(() => {
         if (callback) callback();
@@ -142,6 +143,14 @@ function generateRequests(callback) {
     });
 }
 
+function generateReceiving(callback) {
+  Receiving.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
 function generateUsers(callback) {
   Plant.findOne({}).then(plant => {
     User.find({}).remove()
@@ -191,25 +200,28 @@ function generateSuppliers(callback) {
 }
 
 generateMeasurementUnits(function () {
-  console.log("finished populating measurement-units");
+  console.log('finished populating measurement-units');
 });
 generateSuppliers(function () {
-  console.log("finished populating suppliers");
+  console.log('finished populating suppliers');
 });
 generateRequests(function () {
-  console.log("finished populating requests");
+  console.log('finished populating requests');
+});
+generateReceiving(function () {
+  console.log('finished populating receiving');
 });
 generatePlants(function () {
-  console.log("finished populating plants");
+  console.log('finished populating plants');
   generateUsers(function () {
-    console.log("finished populating users");
+    console.log('finished populating users');
     generateItems(function () {
-      console.log("finished populating items");
+      console.log('finished populating items');
       generateInventoryHistory(function () {
-        console.log("finished populating inventory-history");
+        console.log('finished populating inventory-history');
       });
       generateInventory(function () {
-        console.log("finished populating inventory");
+        console.log('finished populating inventory');
       });
     });
   });
