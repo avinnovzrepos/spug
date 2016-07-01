@@ -42,6 +42,7 @@ function handleError(res, statusCode) {
 export function index(req, res) {
   return InventoryHistory.find({})
     .populate("inventory")
+    .populate("inventory.createdBy")
     .populate('user', 'name email')
     .sort("-createdAt")
     .then(respondWithResult(res))
@@ -51,7 +52,7 @@ export function index(req, res) {
 // Gets a single InventoryHistory from the DB
 export function show(req, res) {
   return InventoryHistory.findById(req.params.id)
-    .populate("user inventory").exec()
+    .populate("user inventory inventory.createdBy").exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
@@ -61,8 +62,9 @@ export function show(req, res) {
 // Gets a InventoryHistory by Inventory
 export function byInventory(req, res) {
   return InventoryHistory.find({ inventory: req.params.inventoryId })
-    .populate("inventory")
-    .populate('user', 'name email').sort("-createdAt").exec()
+    .populate("inventory inventory.createdBy")
+    .populate('user user.plant', 'name email plant')
+    .sort("-createdAt").exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))

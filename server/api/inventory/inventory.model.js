@@ -2,6 +2,9 @@
 
 import mongoose from 'mongoose';
 import InventoryHistory from '../inventory-history/inventory-history.model';
+import Plant from '../plant/plant.model';
+import Item from '../item/item.model';
+import User from '../user/user.model';
 
 var InventorySchema = new mongoose.Schema({
   plant: {
@@ -10,7 +13,8 @@ var InventorySchema = new mongoose.Schema({
   },
   item: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Item'
+    ref: 'Item',
+    required: true
   },
   value: {
     type: Number,
@@ -26,11 +30,15 @@ var InventorySchema = new mongoose.Schema({
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true
   },
   lastUpdatedBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: function () {
+      return !this.isNew;
+    }
   },
 }, {
   timestamps: true
@@ -40,19 +48,63 @@ var InventorySchema = new mongoose.Schema({
  * Validations
  */
 
-// Validate empty item
-InventorySchema
-  .path('item')
-  .validate(function(item) {
-    return !!item;
-  }, 'Item field should be provided');
-
-// Validate empty plant
+// Validate plant exists
 InventorySchema
   .path('plant')
-  .validate(function(plant) {
-    return !!plant;
-  }, 'Plant field should be provided');
+  .validate(function(plant, respond) {
+    var id = plant._id ? plant._id : plant;
+    return Plant.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'Plant does not exist');
+
+// Validate item exists
+InventorySchema
+  .path('item')
+  .validate(function(item, respond) {
+    var id = item._id ? item._id : item;
+    return Item.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'Item does not exist');
+
+// Validate createdBy user exists
+InventorySchema
+  .path('createdBy')
+  .validate(function(user, respond) {
+    var id = user._id ? user._id : user;
+    return User.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'createdBy User does not exist');
+
+
+// Validate lastUpdatedBy user exists
+InventorySchema
+  .path('lastUpdatedBy')
+  .validate(function(user, respond) {
+    var id = user._id ? user._id : user;
+    return User.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'lastUpdatedBy User does not exist');
+
 
 // Validate duplicate inventory item
 InventorySchema
@@ -76,6 +128,8 @@ InventorySchema
         throw err;
       });
   }, 'An inventory for this item in this plant already exist');
+
+
 
 var Inventory = mongoose.model('Inventory', InventorySchema);
 export default Inventory;

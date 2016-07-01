@@ -3,7 +3,10 @@
 import mongoose from 'mongoose';
 
 var MeasurementUnitSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
   description: String,
   active: {
     type: Boolean,
@@ -36,5 +39,12 @@ MeasurementUnitSchema
         throw err;
       });
   }, 'Cannot have duplicate measurement unit name');
+
+// Validate empty name
+MeasurementUnitSchema
+  .path('name')
+  .validate(function(name) {
+    return name.length;
+  }, 'Name should be provided');
 
 export default mongoose.model('MeasurementUnit', MeasurementUnitSchema);
