@@ -4,7 +4,7 @@ angular.module('spugApp')
   .config(function ($stateProvider) {
     $stateProvider
       .state('item', {
-        url: '/item/:itemType',
+        url: '/item/:itemType?:id',
         parent: 'internal',
         authenticate: true,
         views: {

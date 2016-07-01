@@ -11,10 +11,11 @@
 
 body {
   overflow-x: hidden;
+  background-color: #EFECEC;
 }
 
 .body-content {
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 
 .browserupgrade {
@@ -30,8 +31,19 @@ body {
   }
 }
 
+.no-margin {
+  margin: 0px;
+}
+
+.spug-container {
+  .widget {
+    padding: 15px;
+  }
+}
+
 /* inject:less */
 @import 'admin/admin.less';
+@import 'history-list/history-list.less';
 @import 'inventory-list/inventory-list.less';
 @import 'inventory/inventory.less';
 @import 'item-list/item-list.less';

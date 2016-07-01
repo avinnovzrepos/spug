@@ -2,7 +2,7 @@
 (function(){
 
 class ItemComponent {
-  constructor($state, API) {
+  constructor($state, $stateParams, API) {
     this.message = 'Hello';
     this.itemType = $state.params.itemType === 'mechanical' ? true : false;
     this.capacities = [];
@@ -13,15 +13,31 @@ class ItemComponent {
     this.facilities = [];
     this.facilityTypes = [];
     this.outVoltages = [];
+    this.measurements = [];
     this.API = API;
+    this.$stateParams = $stateParams;
+    this.$state = $state;
+    this.item = {};
   }
 
   $onInit() {
+    const setItem = (item) => {
+      this.item = item;
+    }
+    if(this.$stateParams.id) {
+      this.API.doGet('items/' + this.$stateParams.id, setItem);
+    }
+
+    const setUoM = (data) => {
+      this.measurements = data;
+    };
+
+    this.API.doGet('measurement-units', setUoM);
+
     var initialNum = this.itemType ? '0000' : '00';
     for (var i = 1; i <= 8; i++) {
       this.compNos.push(initialNum+i);
     };
-    console.log(this.itemType);
     if(this.itemType) {
       this.categories.push(
         {
@@ -212,6 +228,7 @@ class ItemComponent {
   }
 
   submit(item) {
+    let state = this.$state;
     let itemCode = "";
     if(this.itemType) {
       item.code = itemCode.concat(
@@ -243,7 +260,7 @@ class ItemComponent {
     }
     item.categoryId = item.category.label;
     this.API.doPost('items', item, function(resp) {
-      console.log(resp);
+      state.go('item-list');
     },{});
   }
 }

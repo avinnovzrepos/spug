@@ -1,1 +1,43 @@
-<div>This is the inventory view.</div>
+<div class="spug-container">
+  <form ng-submit="invForm.submit(invForm.form)">
+    <div class="widget clearfix">
+      <div class="form-group col-md-8">
+        <label for="itemName">Item Name</label>
+        <input type="text" ng-model="invForm.form.item" placeholder="Custom template" uib-typeahead="item as item.code + '-' + item.name for item in invForm.items | filter:{code:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" >
+      </div>
+      <div class="form-group col-md-4">
+        <label for="itemName">Item Stock Code</label>
+        <input type="text" class="form-control" ng-model="invForm.form.item.code" readonly>
+      </div>
+      <div class="form-group col-md-12">
+        <textarea class="form-control" placeholder="Specifications" row="2" ng-model="invForm.form.item.specification" readonly></textarea>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="partNo">Part No.</label>
+        <input type="text" class="form-control" placeholder="Part No." ng-model="invForm.form.item.partNo" readonly>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="partNo">Unit Cost</label>
+        <input type="number" class="form-control" placeholder="Unit Cost" ng-model="invForm.form.item.unitCost" readonly>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="itemName">Unit of Measurement</label>
+        <input type="text" class="form-control" ng-model="invForm.form.item.unitOfMeasurement" readonly>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="partNo">Quantity</label>
+        <input type="number" class="form-control" placeholder="Quantity" ng-model="invForm.form.value">
+      </div>
+      <div class="form-group col-md-4">
+        <label for="partNo">Critical Level</label>
+        <input type="number" class="form-control" placeholder="Critical Level" ng-model="invForm.form.critical">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-long pull-right">Submit</button>
+  </form>
+</div>
+<script type="text/ng-template" id="customTemplate.html">
+  <a>
+    {{match.model.code + '-' + match.model.name}}
+  </a>
+</script>

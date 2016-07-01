@@ -9,11 +9,11 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/:id', controller.show);
-router.post('/', auth.hasRole('superadmin'), controller.create);
-router.put('/:id', auth.hasRole('superadmin'), controller.update);
-router.patch('/:id', auth.hasRole('superadmin'), controller.update);
-router.delete('/:id', auth.hasRole('superadmin'), controller.destroy);
+router.post('/', auth.hasRole('admin'), controller.create);
+router.put('/:id', auth.hasRole('admin'), controller.update);
+router.patch('/:id', auth.hasRole('admin'), controller.update);
+router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
-router.get('/:inventoryId/history', auth.hasRole('superadmin'), inventoryHistory.byInventory);
+router.get('/:inventoryId/history', auth.hasRole('admin'), inventoryHistory.byInventory);
 
 module.exports = router;
