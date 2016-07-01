@@ -12,6 +12,7 @@ import Item from '../api/item/item.model';
 import Inventory from '../api/inventory/inventory.model';
 import InventoryHistory from '../api/inventory-history/inventory-history.model';
 import User from '../api/user/user.model';
+import Request from '../api/request/request.model';
 
 Thing.find({}).remove()
   .then(() => {
@@ -133,6 +134,14 @@ function generateInventoryHistory(callback) {
     });
 }
 
+function generateRequests(callback) {
+  Request.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
 function generateUsers(callback) {
   Plant.findOne({}).then(plant => {
     User.find({}).remove()
@@ -186,6 +195,9 @@ generateMeasurementUnits(function () {
 });
 generateSuppliers(function () {
   console.log("finished populating suppliers");
+});
+generateRequests(function () {
+  console.log("finished populating requests");
 });
 generatePlants(function () {
   console.log("finished populating plants");
