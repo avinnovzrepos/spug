@@ -6,6 +6,7 @@ mongoose.Promise = require('bluebird');
 import _ from 'lodash';
 import {Schema} from 'mongoose';
 import { userRoles } from '../../config/environment';
+import Plant from '../plant/plant.model';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
@@ -90,6 +91,24 @@ UserSchema
     }
     return password.length;
   }, 'Password cannot be blank');
+
+// Validate empty password
+UserSchema
+  .path('plant')
+  .validate(function(plant, respond) {
+    if (plant) {
+      var id = plant._id ? plant._id : plant;
+      return Plant.findById(id).exec()
+        .then(function(existing) {
+          return respond(!!existing);
+        })
+        .catch(function(err) {
+          throw err;
+        });
+    } else {
+      respond(false);
+    }
+  }, 'Plant not found');
 
 // Validate email is not taken
 UserSchema
