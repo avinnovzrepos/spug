@@ -158,3 +158,18 @@ export function byUser(req, res) {
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
+
+// Declines a Request
+export function decline(req, res) {
+  return Request.findById(req.params.id).exec()
+    .catch(handleError(res))
+    .then(handleEntityNotFound(res))
+    .then(saveUpdates({ status: 'declined' }))
+    .then(request => Request.populate(request, [
+      { path: 'createdBy', select: 'name email role plant' },
+      'destination',
+      'items.item'
+    ]))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}

@@ -106,7 +106,8 @@ export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  return Receiving.findById(req.params.id).exec()
+  return Receiving.findById(req.params.id)
+    .populate("receivedBy").exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
@@ -121,7 +122,8 @@ export function update(req, res) {
 
 // Deletes a Receiving from the DB
 export function destroy(req, res) {
-  return Receiving.findById(req.params.id).exec()
+  return Receiving.findById(req.params.id)
+    .populate("receivedBy").exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates({ active: false }))
