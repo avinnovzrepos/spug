@@ -1,0 +1,29 @@
+<div class="spug-container">
+  <div class="widget clearfix">
+    <div>
+      <div class="form-group col-md-8">
+        <label> Request By: {{acq.requests.createdBy.name}} </label>
+        <br>
+        <label> Destination: {{acq.requests.destination.name}} </label>
+      </div>
+    </div>
+    <div ng-repeat="item in acq.requests.items">
+      <div class="form-group col-md-8">
+        <label for="itemName">Item Name</label>
+        <input type="text" ng-model="item.item" placeholder="Custom template" uib-typeahead="item.name as item.code + '-' + item.name for item in requi.items | filter:{code:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" readonly>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="partNo">Quantity</label>
+        <input type="number" class="form-control" placeholder="Quantity" ng-model="item.quantity" readonly>
+      </div>
+      <div class="form-group col-md-1" style="margin-top: 24px;">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> Accept
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary btn-long pull-right">Submit</button>
+</div>

@@ -20,7 +20,12 @@
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="history-list"> History <span class="menu-icon fa fa-history"></span></a>
     </li>
-
+    <li class="sidebar-list">
+      <a ui-sref="requisition"> Request <span class="menu-icon fa fa-history"></span></a>
+    </li>
+    <li class="sidebar-list">
+      <a ui-sref="acquisition-list"> Receive <span class="menu-icon fa fa-history"></span></a>
+    </li>
   </ul>
   <!-- <div class="sidebar-footer">
     <div class="col-xs-4">
