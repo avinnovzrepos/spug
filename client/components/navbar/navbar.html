@@ -17,7 +17,7 @@
     <li class="sidebar-list">
       <a ui-sref="inventory-list"> Inventory <span class="menu-icon fa fa-cube"></span></a>
     </li>
-    <li class="sidebar-list">
+    <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="history-list"> History <span class="menu-icon fa fa-history"></span></a>
     </li>
 
@@ -51,7 +51,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-right">
           <li class="dropdown-header">
-            Joe Bloggs
+            {{nav.getCurrentUser().name}}
           </li>
           <li class="divider"></li>
           <li class="link">
