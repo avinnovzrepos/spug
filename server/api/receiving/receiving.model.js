@@ -107,15 +107,19 @@ ReceivingSchema
 ReceivingSchema.pre('save', function (next) {
   var self = this;
   self.wasNew = self.isNew;
-  if (self.isNew) {
-    next();
-  } else {
-    this.constructor.findById(self.id).then(receiving => {
-      self.previousValue = receiving.items;
-      self.isDeleted = !receiving.active;
-      next();
-    });
-  }
+  Request.findById(self.request._id ? self.request : self.request)
+    .then(request => {
+      self.request = request;
+      if (self.isNew) {
+        next();
+      } else {
+        this.constructor.findById(self.id).then(receiving => {
+          self.previousValue = receiving.items;
+          self.isDeleted = !receiving.active;
+          next();
+        });
+      }
+    })
 });
 
 var addInInventory = function (self) {
@@ -129,7 +133,7 @@ var addInInventory = function (self) {
         inventory.value = inventory.value + receivingItem.quantity;
         inventory.lastUpdatedBy = self.receivedBy;
         inventory.save().then(function (saved) {
-          if (index == self.items.length) {
+          if (index == self.items.length - 1) {
             self.request.status = 'recieved';
             self.request.save().then(function () {
               // NOTHING TODO
@@ -144,7 +148,7 @@ var addInInventory = function (self) {
           value: receivingItem.quantity,
           receiving: true
         }).then(function (saved) {
-          if (index == self.items.length) {
+          if (index == self.items.length - 1) {
             self.request.status = 'recieved';
             self.request.save().then(function () {
               if (callback) callback();
@@ -167,7 +171,6 @@ var revertInventory = function (self, callback) {
         inventory.value = inventory.value - receivingItem.quantity;
         inventory.lastUpdatedBy = self.receivedBy;
         inventory.save().then(function (saved) {
-          console.log(saved)
           if (index == self.items.length - 1) {
             self.request.status = 'pending';
             self.request.save().then(function () {
@@ -197,6 +200,7 @@ var revertInventory = function (self, callback) {
 
 ReceivingSchema.post('save', function (inventory) {
   var self = this;
+
   if (self.wasNew) {
     addInInventory(self);
   } else {
@@ -206,7 +210,6 @@ ReceivingSchema.post('save', function (inventory) {
       addInInventory(self)
     } else {
       revertInventory(self, function () {
-        console.log("ASDEFG")
         addInInventory(self);
       });
     }
