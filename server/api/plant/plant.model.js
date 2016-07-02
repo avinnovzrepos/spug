@@ -3,8 +3,11 @@
 import mongoose from 'mongoose';
 
 var PlantSchema = new mongoose.Schema({
-  name: String,
-  descripiton: String,
+  name: {
+    type: String,
+    required: true
+  },
+  description: String,
   active: {
     type: Boolean,
     default: true
@@ -35,5 +38,12 @@ PlantSchema
         throw err;
       });
   }, 'Cannot have duplicate plant name');
+
+// Validate empty name
+PlantSchema
+  .path('name')
+  .validate(function(name) {
+    return name.length;
+  }, 'Name should be provided');
 
 export default mongoose.model('Plant', PlantSchema);

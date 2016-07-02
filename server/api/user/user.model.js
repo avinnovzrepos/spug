@@ -6,6 +6,7 @@ mongoose.Promise = require('bluebird');
 import _ from 'lodash';
 import {Schema} from 'mongoose';
 import { userRoles } from '../../config/environment';
+import Plant from '../plant/plant.model';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
@@ -13,17 +14,26 @@ var UserSchema = new Schema({
   name: String,
   email: {
     type: String,
-    lowercase: true
+    lowercase: true,
+    required: true
   },
   role: {
     type: String,
-    default: 'manager'
+    lowercase: true,
+    default: 'manager',
+    enum: userRoles
   },
   plant: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Plant'
+    ref: 'Plant',
+    required: function () {
+      return this.role != 'superadmin';
+    }
   },
-  password: String,
+  password: {
+    type: String,
+    required: true
+  },
   provider: {
     type: String,
     default: 'local'
@@ -75,9 +85,6 @@ UserSchema
 UserSchema
   .path('email')
   .validate(function(email) {
-    if (authTypes.indexOf(this.provider) !== -1) {
-      return true;
-    }
     return email.length;
   }, 'Email cannot be blank');
 
@@ -85,11 +92,22 @@ UserSchema
 UserSchema
   .path('password')
   .validate(function(password) {
-    if (authTypes.indexOf(this.provider) !== -1) {
-      return true;
-    }
     return password.length;
   }, 'Password cannot be blank');
+
+// Validate plant exists
+UserSchema
+  .path('plant')
+  .validate(function(plant, respond) {
+    var id = plant._id ? plant._id : plant;
+    return Plant.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'Plant does not exist');
 
 // Validate email is not taken
 UserSchema
@@ -113,14 +131,6 @@ UserSchema
         throw err;
       });
   }, 'The specified email address is already in use');
-
-// Validate role
-UserSchema
-  .path('role')
-  .validate(function(role) {
-    return userRoles.indexOf(role) >= 0;
-  }, 'Invalid user role');
-
 
 var validatePresenceOf = function(value) {
   return value && value.length;

@@ -62,7 +62,8 @@ function handleError(res, statusCode) {
  * restriction: 'admin'
  */
 export function index(req, res) {
-  return User.find({active: true}, '-salt -password').exec()
+  return User.find({active: true}, '-salt -password')
+    .populate('plant').exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -76,6 +77,8 @@ export function create(req, res, next) {
   }
   User.create(req.body)
     .catch(validationError(res))
+    .then(user => User.populate(user, 'plant'))
+    .catch(handleError(res))
     .then(user => user.public)
     .then(respondWithResult(res, 201));
 }
@@ -84,7 +87,8 @@ export function create(req, res, next) {
  * Get a single user
  */
 export function show(req, res) {
-  return User.findById(req.params.id).exec()
+  return User.findById(req.params.id)
+    .populate('plant').exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(user => user && user.public)
@@ -105,6 +109,7 @@ export function destroy(req, res) {
     )
     .then(saveUpdates({ active: false }))
     .catch(err => validationError(err))
+    .then(user => User.populate(user, 'plant'))
     .then(user => user && user.public)
     .then(respondWithResult(res, 204));
 }
@@ -119,6 +124,8 @@ export function changePassword(req, res, next) {
     .then(user => user.authenticate(String(req.body.oldPassword)) ? user : res.status(403).end())
     .then(saveUpdates({ password: String(req.body.newPassword) }))
     .catch(err => validationError(err))
+    .then(user => User.populate(user, 'plant'))
+    .catch(handleError(res))
     .then(user => user && user.public)
     .then(respondWithResult(res, 204));
 }
@@ -169,6 +176,8 @@ export function update(req, res) {
     })
     .then(saveUpdates(req.body))
     .catch(validationError(res))
+    .then(user => User.populate(user, 'plant'))
+    .catch(handleError(res))
     .then(user => user && user.public)
     .then(respondWithResult(res));
 }
@@ -177,7 +186,8 @@ export function update(req, res) {
  * Get my info
  */
 export function me(req, res, next) {
-  return User.findById(req.user._id).exec()
+  return User.findById(req.user._id)
+    .populate('plant').exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(user => user && user.public)

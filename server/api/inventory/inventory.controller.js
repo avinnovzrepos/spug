@@ -25,7 +25,6 @@ function saveUpdates(updates) {
   return function(entity) {
     var parsed = _.extend(updates, { plant: undefined, item: undefined });
     var updated = _.merge(entity, parsed);
-    console.log(updated)
     return updated.save()
       .then(updated => {
         return updated;
@@ -73,7 +72,8 @@ export function index(req, res) {
 // Gets a single Inventory from the DB
 export function show(req, res) {
   return Inventory.findById(req.params.id)
-    .populate('plant item')
+    .populate('item')
+    .populate('plant')
     .populate('createdBy', 'name email')
     .populate('lastUpdatedBy', 'name email').exec()
     .catch(handleError(res))
@@ -85,9 +85,10 @@ export function show(req, res) {
 // Creates a new Inventory in the DB
 export function create(req, res) {
   req.body.createdBy = req.user._id;
+  req.body.plant = req.user.role === "superadmin" ? req.body.plant : req.user.plant;
   return Inventory.create(req.body)
     .then(inventory => Inventory.populate(inventory,  [
-      'plant item',
+      'item plant',
       {path:'createdBy', select:'name email'},
       {path:'lastUpdatedBy', select:'name email'}
     ]))
@@ -101,6 +102,7 @@ export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
+  req.body.plant = req.user.role === "superadmin" ? req.body.plant : req.user.plant;
   return Inventory.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))

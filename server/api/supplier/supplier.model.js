@@ -3,9 +3,15 @@
 import mongoose from 'mongoose';
 
 var SupplierSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
   address: String,
-  contactNumber: String,
+  contactNumber: {
+    type: String,
+    required: true
+  },
   contactPerson: String,
   active: {
     type: Boolean,
