@@ -17,6 +17,12 @@ class AcquisitionComponent {
     }
   }
 
+  submit(form) {
+    this.API.doPost('receiving/' + this.requests._id, this.requests, function(resp) {
+      console.log(resp);
+    },{});
+  }
+
 }
 
 angular.module('spugApp')
