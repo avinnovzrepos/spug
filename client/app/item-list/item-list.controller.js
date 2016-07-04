@@ -3,7 +3,6 @@
 
 class ItemListComponent {
   constructor(API) {
-    this.message = 'Hello';
     this.API = API;
     this.items = [];
   }
@@ -14,6 +13,18 @@ class ItemListComponent {
     }
 
     this.API.doGet('items', setItems);
+  }
+
+  delete(item) {
+    const deleteItem = (resp) => {
+      this.items.map((data, index) => {
+        if(item._id == data._id) {
+          this.items.splice(index, 1);
+        }
+      });
+    };
+
+    this.API.doDelete('items', item._id, deleteItem);
   }
 }
 

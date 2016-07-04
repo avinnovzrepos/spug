@@ -3,13 +3,13 @@
 angular.module('spugApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('inventory', {
-        url: '/inventory?:id',
+      .state('requisition', {
+        url: '/requisition',
         parent: 'internal',
         authenticate: true,
         views: {
           'container@': {
-            template: '<inventory></inventory>'
+            template: '<requisition></requisition>'
           }
         }
       });

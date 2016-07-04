@@ -9,6 +9,7 @@ angular.module('spugApp.auth')
         return url;
       },
       doGet: function(uri, callback, params) {
+        console.log(params);
         $http({
           url: url + uri,
           method: 'GET',
@@ -38,7 +39,7 @@ angular.module('spugApp.auth')
       },
       doPut: function(uri, object, callback, params, id) {
         $http({
-          url: url + uri + (object.id ? "/" + object.id : ""),
+          url: url + uri + '/' + id,
           method: 'PUT',
           data: object,
           params: params ? params : {},

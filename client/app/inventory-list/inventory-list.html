@@ -1,37 +1,38 @@
-<div>
-  <span>
-    <strong>
-      Inventory
-    </strong>
-  </span>
-  <button class="btn btn-primary pull-right" ui-sref="inventory">
-    Add Inventory
-    <span class="fa fa-plus"> </span>
-  </button>
-  <table class="table table-condensed">
-    <tr>
-      <th> Item Stock Code </th>
-      <th> Item Name </th>
-      <th> Quantity </th>
-      <th> Unit of Measurement </th>
-      <th> Critical Level </th>
-      <th></th>
-    </tr>
-    <tr>
-      <td>12345</td>
-      <td>VOLVO Bulb</td>
-      <td>1000</td>
-      <td>PCS</td>
-      <td>10</td>
-      <td>
-        <button class="btn btn-small btn-warning">
-          <i class="glyphicon glyphicon-edit"></i>
-        </button>
-        <button class="btn btn-small btn-danger">
-          <i class="glyphicon glyphicon-trash"></i>
-        </button>
-      </td>
-    </tr>
-  </table>
+<div class="spug-container">
+  <div class="clearfix">
+    <h3>
+      INVENTORY
+      <button class="btn btn-primary pull-right" ui-sref="inventory">
+        ADD
+        <span class="fa fa-plus"> </span>
+      </button>
+    </h3>
+  </div>
+  <div class="widget">
+    <table class="table table-condensed">
+      <tr>
+        <th> Item Stock Code </th>
+        <th> Item Name </th>
+        <th> Unit of Measurement </th>
+        <th> Quantity </th>
+        <th> Critical Level </th>
+        <th></th>
+      </tr>
+      <tr ng-repeat="inventoryStock in itemInventory.inventoryList">
+        <td> {{inventoryStock.item.code}} </td>
+        <td> {{inventoryStock.item.name}} </td>
+        <td> {{inventoryStock.item.unitOfMeasurement}} </td>
+        <td> {{inventoryStock.value}} </td>
+        <td> {{inventoryStock.critical}} </td>
+        <td>
+          <button class="btn btn-small btn-warning" ui-sref="inventory({id: inventoryStock._id})">
+            <i class="glyphicon glyphicon-edit"></i>
+          </button>
+          <button class="btn btn-small btn-danger" ng-click="itemInventory.delete(inventoryStock)">
+            <i class="glyphicon glyphicon-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>
-

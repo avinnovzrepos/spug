@@ -1,0 +1,28 @@
+<div class="spug-container">
+  <div class="clearfix">
+    <h3>
+      HISTORY
+    </h3>
+  </div>
+  <div class="widget">
+    <table class="table table-condensed">
+      <tr>
+        <th> ID </th>
+        <th> Action </th>
+        <th> Date </th>
+        <th> Previous Value </th>
+        <th> New Value </th>
+        <th> Updated By </th>
+      </tr>
+      <tr ng-repeat="history in history.historyList">
+        <td> {{history._id}} </td>
+        <td> {{history.action}} </td>
+        <td> {{history.updatedAt | date:'medium'}} </td>
+        <td> {{history.previousValue}} </td>
+        <td> {{history.newValue}} </td>
+        <td> {{history.user.name + ' ' + history.user.plant.name}} </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
