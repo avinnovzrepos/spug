@@ -8,6 +8,10 @@ var PlantSchema = new mongoose.Schema({
     required: true
   },
   description: String,
+  location: {
+    type: { type: String, default:'Point' },
+    coordinates: { type: [Number], default:[0, 0] }
+  },
   active: {
     type: Boolean,
     default: true
@@ -45,5 +49,7 @@ PlantSchema
   .validate(function(name) {
     return name.length;
   }, 'Name should be provided');
+
+PlantSchema.index({ location : '2dsphere' });
 
 export default mongoose.model('Plant', PlantSchema);
