@@ -8,15 +8,20 @@
 import User from '../api/user/user.model';
 import LoginHistory from '../api/login-history/login-history.model';
 
-import Thing from '../api/thing/thing.model';
-import Supplier from '../api/supplier/supplier.model';
-import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
 import Plant from '../api/plant/plant.model';
+
+import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
 import Item from '../api/item/item.model';
+
 import Inventory from '../api/inventory/inventory.model';
 import InventoryHistory from '../api/inventory-history/inventory-history.model';
-import Request from '../api/request/request.model';
+
+import PurchaseOrder from '../api/purchase-order/purchase-order.model';
+
 import Receiving from '../api/receiving/receiving.model';
+
+import Thing from '../api/thing/thing.model';
+import Supplier from '../api/supplier/supplier.model';
 
 Thing.find({}).remove()
   .then(() => {
@@ -117,11 +122,17 @@ function generatePlants(callback) {
   Plant.find({}).remove()
     .then(() => {
       Plant.create({
-        name: 'Ortigas Plant',
-        description: 'Ortigas Pasig plant'
+        name: 'Central Office',
+        description: 'Metro manila central office'
       },{
-        name: 'Bulacan Plant',
+        name: 'Region 3 Warehouse',
+        description: 'Central luzon warehouse'
+      },{
+        name: 'Malolos Plant',
         description: 'Malolos Bulacan plant'
+      },{
+        name: 'Calumpit Plant',
+        description: 'Calumpit Bulacan plant'
       })
       .then(() => {
         if (callback) callback();
@@ -129,17 +140,8 @@ function generatePlants(callback) {
     });
 }
 
-
-function generateInventoryHistory(callback) {
-  InventoryHistory.find({}).remove()
-    .then(() => {
-      // TODO
-      if (callback) callback();
-    });
-}
-
-function generateRequests(callback) {
-  Request.find({}).remove()
+function generatePurchaseOrders(callback) {
+  PurchaseOrder.find({}).remove()
     .then(() => {
       // TODO
       if (callback) callback();
@@ -155,32 +157,34 @@ function generateReceiving(callback) {
 }
 
 function generateUsers(callback) {
-  Plant.findOne({}).then(plant => {
+  Plant.find({}).then(plants => {
     User.find({}).remove()
       .then(() => {
         User.create({
-          provider: 'local',
           role: 'plant',
-          plant: plant._id,
+          plant: plants[3]._id,
+          name: 'Test Plant 1',
+          email: 'plant1@spug.com',
+          password: 'plant1'
+        }, {
+          role: 'plant',
+          plant: plants[2]._id,
           name: 'Test Manager',
           email: 'plant@spug.com',
           password: 'plant'
         }, {
-          provider: 'local',
           role: 'warehouse',
-          plant: plant._id,
+          plant: plants[1]._id,
           name: 'Test Warehouse',
           email: 'warehouse@spug.com',
           password: 'warehouse'
-        },{
-          provider: 'local',
+        }, {
           role: 'admin',
-          plant: plant._id,
+          plant: plants[0]._id,
           name: 'Test Admin',
           email: 'admin@spug.com',
           password: 'admin'
         }, {
-          provider: 'local',
           role: 'superadmin',
           name: 'Test Super Admin',
           email: 'superadmin@spug.com',
@@ -202,24 +206,14 @@ function generateSuppliers(callback) {
     });
 }
 
-
-
-function loginHistory(callback) {
-  LoginHistory.find({}).remove()
-    .then(() => {
-      // TODO
-      if (callback) callback();
-    });
-}
-
 generateMeasurementUnits(function () {
   console.log('finished populating measurement-units');
 });
 generateSuppliers(function () {
   console.log('finished populating suppliers');
 });
-generateRequests(function () {
-  console.log('finished populating requests');
+generatePurchaseOrders(function () {
+  console.log('finished populating purchase-orders');
 });
 generateReceiving(function () {
   console.log('finished populating receiving');
@@ -230,9 +224,6 @@ generatePlants(function () {
     console.log('finished populating users');
     generateItems(function () {
       console.log('finished populating items');
-      generateInventoryHistory(function () {
-        console.log('finished populating inventory-history');
-      });
       generateInventory(function () {
         console.log('finished populating inventory');
       });
@@ -253,6 +244,34 @@ function clearLoginHistory(callback) {
     });
 }
 
+
+function clearInventoryHistory(callback) {
+  InventoryHistory.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
 clearLoginHistory(function () {
-  console.log("Cleared History: Login");
+  console.log("cleared history: login");
+});
+
+clearInventoryHistory(function () {
+  console.log("cleared history: inventory");
+});
+
+
+// CLEAR TRANSACTIONS
+
+function clearPurchaseOrders(callback) {
+  PurchaseOrder.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
+clearPurchaseOrders(function () {
+  console.log("cleared purchase orders");
 });

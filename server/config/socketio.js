@@ -17,15 +17,16 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
-  require('../api/login-history/login-history.socket').register(socket);
-  require('../api/receiving/receiving.socket').register(socket);
-  require('../api/request/request.socket').register(socket);
-  require('../api/inventory-history/inventory-history.socket').register(socket);
-  require('../api/plant/plant.socket').register(socket);
-  require('../api/measurement-unit/measurement-unit.socket').register(socket);
-  require('../api/supplier/supplier.socket').register(socket);
-  require('../api/item/item.socket').register(socket);
-  require('../api/inventory/inventory.socket').register(socket);
+  // require('../api/purchase-order/purchase-order.socket').register(socket);
+  // require('../api/login-history/login-history.socket').register(socket);
+  // require('../api/receiving/receiving.socket').register(socket);
+  // require('../api/request/request.socket').register(socket);
+  // require('../api/inventory-history/inventory-history.socket').register(socket);
+  // require('../api/plant/plant.socket').register(socket);
+  // require('../api/measurement-unit/measurement-unit.socket').register(socket);
+  // require('../api/supplier/supplier.socket').register(socket);
+  // require('../api/item/item.socket').register(socket);
+  // require('../api/inventory/inventory.socket').register(socket);
 
 }
 
