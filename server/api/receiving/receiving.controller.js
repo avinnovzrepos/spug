@@ -23,6 +23,9 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    if (!entity) {
+      return null;
+    }
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
@@ -64,7 +67,7 @@ export function index(req, res) {
   return Receiving.find({active: true})
     .populate([
       { path: 'receivedBy', select: 'name email role plant' },
-      'request',
+      'purchaseOrder',
       'items.item'
     ])
     .sort("-createdAt").exec()
@@ -77,7 +80,7 @@ export function show(req, res) {
   return Receiving.findById(req.params.id)
     .populate([
       { path: 'receivedBy', select: 'name email role plant' },
-      'request',
+      'purchaseOrder',
       'items.item'
     ]).exec()
     .catch(handleError(res))
@@ -89,12 +92,12 @@ export function show(req, res) {
 // Creates a new Receiving in the DB
 export function create(req, res) {
   req.body.receivedBy = req.user;
-  req.body.request = req.params.id;
+  req.body.purchaseOrder = req.params.id;
   return Receiving.create(req.body)
     .catch(handleError(res))
     .then(receiving => Receiving.populate(receiving, [
       { path: 'receivedBy', select: 'name email role plant' },
-      'request',
+      'purchaseOrder',
       'items.item']
     ))
     .then(respondWithResult(res, 201))
@@ -113,7 +116,7 @@ export function update(req, res) {
     .then(saveUpdates(req.body))
     .then(receiving => Receiving.populate(receiving, [
       { path: 'receivedBy', select: 'name email role plant' },
-      'request',
+      'purchaseOrder',
       'items.item'
     ]))
     .then(respondWithResult(res))
@@ -140,7 +143,7 @@ export function byPlant(req, res) {
     })
     .populate([
       { path: 'receivedBy', select: 'name email role plant' },
-      'request',
+      'purchaseOrder',
       'items.item'
     ])
     .sort("-createdAt").exec()
@@ -157,7 +160,7 @@ export function byUser(req, res) {
     })
     .populate([
       { path: 'receivedBy', select: 'name email role plant' },
-      'request',
+      'purchaseOrder',
       'items.item'
     ])
     .sort("-createdAt").exec()

@@ -24,6 +24,9 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    if (!entity) {
+      return null;
+    }
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
@@ -72,7 +75,7 @@ export function index(req, res) {
   return Request.find(query)
     .populate([
       { path: 'createdBy', select: 'name email role plant' },
-      'destination',
+      'plant',
       'items.item'
     ])
     .sort("-createdAt").exec()
@@ -84,7 +87,7 @@ export function index(req, res) {
 export function show(req, res) {
   return Request.findById(req.params.id).populate([
       { path: 'createdBy', select: 'name email role plant' },
-      'destination',
+      'plant',
       'items.item'
     ]).exec()
     .catch(handleError(res))
@@ -96,12 +99,12 @@ export function show(req, res) {
 // Creates a new Request in the DB
 export function create(req, res) {
   req.body.createdBy = req.user;
-  req.body.destination = req.user.role === 'superadmin' ? req.body.destination : req.user.plant;
+  req.body.plant = req.user.role === 'superadmin' ? req.body.plant : req.user.plant;
   return Request.create(req.body)
     .catch(handleError(res))
     .then(request => Request.populate(request, [
       { path: 'createdBy', select: 'name email role plant' },
-      'destination',
+      'plant',
       'items.item']
     ))
     .then(respondWithResult(res, 201))
@@ -119,7 +122,7 @@ export function update(req, res) {
     .then(saveUpdates(req.body))
     .then(request => Request.populate(request, [
       { path: 'createdBy', select: 'name email role plant' },
-      'destination',
+      'plant',
       'items.item'
     ]))
     .then(respondWithResult(res))
@@ -151,7 +154,7 @@ export function byUser(req, res) {
   return Request.find(query)
     .populate([
       { path: 'createdBy', select: 'name email role plant' },
-      'destination',
+      'plant',
       'items.item'
     ])
     .sort("-createdAt").exec()
@@ -167,7 +170,7 @@ export function decline(req, res) {
     .then(saveUpdates({ status: 'declined' }))
     .then(request => Request.populate(request, [
       { path: 'createdBy', select: 'name email role plant' },
-      'destination',
+      'plant',
       'items.item'
     ]))
     .then(respondWithResult(res))

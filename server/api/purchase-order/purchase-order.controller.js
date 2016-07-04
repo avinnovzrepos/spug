@@ -24,6 +24,9 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    if (!entity) {
+      return null;
+    }
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
@@ -56,6 +59,7 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
+    console.log(err)
     res.status(statusCode).send(err);
   };
 }
@@ -117,13 +121,14 @@ export function update(req, res) {
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
+    .catch(handleError(res))
     .then(purchaseOrder => PurchaseOrder.populate(purchaseOrder, [
       { path: 'createdBy', select: 'name email role plant' },
       'plant',
       'items.item'
     ]))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .catch(handleError(res))
+    .then(respondWithResult(res));
 }
 
 // Deletes a PurchaseOrder from the DB
@@ -132,8 +137,8 @@ export function destroy(req, res) {
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates({ active: false }))
+    .catch(handleError(res))
     .then(respondWithResult(res, 204))
-    .catch(handleError(res));
 }
 
 // Gets a list of PurchaseOrders of a specific user

@@ -23,6 +23,9 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    if (!entity) {
+      return null;
+    }
     var parsed = _.extend(updates, { plant: undefined, item: undefined });
     var updated = _.merge(entity, parsed);
     return updated.save()
