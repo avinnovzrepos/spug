@@ -3,7 +3,7 @@
 
 angular.module('spugApp.constants', [])
 
-.constant('appConfig', {userRoles:['manager','warehouse','admin','superadmin']})
+.constant('appConfig', {userRoles:['plant','warehouse','admin','superadmin']})
 
 ;
 })(angular);

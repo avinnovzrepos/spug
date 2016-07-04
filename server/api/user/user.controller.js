@@ -57,10 +57,6 @@ function handleError(res, statusCode) {
   };
 }
 
-/**
- * Get list of users
- * restriction: 'admin'
- */
 export function index(req, res) {
   return User.find({active: true}, '-salt -password')
     .populate('plant').exec()
@@ -68,13 +64,12 @@ export function index(req, res) {
     .catch(handleError(res));
 }
 
-/**
- * Creates a new user
- */
 export function create(req, res, next) {
+  // admin cannot create another admin or superadmin
   if (req.user.role === 'admin' && ['admin', 'superadmin'].indexOf(req.body.role) >= 0) {
     return res.status(403).end();
   }
+
   User.create(req.body)
     .catch(validationError(res))
     .then(user => User.populate(user, 'plant'))
@@ -83,9 +78,6 @@ export function create(req, res, next) {
     .then(respondWithResult(res, 201));
 }
 
-/**
- * Get a single user
- */
 export function show(req, res) {
   return User.findById(req.params.id)
     .populate('plant').exec()
@@ -95,14 +87,11 @@ export function show(req, res) {
     .then(respondWithResult(res));
 }
 
-/**
- * Deletes a user
- * restriction: 'superadmin'
- */
 export function destroy(req, res) {
   return User.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
+    // admin cannot delete another admin and superuser
     .then(user => (req.user.role === 'admin' && ['admin', 'superadmin'].indexOf(user.role) >= 0) ?
       res.status(403).end() :
       user
@@ -114,9 +103,6 @@ export function destroy(req, res) {
     .then(respondWithResult(res, 204));
 }
 
-/**
- * Change a users password
- */
 export function changePassword(req, res, next) {
   return User.findById(req.params.id).exec()
     .catch(handleError(res))
@@ -182,9 +168,6 @@ export function update(req, res) {
     .then(respondWithResult(res));
 }
 
-/**
- * Get my info
- */
 export function me(req, res, next) {
   return User.findById(req.user._id)
     .populate('plant').exec()

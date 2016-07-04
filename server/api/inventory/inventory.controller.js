@@ -87,6 +87,7 @@ export function create(req, res) {
   req.body.createdBy = req.user._id;
   req.body.plant = req.user.role === "superadmin" ? req.body.plant : req.user.plant;
   return Inventory.create(req.body)
+    .catch(handleError(res))
     .then(inventory => Inventory.populate(inventory,  [
       'item plant',
       {path:'createdBy', select:'name email'},

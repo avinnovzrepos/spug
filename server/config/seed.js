@@ -4,6 +4,10 @@
  */
 
 'use strict';
+
+import User from '../api/user/user.model';
+import LoginHistory from '../api/login-history/login-history.model';
+
 import Thing from '../api/thing/thing.model';
 import Supplier from '../api/supplier/supplier.model';
 import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
@@ -11,7 +15,6 @@ import Plant from '../api/plant/plant.model';
 import Item from '../api/item/item.model';
 import Inventory from '../api/inventory/inventory.model';
 import InventoryHistory from '../api/inventory-history/inventory-history.model';
-import User from '../api/user/user.model';
 import Request from '../api/request/request.model';
 import Receiving from '../api/receiving/receiving.model';
 
@@ -157,11 +160,11 @@ function generateUsers(callback) {
       .then(() => {
         User.create({
           provider: 'local',
-          role: 'manager',
+          role: 'plant',
           plant: plant._id,
           name: 'Test Manager',
-          email: 'manager@spug.com',
-          password: 'manager'
+          email: 'plant@spug.com',
+          password: 'plant'
         }, {
           provider: 'local',
           role: 'warehouse',
@@ -199,6 +202,16 @@ function generateSuppliers(callback) {
     });
 }
 
+
+
+function loginHistory(callback) {
+  LoginHistory.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
 generateMeasurementUnits(function () {
   console.log('finished populating measurement-units');
 });
@@ -225,4 +238,21 @@ generatePlants(function () {
       });
     });
   });
-})
+});
+
+
+
+
+
+// CLEAR HISTORY
+
+function clearLoginHistory(callback) {
+  LoginHistory.find({}).remove()
+    .then(() => {
+      if (callback) callback();
+    });
+}
+
+clearLoginHistory(function () {
+  console.log("Cleared History: Login");
+});
