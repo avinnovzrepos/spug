@@ -122,7 +122,7 @@ ReceivingSchema.pre('save', function (next) {
     })
 });
 
-var addInInventory = function (self) {
+var addInInventory = function (self, callback) {
   self.items.forEach(function (receivingItem, index) {
     Inventory.findOne({
       item: receivingItem.item,
