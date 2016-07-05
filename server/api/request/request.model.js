@@ -4,13 +4,10 @@ import mongoose from 'mongoose';
 import Plant from '../plant/plant.model';
 import Item from '../item/item.model';
 import User from '../user/user/user.model';
+import Inventory from '../inventory/inventory/inventory.model';
 
 
 // CONSTANTS
-var requestTypes = [
-  'plant-to-plant',
-  'purchasing-to-plant'
-];
 var requestStatuses = [
   'pending',
   'approved',
@@ -18,18 +15,8 @@ var requestStatuses = [
   'recieved'
 ];
 
-// DEFAULTS
-var defaultRequestType = requestTypes[0];
-
-
 
 var RequestSchema = new mongoose.Schema({
-  requestType: {
-    type: String,
-    default: defaultRequestType,
-    required: true,
-    enum: requestTypes
-  },
 
   // COMMON FIELDS
   destination: {
@@ -66,15 +53,13 @@ var RequestSchema = new mongoose.Schema({
   source: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Plant',
-    required: function() {
-      return this.requestType === 'plant-to-plant';
-    }
+    required: true
   },
   approvedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: function() {
-      return this.status === 'approved';
+      return ['approved', 'declined'].indexOf(this.status) >= 0;
     }
   },
 
@@ -158,21 +143,6 @@ RequestSchema
     return items && Array.isArray(items) && items.length > 0;
   }, 'Request cannot have an empty item list');
 
-// Validate empty createdBy
-RequestSchema
-  .path('createdBy')
-  .validate(function(user) {
-    var self = this;
-    return this.constructor.findOne({})
-    switch (this.status) {
-      case 'pending':
-      default:
-        return true;
-
-    }
-    return !!user;
-  }, 'Created By should be assigned');
-
 // Validate items exists
 RequestSchema
   .path('items')
@@ -192,4 +162,92 @@ RequestSchema
       });
   }, 'Item does not exist');
 
-export default mongoose.model('Request', RequestSchema);
+
+var Request = mongoose.model('Request', RequestSchema);
+
+/**
+ * Hooks
+ */
+
+Request.schema.pre('save', function (next) {
+  var self = this;
+  self.wasNew = self.isNew;
+  if (self.isNew) {
+    next();
+  } else {
+    Request.findById(self.id).then(request => {
+      self.previousStatus = request.status;
+      self.isDeleted = !request.active;
+      if (request.status != 'approved' && self.status == 'approved') {
+        // VALIDATE INSUFFICIENT SUPPLY
+        var inventories = [];
+        var failed = false;
+        self.items.forEach(function (requestItem) {
+          Inventory.findOne({
+            item: requestItem.item,
+            plant: self.source
+          }).then(inventory => {
+            if (!inventory) {
+              if (!failed) {
+                Item
+                  .findById(requestItem.item).exec()
+                  .then(i => next(new Error('Insufficient supply for ' + i.name)))
+                failed = true;
+              }
+            }
+            inventories.push(inventory)
+            if (inventories.length == self.items.length) {
+              if (!failed) next();
+            }
+          })
+        });
+      } else {
+        next();
+      }
+    });
+  }
+});
+
+Request.schema.post('save', function (inventory) {
+  var self = this;
+  if (this.wasNew) {
+    // TODO
+  } else {
+    if (request.status != 'approved' && self.status == 'approved') {
+      // APPROVED
+      self.items.forEach(function (requestItem) {
+        Inventory.findOne({
+          item: requestItem.item,
+          plant: self.source
+        }).then(inventory => {
+          inventory.requisition = true;
+          inventory.value = inventory.value - requestItem.quantity;
+          inventory.save().then(i => {
+            console.log(i);
+            // NOTHING TO DO HERE
+          })
+        })
+      });
+    } else if (request.status == 'approved' && self.status != 'approved') {
+      // UNAPPROVED
+      self.items.forEach(function (requestItem) {
+        Inventory.findOne({
+          item: requestItem.item,
+          plant: self.source
+        }).then(inventory => {
+          inventory.requisition = true;
+          inventory.value = inventory.value + requestItem.quantity;
+          inventory.save().then(i => {
+            console.log(i);
+            // NOTHING TO DO HERE
+          })
+        })
+      });
+    } else {
+      // NOTHING TO DO HERE
+    }
+  }
+});
+
+
+export default Request;

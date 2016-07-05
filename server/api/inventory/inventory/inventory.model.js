@@ -165,7 +165,9 @@ Inventory.schema.post('save', function (inventory) {
   } else {
     if (inventory.value != inventory.previousValue) {
       InventoryHistory.create({
-        action: this.receiving ? 'receiving' : 'update',
+        action: this.receiving ? 'receiving' :
+          this.requisition ? 'requisition' :
+          'update',
         newValue: inventory.value,
         previousValue: inventory.previousValue,
         inventory: inventory,

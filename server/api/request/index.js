@@ -15,5 +15,6 @@ router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
 router.get('/user/:id', auth.isAuthenticated(), controller.byUser);
 router.post('/:id/decline', auth.isAuthenticated(), controller.decline);
+router.post('/:id/approve', auth.isAuthenticated(), controller.approve);
 
 module.exports = router;

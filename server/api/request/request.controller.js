@@ -59,8 +59,15 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
-    res.status(statusCode).send(err);
+    res.status(statusCode).send(err && err.toString ? { message: err.toString() } : err);
   };
+}
+
+function validationError(res, statusCode) {
+  statusCode = statusCode || 422;
+  return function(err) {
+    res.status(statusCode).json(err);
+  }
 }
 
 // Gets a list of Requests
@@ -75,8 +82,11 @@ export function index(req, res) {
   return Request.find(query)
     .populate([
       { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      'source',
+      'destination'
     ])
     .sort("-createdAt").exec()
     .then(respondWithResult(res))
@@ -87,8 +97,11 @@ export function index(req, res) {
 export function show(req, res) {
   return Request.findById(req.params.id).populate([
       { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      'source',
+      'destination'
     ]).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
@@ -99,13 +112,16 @@ export function show(req, res) {
 // Creates a new Request in the DB
 export function create(req, res) {
   req.body.createdBy = req.user;
-  req.body.plant = req.user.role === 'superadmin' ? req.body.plant : req.user.plant;
+  req.body.destination = req.user.role === 'superadmin' ? req.body.destination : req.user.plant;
   return Request.create(req.body)
-    .catch(handleError(res))
+    .catch(validationError(res))
     .then(request => Request.populate(request, [
       { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
       'plant',
-      'items.item']
+      'items.item',
+      'source',
+      'destination']
     ))
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
@@ -120,10 +136,14 @@ export function update(req, res) {
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
+    .catch(validationError(res))
     .then(request => Request.populate(request, [
       { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      'source',
+      'destination'
     ]))
     .then(respondWithResult(res))
     .catch(handleError(res));
@@ -154,8 +174,11 @@ export function byUser(req, res) {
   return Request.find(query)
     .populate([
       { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      'source',
+      'destination'
     ])
     .sort("-createdAt").exec()
     .then(respondWithResult(res))
@@ -167,11 +190,49 @@ export function decline(req, res) {
   return Request.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
-    .then(saveUpdates({ status: 'declined' }))
+    .then(request => {
+      if (!request) return null;
+      if (request.source.toString() !== req.user.plant.toString() && req.user.role != 'superadmin') {
+        res.status(401).send();
+        return null;
+      }
+      return request;
+    })
+    .then(saveUpdates({ status: 'declined', approvedBy: req.user }))
     .then(request => Request.populate(request, [
       { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      'source',
+      'destination'
+    ]))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+// Approves a Request
+export function approve(req, res) {
+  return Request.findById(req.params.id).exec()
+    .catch(handleError(res))
+    .then(handleEntityNotFound(res))
+    .then(request => {
+      if (!request) return null;
+      if (request.source.toString() !== req.user.plant.toString() && req.user.role != 'superadmin') {
+        res.status(401).send();
+        return null;
+      }
+      return request;
+    })
+    .then(saveUpdates({ status: 'approved', approvedBy: req.user }))
+    .catch(handleError(res, 400))
+    .then(request => Request.populate(request, [
+      { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
+      'plant',
+      'items.item',
+      'source',
+      'destination'
     ]))
     .then(respondWithResult(res))
     .catch(handleError(res));

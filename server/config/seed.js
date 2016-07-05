@@ -18,6 +18,7 @@ import Inventory from '../api/inventory/inventory/inventory.model';
 import InventoryHistory from '../api/inventory/inventory-history/inventory-history.model';
 
 import PurchaseOrder from '../api/purchase-order/purchase-order.model';
+import Request from '../api/request/request.model';
 
 import Receiving from '../api/receiving/receiving.model';
 
@@ -293,4 +294,16 @@ function clearPurchaseOrders(callback) {
 
 clearPurchaseOrders(function () {
   console.log("cleared purchase orders");
+});
+
+function clearRequests(callback) {
+  Request.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
+clearRequests(function () {
+  console.log("cleared requests");
 });
