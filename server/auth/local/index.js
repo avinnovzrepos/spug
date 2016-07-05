@@ -3,7 +3,7 @@
 import express from 'express';
 import passport from 'passport';
 import {signToken} from '../auth.service';
-import LoginHistory from '../../api/login-history/login-history.model';
+import LoginHistory from '../../api/user/login-history/login-history.model';
 
 var router = express.Router();
 

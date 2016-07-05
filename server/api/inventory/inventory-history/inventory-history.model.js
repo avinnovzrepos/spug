@@ -2,7 +2,7 @@
 
 import mongoose from 'mongoose';
 import Inventory from '../inventory/inventory.model';
-import User from '../user/user.model';
+import User from '../../user/user/user.model';
 
 var InventoryHistorySchema = new mongoose.Schema({
   inventory: {

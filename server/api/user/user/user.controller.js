@@ -77,7 +77,9 @@ export function create(req, res, next) {
     .catch(validationError(res))
     .then(user => User.populate(user, 'plant'))
     .catch(handleError(res))
-    .then(user => user.public)
+    .then(user => {
+      console.log(user)
+      return user.public})
     .then(respondWithResult(res, 201));
 }
 
@@ -102,6 +104,7 @@ export function destroy(req, res) {
     .then(saveUpdates({ active: false }))
     .catch(err => validationError(err))
     .then(user => User.populate(user, 'plant'))
+    .catch(err => validationError(err))
     .then(user => user && user.public)
     .then(respondWithResult(res, 204));
 }

@@ -10,7 +10,7 @@ var PlantSchema = new mongoose.Schema({
   description: String,
   location: {
     type: { type: String, default:'Point' },
-    coordinates: { type: [Number], default:[0, 0] }
+    coordinates: { type: [Number], default: [0, 0] }
   },
   active: {
     type: Boolean,

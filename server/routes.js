@@ -9,18 +9,21 @@ import path from 'path';
 
 export default function(app) {
   // Insert routes below
+  app.use('/api/user-history', require('./api/user-history'));
   app.use('/api/purchase-orders', require('./api/purchase-order'));
-  app.use('/api/login-history', require('./api/login-history'));
   app.use('/api/receiving', require('./api/receiving'));
   app.use('/api/requests', require('./api/request'));
-  app.use('/api/inventory-history', require('./api/inventory-history'));
   app.use('/api/plants', require('./api/plant'));
-  app.use('/api/inventory', require('./api/inventory'));
   app.use('/api/measurement-units', require('./api/measurement-unit'));
   app.use('/api/suppliers', require('./api/supplier'));
   app.use('/api/items', require('./api/item'));
   app.use('/api/things', require('./api/thing'));
-  app.use('/api/users', require('./api/user'));
+
+  app.use('/api/inventory', require('./api/inventory/inventory'));
+  app.use('/api/inventory-history', require('./api/inventory/inventory-history'));
+
+  app.use('/api/users', require('./api/user/user'));
+  app.use('/api/login-history', require('./api/user/login-history'));
 
   app.use('/auth', require('./auth').default);
 

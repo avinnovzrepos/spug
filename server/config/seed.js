@@ -5,16 +5,16 @@
 
 'use strict';
 
-import User from '../api/user/user.model';
-import LoginHistory from '../api/login-history/login-history.model';
+import User from '../api/user/user/user.model';
+import LoginHistory from '../api//user/login-history/login-history.model';
 
 import Plant from '../api/plant/plant.model';
 
 import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
 import Item from '../api/item/item.model';
 
-import Inventory from '../api/inventory/inventory.model';
-import InventoryHistory from '../api/inventory-history/inventory-history.model';
+import Inventory from '../api/inventory/inventory/inventory.model';
+import InventoryHistory from '../api/inventory/inventory-history/inventory-history.model';
 
 import PurchaseOrder from '../api/purchase-order/purchase-order.model';
 

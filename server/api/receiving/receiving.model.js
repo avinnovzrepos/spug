@@ -2,9 +2,9 @@
 
 import mongoose from 'mongoose';
 import PurchaseOrder from '../purchase-order/purchase-order.model';
-import User from '../user/user.model';
+import User from '../user/user/user.model';
 import Item from '../item/item.model';
-import Inventory from '../inventory/inventory.model';
+import Inventory from '../inventory/inventory/inventory.model';
 
 var ReceivingSchema = new mongoose.Schema({
   purchaseOrder: {

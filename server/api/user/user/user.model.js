@@ -5,8 +5,8 @@ import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import _ from 'lodash';
 import {Schema} from 'mongoose';
-import { userRoles } from '../../config/environment';
-import Plant from '../plant/plant.model';
+import { userRoles } from '../../../config/environment';
+import Plant from '../../plant/plant.model';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
