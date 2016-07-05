@@ -9,7 +9,6 @@ import path from 'path';
 
 export default function(app) {
   // Insert routes below
-  app.use('/api/user-history', require('./api/user-history'));
   app.use('/api/purchase-orders', require('./api/purchase-order'));
   app.use('/api/receiving', require('./api/receiving'));
   app.use('/api/requests', require('./api/request'));
@@ -23,6 +22,7 @@ export default function(app) {
   app.use('/api/inventory-history', require('./api/inventory/inventory-history'));
 
   app.use('/api/users', require('./api/user/user'));
+  app.use('/api/user-history', require('./api/user/user-history'));
   app.use('/api/login-history', require('./api/user/login-history'));
 
   app.use('/auth', require('./auth').default);

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import {Schema} from 'mongoose';
 import { userRoles } from '../../../config/environment';
 import Plant from '../../plant/plant.model';
+import UserHistory from '../user-history/user-history.model';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
@@ -39,10 +40,27 @@ var UserSchema = new Schema({
     default: 'local'
   },
   salt: String,
+
   facebook: {},
   twitter: {},
   google: {},
   github: {},
+
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: function () {
+      return this.role != 'superadmin';
+    }
+  },
+  lastUpdatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: function () {
+      return !this.isNew;
+    }
+  },
+
   active: {
     type: Boolean,
     default: true
@@ -141,29 +159,94 @@ var validatePresenceOf = function(value) {
  */
 UserSchema
   .pre('save', function(next) {
-    // Handle new/update passwords
-    if (!this.isModified('password')) {
-      return next();
-    }
+    var self = this;
+    self.wasNew = self.isNew;
 
-    if (!validatePresenceOf(this.password) && authTypes.indexOf(this.provider) === -1) {
-      return next(new Error('Invalid password'));
-    }
-
-    // Make salt with a callback
-    this.makeSalt((saltErr, salt) => {
-      if (saltErr) {
-        return next(saltErr);
+    var hashPassword = function () {
+      // Handle new/update passwords
+      if (!self.isModified('password')) {
+        return next();
       }
-      this.salt = salt;
-      this.encryptPassword(this.password, (encryptErr, hashedPassword) => {
-        if (encryptErr) {
-          return next(encryptErr);
+
+      if (!validatePresenceOf(self.password) && authTypes.indexOf(self.provider) === -1) {
+        return next(new Error('Invalid password'));
+      }
+
+      // Make salt with a callback
+      self.makeSalt((saltErr, salt) => {
+        if (saltErr) {
+          return next(saltErr);
         }
-        this.password = hashedPassword;
-        next();
+        self.salt = salt;
+        self.encryptPassword(self.password, (encryptErr, hashedPassword) => {
+          if (encryptErr) {
+            return next(encryptErr);
+          }
+          self.password = hashedPassword;
+          next();
+        });
       });
-    });
+    }
+
+    if (self.isNew) {
+      self.lastUpdatedBy = self.createdBy;
+      hashPassword();
+    } else {
+      this.constructor.findById(self.id).then(user => {
+        self.previousValue = user;
+        self.isDeleted = !user.active;
+        hashPassword();
+      });
+    }
+  });
+
+
+UserSchema
+  .post('save', function (user) {
+    var self = this;
+
+    if (self.wasNew) {
+      UserHistory.create({
+        action: 'create',
+        newValue: self,
+        user: self,
+        modifiedBy: self.lastUpdatedBy
+      }).then(history => {
+        // NOTHING TO DO HERE
+      })
+    } else {
+      if (self.isDeleted && self.active) {
+        UserHistory.create({
+          action: 'restore',
+          newValue: self,
+          previousValue: self.previousValue,
+          user: self,
+          modifiedBy: self.lastUpdatedBy
+        }).then(history => {
+          // NOTHING TO DO HERE
+        });
+      } else if (!self.isDeleted && !self.active) {
+        UserHistory.create({
+          action: 'delete',
+          newValue: self,
+          previousValue: self.previousValue,
+          user: self,
+          modifiedBy: self.lastUpdatedBy
+        }).then(history => {
+          // NOTHING TO DO HERE
+        });
+      } else {
+        UserHistory.create({
+          action: 'update',
+          newValue: self,
+          previousValue: self.previousValue,
+          user: self,
+          modifiedBy: self.lastUpdatedBy
+        }).then(history => {
+          // NOTHING TO DO HERE
+        });
+      }
+    }
   });
 
 /**

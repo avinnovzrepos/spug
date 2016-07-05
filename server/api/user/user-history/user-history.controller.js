@@ -1,7 +1,7 @@
 'use strict';
 
 import _ from 'lodash';
-import LoginHistory from './login-history.model';
+import UserHistory from './user-history.model';
 import User from '../user/user.model';
 
 function respondWithResult(res, statusCode) {
@@ -30,36 +30,20 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of LoginHistory
+// Gets a list of UserHistory
 export function index(req, res) {
-  return LoginHistory.find()
+  return UserHistory.find()
     .populate('user', 'name plant email role').exec()
     .catch(handleError(res))
     .then(respondWithResult(res));
 }
 
-// Gets list of LoginHistory by user
+// Gets list of UserHistory by user
 export function byUser(req, res) {
-  return LoginHistory.find({
+  return UserHistory.find({
     user: req.params.id
-  }).populate('user', 'name plant email role').exec()
+  }).populate('modifiedBy', 'name plant email role').exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res));
-}
-
-// Gets list of LoginHistory by plant
-export function byPlant(req, res) {
-  User.find({ plant: req.params.id }).exec()
-    .catch(handleError(res))
-    .then( users => {
-      LoginHistory.find({
-        user: {
-          $in: users
-        }
-      }).populate('user', 'name plant email role').exec()
-        .catch(handleError(res))
-        .then(handleEntityNotFound(res))
-        .then(respondWithResult(res));
-    });
 }

@@ -6,6 +6,7 @@
 'use strict';
 
 import User from '../api/user/user/user.model';
+import UserHistory from '../api/user/user-history/user-history.model';
 import LoginHistory from '../api//user/login-history/login-history.model';
 
 import Plant from '../api/plant/plant.model';
@@ -161,37 +162,44 @@ function generateUsers(callback) {
     User.find({}).remove()
       .then(() => {
         User.create({
-          role: 'plant',
-          plant: plants[3]._id,
-          name: 'Test Plant 1',
-          email: 'plant1@spug.com',
-          password: 'plant1'
-        }, {
-          role: 'plant',
-          plant: plants[2]._id,
-          name: 'Test Manager',
-          email: 'plant@spug.com',
-          password: 'plant'
-        }, {
-          role: 'warehouse',
-          plant: plants[1]._id,
-          name: 'Test Warehouse',
-          email: 'warehouse@spug.com',
-          password: 'warehouse'
-        }, {
-          role: 'admin',
-          plant: plants[0]._id,
-          name: 'Test Admin',
-          email: 'admin@spug.com',
-          password: 'admin'
-        }, {
           role: 'superadmin',
           name: 'Test Super Admin',
           email: 'superadmin@spug.com',
           password: 'superadmin'
         })
-        .then(() => {
-          if (callback) callback();
+        .then((user) => {
+          User.create({
+            role: 'plant',
+            plant: plants[3]._id,
+            name: 'Test Plant 1',
+            email: 'plant1@spug.com',
+            password: 'plant1',
+            createdBy: user
+          }, {
+            role: 'plant',
+            plant: plants[2]._id,
+            name: 'Test Manager',
+            email: 'plant@spug.com',
+            password: 'plant',
+            createdBy: user
+          }, {
+            role: 'warehouse',
+            plant: plants[1]._id,
+            name: 'Test Warehouse',
+            email: 'warehouse@spug.com',
+            password: 'warehouse',
+            createdBy: user
+          }, {
+            role: 'admin',
+            plant: plants[0]._id,
+            name: 'Test Admin',
+            email: 'admin@spug.com',
+            password: 'admin',
+            createdBy: user
+          })
+          .then(() => {
+            if (callback) callback();
+          });
         });
       });
   });
@@ -244,6 +252,13 @@ function clearLoginHistory(callback) {
     });
 }
 
+function clearUserHistory(callback) {
+  UserHistory.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
 
 function clearInventoryHistory(callback) {
   InventoryHistory.find({}).remove()
@@ -255,6 +270,10 @@ function clearInventoryHistory(callback) {
 
 clearLoginHistory(function () {
   console.log("cleared history: login");
+});
+
+clearUserHistory(function () {
+  console.log("cleared history: user");
 });
 
 clearInventoryHistory(function () {

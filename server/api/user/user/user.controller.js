@@ -49,6 +49,7 @@ function handleEntityNotFound(res) {
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
   return function(err) {
+    console.log(err)
     res.status(statusCode).json(err);
   }
 }
@@ -73,13 +74,12 @@ export function create(req, res, next) {
     return res.status(403).end();
   }
 
+  req.body.createdBy = req.user;
   User.create(req.body)
     .catch(validationError(res))
     .then(user => User.populate(user, 'plant'))
     .catch(handleError(res))
-    .then(user => {
-      console.log(user)
-      return user.public})
+    .then(user => user && user.public)
     .then(respondWithResult(res, 201));
 }
 
@@ -93,6 +93,7 @@ export function show(req, res) {
 }
 
 export function destroy(req, res) {
+  req.body.lastUpdatedBy = req.user;
   return User.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
@@ -110,6 +111,7 @@ export function destroy(req, res) {
 }
 
 export function changePassword(req, res, next) {
+  req.body.lastUpdatedBy = req.user;
   return User.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
