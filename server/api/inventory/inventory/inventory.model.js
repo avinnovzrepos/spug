@@ -9,7 +9,8 @@ import User from '../../user/user/user.model';
 var InventorySchema = new mongoose.Schema({
   plant: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Plant'
+    ref: 'Plant',
+    required: true
   },
   item: {
     type: mongoose.Schema.Types.ObjectId,

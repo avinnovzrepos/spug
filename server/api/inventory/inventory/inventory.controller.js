@@ -92,7 +92,8 @@ export function create(req, res) {
   return Inventory.create(req.body)
     .catch(handleError(res))
     .then(inventory => Inventory.populate(inventory,  [
-      'item plant',
+      'item',
+      'plant',
       {path:'createdBy', select:'name email'},
       {path:'lastUpdatedBy', select:'name email'}
     ]))
@@ -112,7 +113,7 @@ export function update(req, res) {
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
     .then(inventory => Inventory.populate(inventory,  [
-      'plant item',
+      'plant', 'item',
       {path:'createdBy', select:'name email'},
       {path:'lastUpdatedBy', select:'name email'}
     ]))
@@ -129,4 +130,14 @@ export function destroy(req, res) {
     .then(saveUpdates({ active: false }))
     .then(respondWithResult(res, 204))
     .catch(handleError(res));
+}
+
+// Gets list of Inventory by plant
+export function byPlant(req, res) {
+  Inventory.find({
+    plant: req.params.id
+  }).populate('item plant').exec()
+  .catch(handleError(res))
+  .then(handleEntityNotFound(res))
+  .then(respondWithResult(res));
 }
