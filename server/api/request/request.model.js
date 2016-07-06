@@ -213,40 +213,42 @@ Request.schema.post('save', function (inventory) {
   if (this.wasNew) {
     // TODO
   } else {
-    if (request.status != 'approved' && self.status == 'approved') {
-      // APPROVED
-      self.items.forEach(function (requestItem) {
-        Inventory.findOne({
-          item: requestItem.item,
-          plant: self.source
-        }).then(inventory => {
-          inventory.requisition = true;
-          inventory.value = inventory.value - requestItem.quantity;
-          inventory.save().then(i => {
-            console.log(i);
-            // NOTHING TO DO HERE
+    Request.findById(self.id).then(request => {
+      if (request.status != 'approved' && self.status == 'approved') {
+        // APPROVED
+        self.items.forEach(function (requestItem) {
+          Inventory.findOne({
+            item: requestItem.item,
+            plant: self.source
+          }).then(inventory => {
+            inventory.requisition = true;
+            inventory.value = inventory.value - requestItem.quantity;
+            inventory.save().then(i => {
+              console.log(i);
+              // NOTHING TO DO HERE
+            })
           })
-        })
-      });
-    } else if (request.status == 'approved' && self.status != 'approved') {
-      // UNAPPROVED
-      self.items.forEach(function (requestItem) {
-        Inventory.findOne({
-          item: requestItem.item,
-          plant: self.source
-        }).then(inventory => {
-          inventory.requisition = true;
-          inventory.value = inventory.value + requestItem.quantity;
-          inventory.save().then(i => {
-            console.log(i);
-            // NOTHING TO DO HERE
+        });
+      } else if (request.status == 'approved' && self.status != 'approved') {
+        // UNAPPROVED
+        self.items.forEach(function (requestItem) {
+          Inventory.findOne({
+            item: requestItem.item,
+            plant: self.source
+          }).then(inventory => {
+            inventory.requisition = true;
+            inventory.value = inventory.value + requestItem.quantity;
+            inventory.save().then(i => {
+              console.log(i);
+              // NOTHING TO DO HERE
+            })
           })
-        })
-      });
-    } else {
-      // NOTHING TO DO HERE
+        });
+      } else {
+        // NOTHING TO DO HERE
+      }
     }
-  }
+  });
 });
 
 
