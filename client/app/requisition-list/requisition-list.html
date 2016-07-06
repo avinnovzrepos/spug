@@ -21,7 +21,7 @@
             <th> Request To </th>
             <th> Items </th>
             <th> Status </th>
-            <th ng-if="requeList.currUser.role !== 'admin'"></th>
+            <th></th>
           </tr>
           <tr ng-repeat="request in requeList.requestList">
             <td> {{request.updatedAt | date: 'short'}} </td>
@@ -39,6 +39,12 @@
             </td>
             <td ng-if="requeList.currUser.role !== 'admin'">
               <button class="btn btn-sm btn-danger" ng-click="requeList.cancel(request)"> cancel </button>
+            </td>
+            <td ng-if="requeList.currUser.role === 'admin'">
+              <button class="btn btn-sm btn-primary" type="button"
+                ng-csv="requeList.getCSV(request.items)"
+                csv-header="['Item Code', 'Item Name', 'Quantity']"
+                filename="{{request._id}}.csv">Export</button>
             </td>
           </tr>
         </table>

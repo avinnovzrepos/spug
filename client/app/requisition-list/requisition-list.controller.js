@@ -48,6 +48,15 @@ class RequisitionListComponent {
       console.log(resp);
     });
   }
+
+  getCSV(requestItems) {
+    console.log("REQUEST ITEMS")
+    return requestItems.map((requestItem) => ({
+      itemCode: requestItem.item.code,
+      itemName: requestItem.item.name,
+      quantity: requestItem.quantity
+    }))
+  }
 }
 
 angular.module('spugApp')
