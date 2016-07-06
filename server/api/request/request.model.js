@@ -247,8 +247,8 @@ Request.schema.post('save', function (inventory) {
       } else {
         // NOTHING TO DO HERE
       }
-    }
-  });
+    });
+  }
 });
 
 
