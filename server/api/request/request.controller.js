@@ -236,7 +236,7 @@ export function approve(req, res) {
 export function byPlant(req, res) {
   var query = {
     active: true,
-    destination: req.params.id
+    source: req.params.id
   };
   if (req.query.status) {
     query.status = { $in: req.query.status.split(',') };
