@@ -110,6 +110,9 @@ export function show(req, res) {
 export function create(req, res) {
   req.body.createdBy = req.user;
   req.body.destination = req.user.role === 'superadmin' ? req.body.destination : req.user.plant;
+  if (req.body.destination && req.body.source && req.body.destination == req.body.source) {
+    res.status(400).send({ message: 'Source and destination cannot be the same' });
+  }
   return Request.create(req.body)
     .catch(validationError(res))
     .then(request => Request.populate(request, [
