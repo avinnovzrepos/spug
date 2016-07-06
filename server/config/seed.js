@@ -81,7 +81,24 @@ function generateItems(callback) {
         name: 'SAMPLE MECHANICAL FROM SEED',
         partNumber: 'SAMPLE PART NUMBER',
         specification: 'SAMPLE SPECIFICATION',
-        unitOfMeasurement: 'SAMPLE UNIT OF MEASUREMENT',
+        unitOfMeasurement: 'kg',
+        unitCost: 100,
+        year: '2016',
+        categoryId: 'CATEGORY ID',
+        componentId: 'COMPONENT ID',
+        other: 0,
+
+        mechanical: 'M',
+        brand: 'SAMPLE BRAND',
+        capacity: 'SAMPLE CAPACITY',
+        mechanicalSpares: 'SAMPLE MECHANICAL SPARES'
+      },
+      {
+        code: '222222',
+        name: 'SAMPLE MECHANICAL FROM SEED 2',
+        partNumber: 'SAMPLE PART NUMBER 2',
+        specification: 'SAMPLE SPECIFICATION 2',
+        unitOfMeasurement: 'kg',
         unitCost: 100,
         year: '2016',
         categoryId: 'CATEGORY ID',
@@ -108,7 +125,9 @@ function generateInventory(callback) {
             var inventory = new Inventory({
               plant: plant._id,
               item: item._id,
-              createdBy: user._id
+              createdBy: user._id,
+              value: 10,
+              critical: 1
             });
             inventory.save()
               .then(() => {
@@ -125,16 +144,28 @@ function generatePlants(callback) {
     .then(() => {
       Plant.create({
         name: 'Central Office',
-        description: 'Metro manila central office'
+        description: 'Metro manila central office',
+        location: {
+          coordinates: [121.0223, 14.6091]
+        }
       },{
         name: 'Region 3 Warehouse',
-        description: 'Central luzon warehouse'
+        description: 'Central luzon warehouse',
+        location: {
+          coordinates: [120.7120, 15.4828]
+        }
       },{
         name: 'Malolos Plant',
-        description: 'Malolos Bulacan plant'
+        description: 'Malolos Bulacan plant',
+        location: {
+          coordinates: [120.8160, 14.8527]
+        }
       },{
         name: 'Calumpit Plant',
-        description: 'Calumpit Bulacan plant'
+        description: 'Calumpit Bulacan plant',
+        location: {
+          coordinates: [120.7695, 14.9011]
+        }
       })
       .then(() => {
         if (callback) callback();

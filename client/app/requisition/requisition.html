@@ -1,31 +1,62 @@
-<div class="spug-container">
-  <div class="clearfix">
-    {{requi.formItemCount}}
-    <button class="btn btn-small btn-success pull-right" ng-click="requi.addInput()">
-      Add Item <i class="glyphicon glyphicon-plus"></i>
-    </button>
-  </div>
-  <form ng-submit="requi.submit(requi.form)">
-    <div class="widget clearfix">
-      <div ng-repeat="i in requi.getNumber(requi.formItemCount) track by $index">
-        <div class="form-group col-md-8">
-          <label for="itemName">Item Name</label>
-          <input type="text" ng-model="requi.form.items[$index].item" placeholder="Custom template" uib-typeahead="item._id as item.code + '-' + item.name for item in requi.items | filter:{code:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" >
-        </div>
-        <div class="form-group col-md-3">
-          <label for="partNo">Quantity</label>
-          <input type="number" class="form-control" placeholder="Quantity" ng-model="requi.form.items[$index].quantity">
-        </div>
-        <div class="form-group col-md-1" style="margin-top: 24px;">
-          <button class="btn btn-small btn-danger" ng-click="requi.delInput($index)">
-            <i class="glyphicon glyphicon-minus"></i>
+<div class="widget">
+  <div class="spug-container">
+    <div class="widget" ng-if="requi.plantInventory.length > 0">
+      <h3 class="text-muted"> {{requi.plantInventory[0].plant.name}}'s Inventory </h3>
+      <table class="table table-condensed">
+        <tr>
+          <th> Item Stock Code </th>
+          <th> Item Name </th>
+          <th> Unit of Measurement </th>
+          <th> Quantity </th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="eachItem in requi.plantInventory">
+          <td> {{eachItem.item.code}} </td>
+          <td> {{eachItem.item.name}} </td>
+          <td> {{eachItem.item.unitOfMeasurement}} </td>
+          <td> {{eachItem.value}} </td>
+          <td>
+            <button type="button" class="btn btn-small btn-warning" ng-click="requi.requestItem(eachItem.item)">
+              Request
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <form ng-submit="requi.submit(requi.form)">
+      <div class="clearfix">
+        <h3 class="text-muted">
+          Request Form
+          <button type="button" class="btn btn-small btn-success pull-right" ng-click="requi.addInput()">
+            Item <i class="glyphicon glyphicon-plus"></i>
           </button>
+        </h3>
+        <div class="form-group col-md-12">
+          <label for="itemName">Request To: </label>
+          <select class="form-control" ng-model="requi.form.source" ng-options="plant._id as plant.name for plant in requi.plants" ng-disabled="requi.plantInventory.length > 0">
+          </select>
+        </div>
+        <div ng-repeat="i in requi.form.items track by $index">
+          <div class="form-group col-md-8">
+            <label for="itemName">Item Name</label>
+            <input type="text" ng-model="requi.form.items[$index].item" placeholder="Custom template" uib-typeahead="item as item.code + '-' + item.name for item in requi.items | filter:{code:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" >
+          </div>
+          <div class="form-group col-md-3">
+            <label for="partNo">Quantity</label>
+            <input type="number" class="form-control" placeholder="Quantity" ng-model="requi.form.items[$index].quantity">
+          </div>
+          <div class="form-group col-md-1" style="margin-top: 24px;">
+            <button type="button" class="btn btn-small btn-danger" ng-click="requi.delInput($index)" ng-if="requi.form.items.length > 1">
+              <i class="glyphicon glyphicon-minus"></i>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <button type="submit" class="btn btn-primary btn-long pull-right">Submit</button>
-  </form>
+      <button type="submit" class="btn btn-primary btn-long pull-right">Submit</button>
+    </form>
+  </div>
 </div>
+
 <script type="text/ng-template" id="customTemplate.html">
   <a>
     {{match.model.code + '-' + match.model.name}}

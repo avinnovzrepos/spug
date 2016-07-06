@@ -2,42 +2,62 @@
 (function(){
 
 class RequisitionComponent {
-  constructor(API) {
+  constructor($stateParams, $state, API, Auth) {
     this.API = API;
+    this.$stateParams = $stateParams;
+    this.$state = $state;
     this.items = [];
     this.form = {};
-    this.formItemCount = 1;
-    this.request = {};
-    this.request.items = [];
+    this.form.items = [null];
+    this.plants = [];
+    this.plantInventory = [];
+    this.currUser = Auth.getCurrentUser();
   }
 
   $onInit() {
     const setItems = (items) => {
-      console.log(items);
       this.items = items;
     };
 
+    const setPlants = (plants) => {
+      this.plants = plants;
+    };
+
     this.API.doGet('items', setItems);
+    this.API.doGet('plants', setPlants, { exclude: this.currUser.plant._id });
+
+    if(this.$stateParams.plantId) {
+      const setInventory = (inventory) => {
+        this.form.source = inventory[0].plant._id;
+        this.plantInventory = inventory;
+      };
+
+      this.API.doGet('plants/'+this.$stateParams.plantId+"/inventory", setInventory);
+    }
   }
 
   addInput() {
-    console.log("edi wow");
-    this.formItemCount++;
+    this.form.items.push(null);
   }
 
   delInput(index) {
-    this.formItemCount--;
+    this.form.items.splice(index, 1);
+    console.log(this.form.items);
   }
 
-  getNumber(num) {
-    return new Array(num);
+  requestItem(item) {
+    let formLength = this.form.items.length;
+    this.form.items[formLength] = {};
+    this.form.items[formLength].item = item;
+    this.form.items[formLength].quantity = 1;
   }
 
   submit(form) {
-    form.requestType = "purchasing-to-plant",
+    let state = this.$state;
+    form.source = this.$stateParams.plantId || form.source;
     form.items = angular.extend([], form.items);
     this.API.doPost('requests', form, function(resp) {
-      console.log(resp);
+      state.go('requisition-list');
     },{});
   }
 

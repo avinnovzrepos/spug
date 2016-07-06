@@ -4,39 +4,43 @@
 
 class MainController {
 
-  constructor($http, $scope, socket) {
-    this.$http = $http;
-    this.socket = socket;
-    this.awesomeThings = [];
-
-    $scope.$on('$destroy', function() {
-      socket.unsyncUpdates('thing');
-    });
+  constructor($http, $scope, API, Auth) {
+    this.$scope = $scope;
+    this.API = API;
+    this.map = { center: { latitude: 12.8797, longitude: 121.7740 }, zoom: 5 };
+    this.currUser = Auth.getCurrentUser();
+    this.testMarkers = [];
   }
 
   $onInit() {
-    this.$http.get('/api/things').then(response => {
-      this.awesomeThings = response.data;
-      this.socket.syncUpdates('thing', this.awesomeThings);
-    });
+    const setMarkers = (data) => {
+      data.map((val, index) => {
+        console.log(val);
+        this.testMarkers.push({
+          latitude: val.location.coordinates[1],
+          longitude: val.location.coordinates[0],
+          id: val._id,
+          title: val.name,
+          description: val.description,
+          show: false
+        });
+        this.$scope.$evalAsync();
+      });
+    };
+
+    this.API.doGet('plants', setMarkers, { exclude: this.currUser.plant._id });
   }
 
-  addThing() {
-    if (this.newThing) {
-      this.$http.post('/api/things', { name: this.newThing });
-      this.newThing = '';
-    }
-  }
-
-  deleteThing(thing) {
-    this.$http.delete('/api/things/' + thing._id);
-  }
+  onClick(marker, eventName, model) {
+    model.show = !model.show;
+  };
 }
 
 angular.module('spugApp')
   .component('main', {
     templateUrl: 'app/main/main.html',
-    controller: MainController
+    controller: MainController,
+    controllerAs: 'main'
   });
 
 })();

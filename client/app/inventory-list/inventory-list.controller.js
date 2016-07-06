@@ -2,9 +2,10 @@
 (function(){
 
 class InventoryListComponent {
-  constructor(API) {
+  constructor(API, Auth) {
     this.API = API;
     this.inventoryList = [];
+    this.user = Auth.getCurrentUser();
   }
 
   $onInit() {
@@ -12,7 +13,7 @@ class InventoryListComponent {
       this.inventoryList = inventoryList;
     }
 
-    this.API.doGet('inventory', setList);
+    this.API.doGet('plants/'+this.user.plant._id+"/inventory", setList);
   }
 
   delete(stock) {

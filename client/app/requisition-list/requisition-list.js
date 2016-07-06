@@ -3,13 +3,13 @@
 angular.module('spugApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('requisition', {
-        url: '/requisition?:plantId&:requestId',
+      .state('requisition-list', {
+        url: '/requisition-list',
         parent: 'internal',
         authenticate: true,
         views: {
           'container@': {
-            template: '<requisition></requisition>'
+            template: '<requisition-list></requisition-list>'
           }
         }
       });

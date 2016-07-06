@@ -44,6 +44,21 @@
     </div>
   </div>
 </div>
-<h3>
-  TODO
-</h3>
+<div class="widget">
+  <div class="widget-body">
+    <div class="widget-content">
+      <span class="text-muted"> VIEW OTHER PLANTS </span>
+      <ui-gmap-google-map center="main.map.center" zoom="main.map.zoom">
+        <ui-gmap-markers models="main.testMarkers" coords="'self'" icon="'icon'" click="main.onClick">
+          <ui-gmap-windows show="show">
+            <div ng-non-bindable>
+              <span> Name: {{title}} </span> <br/>
+              <span> Description: {{description}} </span> <br/>
+              <span> <a href="/requisition?plantId={{id}}"> request here </a> </span>
+            </div>
+          </ui-gmap-windows>
+        </ui-gmap-markers>
+      </ui-gmap-google-map>
+    </div>
+  </div>
+</div>

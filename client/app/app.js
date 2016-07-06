@@ -10,7 +10,8 @@ angular.module('spugApp', [
   'btford.socket-io',
   'ui.router',
   'ui.bootstrap',
-  'validation.match'
+  'validation.match',
+  'uiGmapgoogle-maps'
 ])
   .config(function($urlRouterProvider, $locationProvider, $stateProvider) {
     $urlRouterProvider
@@ -28,4 +29,12 @@ angular.module('spugApp', [
 
     $locationProvider.html5Mode(true);
 
+  })
+
+  .config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+      key: 'AIzaSyBvZM-TE7mJHizUui47giQSEWcNwyzv45s',
+      v: '3.23',
+      libraries: 'weather,geometry,visualization'
+    });
   });
