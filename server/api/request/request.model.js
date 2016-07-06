@@ -13,7 +13,7 @@ var requestStatuses = [
   'pending',
   'approved',
   'declined',
-  'recieved'
+  'received'
 ];
 
 
@@ -223,6 +223,7 @@ Request.schema.post('save', function (inventory) {
     });
   } else {
     if (self.previousStatus == 'pending' && self.status == 'declined') {
+      // DECLINED
       Notification.create({
         plant: self.destination,
         text: "Declined request.",
@@ -245,6 +246,26 @@ Request.schema.post('save', function (inventory) {
             // NOTHING TO DO HERE
           });
         });
+      });
+      Notification.create({
+        plant: self.destination,
+        text: "Approved request.",
+        details: {
+          request: self
+        }
+      }).then(notification => {
+        // TODO
+      });
+    } else if (self.previousStatus == 'approved' && self.status == 'received') {
+      // RECEIVED
+      Notification.create({
+        plant: self.source,
+        text: "Received request.",
+        details: {
+          request: self
+        }
+      }).then(notification => {
+        // TODO
       });
     } else if (self.previousStatus == 'approved' && self.status != 'approved') {
       // UNAPPROVED

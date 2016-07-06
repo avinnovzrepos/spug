@@ -185,12 +185,12 @@ var addInInventory = function (self, callback) {
         inventory.save().then(function (saved) {
           if (index == self.items.length - 1) {
             if (self.purchaseOrder) {
-              self.purchaseOrder.status = 'recieved';
+              self.purchaseOrder.status = 'received';
               self.purchaseOrder.save().then(function () {
                 // NOTHING TODO
               });
             } else if (self.request) {
-              self.request.status = 'recieved';
+              self.request.status = 'received';
               self.request.save().then(function () {
                 // NOTHING TODO
               });

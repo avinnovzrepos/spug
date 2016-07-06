@@ -9,7 +9,7 @@ import User from '../user/user/user.model';
 var statuses = [
   'pending',
   'declined',
-  'recieved'
+  'received'
 ];
 
 var PurchaseOrderSchema = new mongoose.Schema({
