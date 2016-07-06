@@ -5,27 +5,33 @@
     </h3>
   </div>
   <div class="widget">
-    <table class="table table-condensed">
+    <table class="table table-condensed table-hover">
       <tr>
-        <th> ID </th>
         <th> Date </th>
         <th> Request By </th>
         <th> Source </th>
         <th> Approved By </th>
         <th> Status </th>
         <th> Items </th>
+        <th></th>
       </tr>
-      <tr ng-repeat="request in acqList.requestList" ui-sref="acquisition({ id: request._id})">
-        <td> {{request._id}} </td>
-        <td> {{request.updatedAt}} </td>
+      <tr ng-repeat="request in acqList.requestList">
+        <td> {{request.updatedAt | date: 'short'}} </td>
         <td> {{request.createdBy.name}} </td>
         <td> {{request.source.name}} </td>
         <td> {{request.approvedBy.name}} </td>
-        <td> {{request.status}} </td>
+        <td>
+          <label class="label" ng-class="{'label-warning' : request.status === 'pending', 'label-success' : request.status === 'approved' || 'received'}">
+            {{request.status}}
+          </label>
+        </td>
         <td>
           <ul>
-            <li ng-repeat="item in request.items"> {{item.item.name}} </li>
+            <li ng-repeat="item in request.items"> {{item.item.name}} - {{item.quantity}} </li>
           </ul>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-success" ui-sref="acquisition({ id: request._id})" ng-if="request.status !== 'received'"> confirm </button>
         </td>
       </tr>
     </table>

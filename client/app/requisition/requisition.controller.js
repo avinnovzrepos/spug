@@ -16,15 +16,20 @@ class RequisitionComponent {
 
   $onInit() {
     const setItems = (items) => {
-      this.items = items;
-    };
-
-    const setPlants = (plants) => {
-      this.plants = plants;
+      this.items = items || [];
     };
 
     this.API.doGet('items', setItems);
-    this.API.doGet('plants', setPlants, { exclude: this.currUser.plant._id });
+
+    if(this.currUser.role !== 'admin') {
+      const setPlants = (plants) => {
+        console.log("plants");
+        this.plants = plants || [];
+      };
+
+      this.API.doGet('plants', setPlants, { exclude: this.currUser.plant._id });
+    }
+
 
     if(this.$stateParams.plantId) {
       const setInventory = (inventory) => {
@@ -54,11 +59,22 @@ class RequisitionComponent {
 
   submit(form) {
     let state = this.$state;
+    let temp = [];
     form.source = this.$stateParams.plantId || form.source;
+    for(let i of form.items) {
+      i && temp.push(i)
+    }
+    form.items = temp;
     form.items = angular.extend([], form.items);
-    this.API.doPost('requests', form, function(resp) {
-      state.go('requisition-list');
-    },{});
+    if(this.currUser.role !== 'admin') {
+      this.API.doPost('requests', form, function(resp) {
+        state.go('requisition-list');
+      },{});
+    } else {
+      this.API.doPost('purchase-orders', form, function(resp) {
+        state.go('requisition-list');
+      },{});
+    }
   }
 
 

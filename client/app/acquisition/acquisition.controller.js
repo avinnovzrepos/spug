@@ -2,25 +2,31 @@
 (function(){
 
 class AcquisitionComponent {
-  constructor(Auth, API, $stateParams) {
+  constructor($stateParams, $state, Auth, API) {
     this.requests = [];
     this.API = API;
     this.currentUser = Auth.getCurrentUser();
     this.$stateParams = $stateParams;
+    this.$state = $state;
+    this.apiUri = this.currentUser.role === 'admin' ? 'purchase-orders/' : 'requests/';
   }
 
   $onInit() {
     const setForm = (data) => {
       this.requests = data;
     }
+
+
     if(this.$stateParams.id) {
-      this.API.doGet('requests/' + this.$stateParams.id, setForm);
+      this.API.doGet(this.apiUri + this.$stateParams.id, setForm);
     }
   }
 
   submit(form) {
-    this.API.doPost('requests/' + this.$stateParams.id + '/receive', this.requests, function(resp) {
-      console.log(resp);
+    let state = this.$state;
+    this.API.doPost(this.apiUri + this.$stateParams.id + '/receive', this.requests, function(resp) {
+      alert('Success! Item Acquired');
+      state.go('acquisition-list');
     },{});
   }
 

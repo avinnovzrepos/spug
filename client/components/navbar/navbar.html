@@ -11,7 +11,7 @@
     <li class="sidebar-list">
       <a ui-sref="main">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
     </li>
-    <li class="sidebar-list">
+    <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="item-list"> Items <span class="menu-icon fa fa-table"></span></a>
     </li>
     <li class="sidebar-list">
@@ -21,7 +21,7 @@
       <a ui-sref="history-list"> History <span class="menu-icon fa fa-history"></span></a>
     </li>
     <li class="sidebar-list">
-      <a ui-sref="requisition-list"> Request <span class="menu-icon fa fa-history"></span></a>
+      <a ui-sref="requisition-list"> Request <span class="menu-icon fa fa-tasks"></span></a>
     </li>
     <li class="sidebar-list">
       <a ui-sref="acquisition-list"> Receive <span class="menu-icon fa fa-download"></span></a>

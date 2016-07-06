@@ -31,7 +31,7 @@
             Item <i class="glyphicon glyphicon-plus"></i>
           </button>
         </h3>
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-12" ng-if="requi.currUser.role != 'admin'">
           <label for="itemName">Request To: </label>
           <select class="form-control" ng-model="requi.form.source" ng-options="plant._id as plant.name for plant in requi.plants" ng-disabled="requi.plantInventory.length > 0">
           </select>
