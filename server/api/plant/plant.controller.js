@@ -66,7 +66,7 @@ function handleError(res, statusCode) {
 export function index(req, res) {
   return Plant.find({
       active: true,
-      $nin: req.query.exclude || []
+      $nin: req.query.exclude ? req.query.exclude.split(',') || []
     }).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
