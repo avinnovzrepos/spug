@@ -2,6 +2,7 @@
 
 import mongoose from 'mongoose';
 import PurchaseOrder from '../purchase-order/purchase-order.model';
+import Request from '../request/request.model';
 import User from '../user/user/user.model';
 import Item from '../item/item.model';
 import Inventory from '../inventory/inventory/inventory.model';
@@ -10,7 +11,16 @@ var ReceivingSchema = new mongoose.Schema({
   purchaseOrder: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'PurchaseOrder',
-    required: true
+    required: function () {
+      return !this.request;
+    }
+  },
+  request: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Request',
+    required: function () {
+      return !this.purchaseOrder;
+    }
   },
   items: {
     type: [{
@@ -64,14 +74,36 @@ ReceivingSchema
   .path('purchaseOrder')
   .validate(function(purchaseOrder, respond) {
     var id = purchaseOrder._id ? purchaseOrder._id : purchaseOrder;
-    return PurchaseOrder.findById(id).exec()
-      .then(function(existing) {
-        return respond(!!existing);
-      })
-      .catch(function(err) {
-        throw err;
-      });
+    if (id) {
+      return PurchaseOrder.findById(id).exec()
+        .then(function (existing) {
+          return respond(!!existing);
+        })
+        .catch(function(err) {
+          throw err;
+        });
+    } else {
+      return true;
+    }
   }, 'Purchase Order does not exist');
+
+// Validate request exists
+ReceivingSchema
+  .path('request')
+  .validate(function(request, respond) {
+    var id = request._id ? request._id : request;
+    if (id) {
+      return Request.findById(id).exec()
+        .then(function (existing) {
+          return respond(!!existing);
+        })
+        .catch(function(err) {
+          throw err;
+        });
+    } else {
+      return true;
+    }
+  }, 'Request does not exist');
 
 // Validate empty items
 ReceivingSchema
@@ -107,19 +139,36 @@ ReceivingSchema
 ReceivingSchema.pre('save', function (next) {
   var self = this;
   self.wasNew = self.isNew;
-  PurchaseOrder.findById(self.purchaseOrder._id ? self.purchaseOrder : self.purchaseOrder)
-    .then(purchaseOrder => {
-      self.purchaseOrder = purchaseOrder;
-      if (self.isNew) {
-        next();
-      } else {
-        this.constructor.findById(self.id).then(receiving => {
-          self.previousValue = receiving.items;
-          self.isDeleted = !receiving.active;
+  if (self.purchaseOrder) {
+    PurchaseOrder.findById(self.purchaseOrder._id ? self.purchaseOrder : self.purchaseOrder)
+      .then(purchaseOrder => {
+        self.purchaseOrder = purchaseOrder;
+        if (self.isNew) {
           next();
-        });
-      }
-    })
+        } else {
+          this.constructor.findById(self.id).then(receiving => {
+            self.previousValue = receiving.items;
+            self.isDeleted = !receiving.active;
+            next();
+          });
+        }
+      })
+  } else if (self.request) {
+    Request.findById(self.request._id ? self.request : self.request)
+      .then(request => {
+        self.request = request;
+        if (self.isNew) {
+          next();
+        } else {
+          this.constructor.findById(self.id).then(receiving => {
+            self.previousValue = receiving.items;
+            self.isDeleted = !receiving.active;
+            next();
+          });
+        }
+      })
+  }
+
 });
 
 var addInInventory = function (self, callback) {
@@ -134,10 +183,17 @@ var addInInventory = function (self, callback) {
         inventory.lastUpdatedBy = self.receivedBy;
         inventory.save().then(function (saved) {
           if (index == self.items.length - 1) {
-            self.purchaseOrder.status = 'recieved';
-            self.purchaseOrder.save().then(function () {
-              // NOTHING TODO
-            });
+            if (self.purchaseOrder) {
+              self.purchaseOrder.status = 'recieved';
+              self.purchaseOrder.save().then(function () {
+                // NOTHING TODO
+              });
+            } else if (self.request) {
+              self.request.status = 'recieved';
+              self.request.save().then(function () {
+                // NOTHING TODO
+              });
+            }
           }
         })
       } else {
@@ -149,10 +205,17 @@ var addInInventory = function (self, callback) {
           receiving: true
         }).then(function (saved) {
           if (index == self.items.length - 1) {
-            self.purchaseOrder.status = 'recieved';
-            self.purchaseOrder.save().then(function () {
-              if (callback) callback();
-            });
+            if (self.purchaseOrder) {
+              self.purchaseOrder.status = 'recieved';
+              self.purchaseOrder.save().then(function () {
+                // NOTHING TODO
+              });
+            } else if (self.request) {
+              self.request.status = 'recieved';
+              self.request.save().then(function () {
+                // NOTHING TODO
+              });
+            }
           }
         });
       }

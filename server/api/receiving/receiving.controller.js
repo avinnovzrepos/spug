@@ -92,7 +92,11 @@ export function show(req, res) {
 // Creates a new Receiving in the DB
 export function create(req, res) {
   req.body.receivedBy = req.user;
-  req.body.purchaseOrder = req.params.id;
+  if (req.params.purchaseOrderId) {
+    req.body.purchaseOrder = req.params.purchaseOrderId;
+  } else if (req.params.requestId) {
+    req.body.request = req.params.requestId;
+  }
   return Receiving.create(req.body)
     .catch(handleError(res))
     .then(receiving => Receiving.populate(receiving, [
