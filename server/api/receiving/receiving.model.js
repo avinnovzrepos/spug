@@ -235,10 +235,17 @@ var revertInventory = function (self, callback) {
         inventory.lastUpdatedBy = self.receivedBy;
         inventory.save().then(function (saved) {
           if (index == self.items.length - 1) {
-            self.purchaseOrder.status = 'pending';
-            self.purchaseOrder.save().then(function () {
-              if (callback) callback();
-            });
+            if (self.purchaseOrder) {
+              self.purchaseOrder.status = 'pending';
+              self.purchaseOrder.save().then(function () {
+                // NOTHING TODO
+              });
+            } else if (self.request) {
+              self.request.status = 'pending';
+              self.request.save().then(function () {
+                // NOTHING TODO
+              });
+            }
           }
         })
       } else {
@@ -250,10 +257,17 @@ var revertInventory = function (self, callback) {
           receiving: true
         }).then(function (saved) {
           if (index == self.items.length - 1) {
-            self.purchaseOrder.status = 'recieved';
-            self.purchaseOrder.save().then(function () {
-              if (callback) callback();
-            });
+            if (self.purchaseOrder) {
+              self.purchaseOrder.status = 'pending';
+              self.purchaseOrder.save().then(function () {
+                // NOTHING TODO
+              });
+            } else if (self.request) {
+              self.request.status = 'pending';
+              self.request.save().then(function () {
+                // NOTHING TODO
+              });
+            }
           }
         });
       }
@@ -263,14 +277,13 @@ var revertInventory = function (self, callback) {
 
 ReceivingSchema.post('save', function (inventory) {
   var self = this;
-
   if (self.wasNew) {
     addInInventory(self);
   } else {
     if (!this.isDeleted && !this.active) {
       revertInventory(self);
     } else if (this.isDeleted && this.active) {
-      addInInventory(self)
+      addInInventory(self);
     } else {
       revertInventory(self, function () {
         addInInventory(self);
