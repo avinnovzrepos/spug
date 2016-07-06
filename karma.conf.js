@@ -23,12 +23,8 @@ module.exports = function(config) {
       'client/bower_components/angular-ui-router/release/angular-ui-router.js',
       'client/bower_components/angular-validation-match/dist/angular-validation-match.min.js',
       'client/bower_components/angular-simple-logger/dist/angular-simple-logger.js',
-      'client/bower_components/markerclustererplus/src/markerclusterer.js',
-      'client/bower_components/google-maps-utility-library-v3-markerwithlabel/dist/markerwithlabel.js',
-      'client/bower_components/google-maps-utility-library-v3-infobox/dist/infobox.js',
-      'client/bower_components/google-maps-utility-library-v3-keydragzoom/dist/keydragzoom.js',
-      'client/bower_components/js-rich-marker/src/richmarker.js',
       'client/bower_components/angular-google-maps/dist/angular-google-maps.js',
+      'client/bower_components/ng-csv/build/ng-csv.min.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'node_modules/socket.io-client/socket.io.js',

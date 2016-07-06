@@ -11,7 +11,8 @@ angular.module('spugApp', [
   'ui.router',
   'ui.bootstrap',
   'validation.match',
-  'uiGmapgoogle-maps'
+  'uiGmapgoogle-maps',
+  'ngCsv'
 ])
   .config(function($urlRouterProvider, $locationProvider, $stateProvider) {
     $urlRouterProvider
