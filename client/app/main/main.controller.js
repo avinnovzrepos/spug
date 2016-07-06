@@ -27,8 +27,13 @@ class MainController {
         this.$scope.$evalAsync();
       });
     };
+    let params = {};
+    if(this.currUser.role && this.currUser.role !== 'superadmin') {
+      params.exclude = this.currUser.plant._id;
+    }
 
-    this.API.doGet('plants', setMarkers, { exclude: this.currUser.plant._id });
+    this.API.doGet('plants', setMarkers, params);
+
   }
 
   onClick(marker, eventName, model) {

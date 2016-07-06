@@ -38,7 +38,7 @@
               </label>
             </td>
             <td ng-if="requeList.currUser.role !== 'admin'">
-              <button class="btn btn-sm btn-danger" ng-click="requeList.cancel(request)"> cancel </button>
+              <button class="btn btn-sm btn-danger" ng-click="requeList.cancel(request, $index)"> cancel </button>
             </td>
           </tr>
         </table>
@@ -66,14 +66,14 @@
               </ul>
             </td>
             <td>
-              <label class="label" ng-class="{'label-warning' : otherRequest.status === 'pending', 'label-success' : otherRequest.status === 'approved' || 'received'}">
+              <label class="label" ng-class="{'label-warning' : otherRequest.status === 'pending', 'label-success' : otherRequest.status === 'approved' || 'received', 'label-danger' : otherRequest.status === 'declined'}">
                 {{otherRequest.status}}
               </label>
             </td>
             <td>
               <div ng-if="otherRequest.status === 'pending'">
-                <button class="btn btn-sm btn-success" ng-click="requeList.approve(otherRequest)"> accept </button>
-                <button class="btn btn-sm btn-danger"> decline </button>
+                <button class="btn btn-sm btn-success" ng-click="requeList.approve(otherRequest, '/approve')"> approve </button>
+                <button class="btn btn-sm btn-danger" ng-click="requeList.approve(otherRequest, '/decline')"> decline </button>
               </div>
             </td>
           </tr>

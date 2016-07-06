@@ -14,16 +14,16 @@
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="item-list"> Items <span class="menu-icon fa fa-table"></span></a>
     </li>
-    <li class="sidebar-list">
+    <li class="sidebar-list" ng-if="nav.getCurrentUser().role !== 'superadmin'">
       <a ui-sref="inventory-list"> Inventory <span class="menu-icon fa fa-cube"></span></a>
     </li>
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="history-list"> History <span class="menu-icon fa fa-history"></span></a>
     </li>
-    <li class="sidebar-list">
+    <li class="sidebar-list" ng-if="nav.getCurrentUser().role !== 'superadmin'">
       <a ui-sref="requisition-list"> Request <span class="menu-icon fa fa-tasks"></span></a>
     </li>
-    <li class="sidebar-list">
+    <li class="sidebar-list" ng-if="nav.getCurrentUser().role !== 'superadmin'">
       <a ui-sref="acquisition-list"> Receive <span class="menu-icon fa fa-download"></span></a>
     </li>
     <!-- <li class="sidebar-list">

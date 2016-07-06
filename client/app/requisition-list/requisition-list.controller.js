@@ -4,7 +4,7 @@
 class RequisitionListComponent {
   constructor(API, Auth) {
     this.API = API;
-    this.myRequestList = [];
+    this.requestList = [];
     this.otherRequestList = [];
     this.currUser = Auth.getCurrentUser();
   }
@@ -32,21 +32,17 @@ class RequisitionListComponent {
 
   }
 
-  approve(request) {
-    this.API.doPost('requests/'+request._id+"/approve", {}, (resp) => {
+  approve(request, status) {
+    this.API.doPost('requests/'+request._id+status, {}, (resp) => {
       request.status = resp.status;
     });
   }
 
-  decline(request) {
-    //TODO
-  }
-
-  cancel(request) {
-    console.log('cancel');
-    this.API.doDelete('requests', request._id, (resp) => {
-      console.log(resp);
-    });
+  cancel(request, $index) {
+    const removeFromList = (resp) => {
+      this.requestList.splice($index, 1);
+    }
+    this.API.doDelete('requests', request._id, removeFromList);
   }
 }
 
