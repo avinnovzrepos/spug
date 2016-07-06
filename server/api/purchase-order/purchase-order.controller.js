@@ -164,6 +164,29 @@ export function byUser(req, res) {
     .catch(handleError(res));
 }
 
+// Gets a list of PurchaseOrders of a specific plant
+export function byPlant(req, res) {
+  var query = {
+    plant: req.params.id,
+    active: true
+  };
+  if (req.query.status) {
+    query.status = { $in: req.query.status.split(',') };
+  }
+  if (req.query.type) {
+    query.requestType = req.query.type;
+  }
+  return PurchaseOrder.find(query)
+    .populate([
+      { path: 'createdBy', select: 'name email role plant' },
+      'plant',
+      'items.item'
+    ])
+    .sort("-createdAt").exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
 // Declines a PurchaseOrder
 export function decline(req, res) {
   return PurchaseOrder.findById(req.params.id).exec()
