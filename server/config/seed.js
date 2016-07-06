@@ -19,6 +19,7 @@ import InventoryHistory from '../api/inventory/inventory-history/inventory-histo
 
 import PurchaseOrder from '../api/purchase-order/purchase-order.model';
 import Request from '../api/request/request.model';
+import Notifications from '../api/notification/notification.model';
 
 import Receiving from '../api/receiving/receiving.model';
 
@@ -337,4 +338,16 @@ function clearRequests(callback) {
 
 clearRequests(function () {
   console.log("cleared requests");
+});
+
+function clearNotifications(callback) {
+  Notifications.find({}).remove()
+    .then(() => {
+      // TODO
+      if (callback) callback();
+    });
+}
+
+clearNotifications(function () {
+  console.log("cleared notifications");
 });

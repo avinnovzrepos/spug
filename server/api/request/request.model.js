@@ -3,6 +3,7 @@
 import mongoose from 'mongoose';
 import Plant from '../plant/plant.model';
 import Item from '../item/item.model';
+import Notification from '../notification/notification.model';
 import User from '../user/user/user.model';
 import Inventory from '../inventory/inventory/inventory.model';
 
@@ -211,9 +212,27 @@ Request.schema.pre('save', function (next) {
 Request.schema.post('save', function (inventory) {
   var self = this;
   if (this.wasNew) {
-    // TODO
+    Notification.create({
+      plant: self.source,
+      text: "New request from " + self.destination.name + ".",
+      details: {
+        request: self
+      }
+    }).then(notification => {
+      // TODO
+    });
   } else {
-    if (self.previousStatus != 'approved' && self.status == 'approved') {
+    if (request.status == 'pending' && self.status == 'declined') {
+      Notification.create({
+        plant: self.destination,
+        text: "Declined request.",
+        details: {
+          request: self
+        }
+      }).then(notification => {
+        // TODO
+      });
+    } else if (self.previousStatus != 'approved' && self.status == 'approved') {
       // APPROVED
       self.items.forEach(function (requestItem) {
         Inventory.findOne({
