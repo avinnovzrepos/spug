@@ -14,7 +14,9 @@ class RequisitionListComponent {
       this.requestList = list;
     }
 
-    this.API.doGet('plants/'+this.currUser.plant._id+"/sent-requests", setList);
+    this.API.doGet('plants/'+this.currUser.plant._id+"/sent-requests", setList, {
+      status: 'pending'
+    });
     this.API.doGet('plants/'+this.currUser.plant._id+"/requests", (otherRequests) => {
       this.otherRequestList = otherRequests;
     });

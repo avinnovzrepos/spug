@@ -2,9 +2,10 @@
 (function(){
 
 class AcquisitionComponent {
-  constructor(API, $stateParams) {
+  constructor(Auth, API, $stateParams) {
     this.requests = [];
     this.API = API;
+    this.currentUser = Auth.getCurrentUser();
     this.$stateParams = $stateParams;
   }
 
@@ -18,7 +19,7 @@ class AcquisitionComponent {
   }
 
   submit(form) {
-    this.API.doPost('receiving/' + this.requests._id, this.requests, function(resp) {
+    this.API.doPost('requests/' + this.$stateParams.id + '/receive', this.requests, function(resp) {
       console.log(resp);
     },{});
   }

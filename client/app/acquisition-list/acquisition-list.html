@@ -8,18 +8,20 @@
     <table class="table table-condensed">
       <tr>
         <th> ID </th>
-        <th> Type </th>
         <th> Date </th>
         <th> Request By </th>
-        <th> Destination </th>
+        <th> Source </th>
+        <th> Approved By </th>
+        <th> Status </th>
         <th> Items </th>
       </tr>
       <tr ng-repeat="request in acqList.requestList" ui-sref="acquisition({ id: request._id})">
         <td> {{request._id}} </td>
-        <td> {{request.requestType}} </td>
         <td> {{request.updatedAt}} </td>
         <td> {{request.createdBy.name}} </td>
-        <td> {{request.destination.name}} </td>
+        <td> {{request.source.name}} </td>
+        <td> {{request.approvedBy.name}} </td>
+        <td> {{request.status}} </td>
         <td>
           <ul>
             <li ng-repeat="item in request.items"> {{item.item.name}} </li>

@@ -2,8 +2,9 @@
 (function(){
 
 class AcquisitionListComponent {
-  constructor(API) {
+  constructor(API, Auth) {
     this.API = API;
+    this.currentUser = Auth.getCurrentUser();
     this.requestList = [];
   }
 
@@ -11,8 +12,14 @@ class AcquisitionListComponent {
     const setList = (list) => {
       this.requestList = list;
     }
-
-    this.API.doGet('requests', setList);
+    console.log(this.currentUser)
+    this.API.doGet(
+      'plants/' + this.currentUser.plant._id + '/sent-requests',
+      setList,
+      {
+        status: 'approved'
+      }
+    );
   }
 }
 

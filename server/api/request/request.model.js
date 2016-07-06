@@ -222,7 +222,7 @@ Request.schema.post('save', function (inventory) {
       // TODO
     });
   } else {
-    if (request.status == 'pending' && self.status == 'declined') {
+    if (self.previousStatus == 'pending' && self.status == 'declined') {
       Notification.create({
         plant: self.destination,
         text: "Declined request.",
