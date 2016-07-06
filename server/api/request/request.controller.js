@@ -76,9 +76,6 @@ export function index(req, res) {
   if (req.query.status) {
     query.status = { $in: req.query.status.split(',') };
   }
-  if (req.query.type) {
-    query.requestType = req.query.type;
-  }
   return Request.find(query)
     .populate([
       { path: 'createdBy', select: 'name email role plant' },
@@ -168,9 +165,6 @@ export function byUser(req, res) {
   if (req.query.status) {
     query.status = { $in: req.query.status.split(',') };
   }
-  if (req.query.type) {
-    query.requestType = req.query.type;
-  }
   return Request.find(query)
     .populate([
       { path: 'createdBy', select: 'name email role plant' },
@@ -234,6 +228,29 @@ export function approve(req, res) {
       'source',
       'destination'
     ]))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+// Gets a list of Requests of a specific plant
+export function byPlant(req, res) {
+  var query = {
+    active: true,
+    destination: req.params.id
+  };
+  if (req.query.status) {
+    query.status = { $in: req.query.status.split(',') };
+  }
+  return Request.find(query)
+    .populate([
+      { path: 'createdBy', select: 'name email role plant' },
+      { path: 'approvedBy', select: 'name email role plant' },
+      'plant',
+      'items.item',
+      'source',
+      'destination'
+    ])
+    .sort("-createdAt").exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
