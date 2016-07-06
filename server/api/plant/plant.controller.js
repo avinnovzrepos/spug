@@ -64,7 +64,10 @@ function handleError(res, statusCode) {
 
 // Gets a list of Plants
 export function index(req, res) {
-  return Plant.find({active: true}).exec()
+  return Plant.find({
+      active: true,
+      $nin: req.query.exclude || []
+    }).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
