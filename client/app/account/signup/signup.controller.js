@@ -7,23 +7,28 @@ class SignupController {
   submitted = false;
   //end-non-standard
 
-  constructor(Auth, $state) {
+  constructor(Auth, API, $state) {
     this.Auth = Auth;
+    this.API = API;
     this.$state = $state;
+    this.plantList = [];
+
+    const setPlants = (plants) => {
+      this.plantList = plants;
+    }
+
+    this.API.doGet('plants', setPlants);
   }
 
   register(form) {
     this.submitted = true;
 
     if (form.$valid) {
-      this.Auth.createUser({
-        name: this.user.name,
-        email: this.user.email,
-        password: this.user.password
-      })
+      this.user.role = 'plant';
+      this.Auth.createUser(this.user)
       .then(() => {
         // Account created, redirect to home
-        this.$state.go('main');
+        this.$state.go('admin');
       })
       .catch(err => {
         err = err.data;

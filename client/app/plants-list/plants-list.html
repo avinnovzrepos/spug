@@ -1,0 +1,36 @@
+<div class="spug-container">
+  <div class="clearfix">
+    <h3>
+      Plants
+      <button class="btn btn-primary pull-right" ui-sref="plants">
+        Add
+        <span class="fa fa-plus"> </span>
+      </button>
+    </h3>
+  </div>
+  <div class="widget">
+    <table class="table table-condensed">
+      <tr>
+        <th> ID </th>
+        <th> Name </th>
+        <th> Description </th>
+        <th> Location </th>
+        <th></th>
+      </tr>
+      <tr ng-repeat="plant in plants.plantList">
+        <td>{{plant._id}}</td>
+        <td>{{plant.name}}</td>
+        <td>{{plant.description}}</td>
+        <td>{{plant.location.coordinates[1] + ' - ' + plant.location.coordinates[0]}}</td>
+        <td>
+          <button class="btn btn-small btn-warning">
+            <i class="glyphicon glyphicon-edit"></i>
+          </button>
+          <button class="btn btn-small btn-danger">
+            <i class="glyphicon glyphicon-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

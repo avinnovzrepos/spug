@@ -28,9 +28,15 @@ angular.module('spugApp')
       })
       .state('signup', {
         url: '/signup',
-        templateUrl: 'app/account/signup/signup.html',
-        controller: 'SignupController',
-        controllerAs: 'vm'
+        parent: 'internal',
+        views: {
+          'container@': {
+            templateUrl: 'app/account/signup/signup.html',
+            controller: 'SignupController',
+            controllerAs: 'vm'
+          }
+        },
+        authenticate: true
       })
       .state('settings', {
         url: '/settings',

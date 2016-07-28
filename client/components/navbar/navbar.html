@@ -14,6 +14,12 @@
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="item-list"> Items <span class="menu-icon fa fa-table"></span></a>
     </li>
+    <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
+      <a ui-sref="plants-list"> Plants <span class="menu-icon fa fa-map-signs"></span></a>
+    </li>
+    <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
+      <a ui-sref="admin"> Users <span class="menu-icon fa fa-users"></span></a>
+    </li>
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role !== 'superadmin'">
       <a ui-sref="inventory-list"> Inventory <span class="menu-icon fa fa-cube"></span></a>
     </li>
