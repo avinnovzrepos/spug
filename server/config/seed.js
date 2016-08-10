@@ -15,6 +15,7 @@ import LoginHistory from '../api//user/login-history/login-history.model';
 import Plant from '../api/plant/plant.model';
 
 import MeasurementUnit from '../api/item/measurement-unit/measurement-unit.model';
+import Classification from '../api/item/classification/classification.model';
 import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
@@ -70,6 +71,25 @@ function generateMeasurementUnits() {
       },{
         code: 'PCS',
         name: 'Pieces'
+      });
+    });
+}
+
+function generateClassifications() {
+  Classification.find({}).remove()
+    .then(() => {
+      return Classification.create({
+        code: 'C',
+        name: 'Capital Spares'
+      }, {
+        code: 'S',
+        name: 'Security Spares'
+      }, {
+        code: 'O',
+        name: 'Overhaul Spares'
+      }, {
+        code: 'W',
+        name: 'Wear and Tear Spares'
       });
     });
 }
@@ -312,6 +332,9 @@ function generateSuppliers(callback) {
 
 generateMeasurementUnits(function () {
   console.log('finished populating measurement-units');
+});
+generateClassifications(function () {
+  console.log('finished populating classifications');
 });
 generateSuppliers(function () {
   console.log('finished populating suppliers');
