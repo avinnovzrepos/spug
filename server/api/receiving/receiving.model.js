@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import PurchaseOrder from '../purchase-order/purchase-order.model';
 import Request from '../request/request.model';
 import User from '../user/user/user.model';
-import Item from '../item/item.model';
+import Item from '../item/item/item.model';
 import Inventory from '../inventory/inventory/inventory.model';
 import Notification from '../notification/notification.model';
 

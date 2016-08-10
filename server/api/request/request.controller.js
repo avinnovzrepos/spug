@@ -11,7 +11,7 @@
 
 import _ from 'lodash';
 import Request from './request.model';
-import Item from '../item/item.model';
+import Item from '../item/item/item.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;

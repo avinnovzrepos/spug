@@ -17,9 +17,9 @@ export default function(app) {
   app.use('/api/receiving', require('./api/receiving'));
   app.use('/api/requests', require('./api/request'));
   app.use('/api/plants', require('./api/plant'));
-  app.use('/api/measurement-units', require('./api/measurement-unit'));
+  app.use('/api/measurement-units', require('./api/item/measurement-unit'));
   app.use('/api/suppliers', require('./api/supplier'));
-  app.use('/api/items', require('./api/item'));
+  app.use('/api/items', require('./api/item/item'));
   app.use('/api/things', require('./api/thing'));
 
   app.use('/api/inventory', require('./api/inventory/inventory'));

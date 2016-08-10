@@ -14,8 +14,8 @@ import LoginHistory from '../api//user/login-history/login-history.model';
 
 import Plant from '../api/plant/plant.model';
 
-import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
-import Item from '../api/item/item.model';
+import MeasurementUnit from '../api/item/measurement-unit/measurement-unit.model';
+import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
 import InventoryHistory from '../api/inventory/inventory-history/inventory-history.model';
