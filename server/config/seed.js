@@ -61,18 +61,15 @@ Thing.find({}).remove()
     });
   });
 
-function generateMeasurementUnits(callback) {
+function generateMeasurementUnits() {
   MeasurementUnit.find({}).remove()
     .then(() => {
-      MeasurementUnit.create({
-        name: 'kg(s)',
-        description: 'Kilograms'
+      return MeasurementUnit.create({
+        code: 'KGS',
+        name: 'Kilograms'
       },{
-        name: 'pc(s)',
-        description: 'Pieces'
-      })
-      .then(() => {
-        if (callback) callback();
+        code: 'PCS',
+        name: 'Pieces'
       });
     });
 }
