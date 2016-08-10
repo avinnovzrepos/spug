@@ -1,17 +1,16 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/departments              ->  index
- * POST    /api/departments              ->  create
- * GET     /api/departments/:id          ->  show
- * PUT     /api/departments/:id          ->  update
- * DELETE  /api/departments/:id          ->  destroy
+ * GET     /api/divisions              ->  index
+ * POST    /api/divisions              ->  create
+ * GET     /api/divisions/:id          ->  show
+ * PUT     /api/divisions/:id          ->  update
+ * DELETE  /api/divisions/:id          ->  destroy
  */
 
 'use strict';
 
 import _ from 'lodash';
-import Department from './department.model';
-import Division from '../division/division.model';
+import Division from './division.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -63,35 +62,41 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Departments
+// Gets a list of Divisions
 export function index(req, res) {
-  return Department.find({active: true}).exec()
+  return Division.find({active: true})
+    .populate('department').exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Gets a single Department from the DB
+// Gets a single Division from the DB
 export function show(req, res) {
-  return Department.findById(req.params.id).exec()
+  return Division.findById(req.params.id)
+    .populate('department').exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Creates a new Department in the DB
+// Creates a new Division in the DB
 export function create(req, res) {
-  return Department.create(req.body)
+  return Division.create(req.body)
+    .catch(handleError(res))
+    .then(division => Division.populate(division,  [
+      'department'
+    ]))
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Updates an existing Department in the DB
+// Updates an existing Division in the DB
 export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  return Department.findById(req.params.id).exec()
+  return Division.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
@@ -99,23 +104,12 @@ export function update(req, res) {
     .catch(handleError(res));
 }
 
-// Deletes a Department from the DB
+// Deletes a Division from the DB
 export function destroy(req, res) {
-  return Department.findById(req.params.id).exec()
+  return Division.findById(req.params.id).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates({ active: false }))
     .then(respondWithResult(res, 204))
-    .catch(handleError(res));
-}
-
-// Gets a list of Divisions of a Department
-export function divisons(req, res) {
-  return Division.find({
-      department: req.params.id,
-      active: true
-    })
-    .populate('department').exec()
-    .then(respondWithResult(res))
     .catch(handleError(res));
 }

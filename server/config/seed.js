@@ -6,6 +6,7 @@
 'use strict';
 
 import Department from '../api/department/department.model';
+import Division from '../api/division/division.model';
 
 import User from '../api/user/user/user.model';
 import UserHistory from '../api/user/user-history/user-history.model';
@@ -66,15 +67,34 @@ function generateDepartments(callback) {
     .then(() => {
       Department.create({
         code: 'LOD',
-        name: 'Luzon Operational Department'
+        name: 'Luzon Operations Department'
       },{
         code: 'VOD',
-        name: 'Visayas Operational Department'
+        name: 'Visayas Operations Department'
       },{
         code: 'MOD',
-        name: 'Mindanao Operational Department'
+        name: 'Mindanao Operations Department'
+      }).then(function(){
+        if (callback) callback();
       })
-      if (callback) callback();
+    });
+}
+
+function generateDivisions(callback) {
+  Division.find({}).remove()
+    .then(() => {
+      Department.findOne({code: 'VOD'}).then(department => {
+        Division.create({
+          department: department,
+          code: 'WVOD',
+          name: 'Western Visayas Operations Division'
+        },{
+          department: department,
+          code: 'EVOD',
+          name: 'Eastern Visayas Operations Division'
+        })
+        if (callback) callback();
+      });
     });
 }
 
@@ -267,6 +287,12 @@ function generateSuppliers(callback) {
     });
 }
 
+generateDepartments(function () {
+  console.log('finished populating departments');
+  generateDivisions(function () {
+    console.log('finished populating divisions');
+  });
+});
 generateMeasurementUnits(function () {
   console.log('finished populating measurement-units');
 });

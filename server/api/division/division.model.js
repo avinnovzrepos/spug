@@ -1,8 +1,9 @@
 'use strict';
 
 import mongoose from 'mongoose';
+import Department from '../department/department.model';
 
-var DepartmentSchema = new mongoose.Schema({
+var DivisionSchema = new mongoose.Schema({
   code: {
     type: String,
     required: true
@@ -11,6 +12,12 @@ var DepartmentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  department: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Department',
+    required: true
+  },
+
   active: {
     type: Boolean,
     default: true
@@ -21,31 +28,31 @@ var DepartmentSchema = new mongoose.Schema({
 
 
 // Validate empty code
-DepartmentSchema
+DivisionSchema
   .path('code')
   .validate(function(code) {
     return code.trim().length;
   }, 'Code cannot be blank');
 
 // Validate empty name
-DepartmentSchema
+DivisionSchema
   .path('name')
   .validate(function(name) {
     return name.trim().length;
   }, 'Name cannot be blank');
 
 // Validate duplicate code
-DepartmentSchema
+DivisionSchema
   .path('code')
   .validate(function(code, respond) {
     var self = this;
     return this.constructor.findOne({ code: code }).exec()
-      .then(function(department) {
-        if (department) {
-          if (self.id === department.id) {
+      .then(function(division) {
+        if (division) {
+          if (self.id === division.id) {
             return respond(true);
           }
-          if (!department.active) {
+          if (!division.active) {
             return respond(true);
           }
           return respond(false);
@@ -55,20 +62,20 @@ DepartmentSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate department code');
+  }, 'Cannot have duplicate division code');
 
 // Validate duplicate name
-DepartmentSchema
+DivisionSchema
   .path('name')
   .validate(function(name, respond) {
     var self = this;
     return this.constructor.findOne({ name: name }).exec()
-      .then(function(department) {
-        if (department) {
-          if (self.id === department.id) {
+      .then(function(division) {
+        if (division) {
+          if (self.id === division.id) {
             return respond(true);
           }
-          if (!department.active) {
+          if (!division.active) {
             return respond(true);
           }
           return respond(false);
@@ -78,7 +85,20 @@ DepartmentSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate department name');
+  }, 'Cannot have duplicate division name');
 
+// Validate department exists
+DivisionSchema
+  .path('department')
+  .validate(function(department, respond) {
+    var id = department._id ? department._id : department;
+    return Department.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'Department does not exist');
 
-export default mongoose.model('Department', DepartmentSchema);
+export default mongoose.model('Division', DivisionSchema);
