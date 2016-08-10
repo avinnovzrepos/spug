@@ -5,6 +5,8 @@
 
 'use strict';
 
+import Department from '../api/department/department.model';
+
 import User from '../api/user/user/user.model';
 import UserHistory from '../api/user/user-history/user-history.model';
 import LoginHistory from '../api//user/login-history/login-history.model';
@@ -57,6 +59,24 @@ Thing.find({}).remove()
              'and openshift subgenerators'
     });
   });
+
+
+function generateDepartments(callback) {
+  Department.find({}).remove()
+    .then(() => {
+      Department.create({
+        code: 'LOD',
+        name: 'Luzon Operational Department'
+      },{
+        code: 'VOD',
+        name: 'Visayas Operational Department'
+      },{
+        code: 'MOD',
+        name: 'Mindanao Operational Department'
+      })
+      if (callback) callback();
+    });
+}
 
 function generateMeasurementUnits(callback) {
   MeasurementUnit.find({}).remove()
