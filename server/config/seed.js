@@ -179,7 +179,7 @@ function generateDivisions() {
 
 function generatePlants(callback) {
   return Plant.find({}).remove()
-    .then(function(){
+    .then(() => {
       return Division.findOne({code: 'EVOD'});
     })
     .then((division) => {
@@ -229,6 +229,66 @@ function generatePlants(callback) {
     });
 }
 
+function generateUsers() {
+  return User.find({}).remove()
+    .then(plant => {
+      return User.create({
+        role: 'superadmin',
+        firstName: 'Jose',
+        middleInitial: 'P',
+        lastName: 'Rizal',
+        position: 'Senior IT/IS Specialist',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'superadmin@spug.com',
+        password: 'superadmin'
+      });
+    })
+    .then((superadmin) => {
+      return Plant.find({})
+        .then(plants => ({
+          superadmin: superadmin,
+          plants: plants
+        }));
+    })
+    .then(({superadmin, plants}) => {
+      return User.create({
+        role: 'admin',
+        firstName: 'Antonio',
+        middleInitial: 'P',
+        lastName: 'Luna',
+        position: 'Division Manager',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'admin@spug.com',
+        plant: plants[0],
+        password: 'admin',
+        createdBy: superadmin,
+        lastUpdatedBy: superadmin
+      }, {
+        firstName: 'Juan',
+        middleInitial: 'P',
+        lastName: 'Luna',
+        position: 'Plant Manager',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'plant1@spug.com',
+        plant: plants[0],
+        password: 'plant',
+        createdBy: superadmin,
+        lastUpdatedBy: superadmin
+      }, {
+        firstName: 'Andres',
+        middleInitial: 'P',
+        lastName: 'Bonifacio',
+        position: 'Plant Manager',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'plant2@spug.com',
+        plant: plants[1],
+        password: 'plant',
+        createdBy: superadmin,
+        lastUpdatedBy: superadmin
+      });
+    });
+}
+
 function generatePurchaseOrders(callback) {
   PurchaseOrder.find({}).remove()
     .then(() => {
@@ -244,55 +304,6 @@ function generateReceiving(callback) {
       if (callback) callback();
     });
 }
-
-function generateUsers(callback) {
-  Plant.find({}).then(plants => {
-    User.find({}).remove()
-      .then(() => {
-        User.create({
-          role: 'superadmin',
-          name: 'Test Super Admin',
-          email: 'superadmin@spug.com',
-          password: 'superadmin'
-        })
-        .then((user) => {
-          User.create({
-            role: 'plant',
-            plant: plants[3]._id,
-            name: 'Test Plant 1',
-            email: 'plant1@spug.com',
-            password: 'plant1',
-            createdBy: user
-          }, {
-            role: 'plant',
-            plant: plants[2]._id,
-            name: 'Test Manager',
-            email: 'plant@spug.com',
-            password: 'plant',
-            createdBy: user
-          }, {
-            role: 'warehouse',
-            plant: plants[1]._id,
-            name: 'Test Warehouse',
-            email: 'warehouse@spug.com',
-            password: 'warehouse',
-            createdBy: user
-          }, {
-            role: 'admin',
-            plant: plants[0]._id,
-            name: 'Test Admin',
-            email: 'admin@spug.com',
-            password: 'admin',
-            createdBy: user
-          })
-          .then(() => {
-            if (callback) callback();
-          });
-        });
-      });
-  });
-}
-
 
 function generateSuppliers(callback) {
   Supplier.find({}).remove()
@@ -315,23 +326,24 @@ generateReceiving(function () {
   console.log('finished populating receiving');
 });
 
-generateDepartments().then(function(){
+generateDepartments().then(() => {
   console.log('finished populating departments');
   return generateDivisions();
 })
-.then(function(){
+.then(() => {
   console.log('finished populating divisions');
   return generatePlants();
 })
-.then(function () {
+.then(() => {
   console.log('finished populating plants');
-  return generateUsers(function () {
-    console.log('finished populating users');
-    generateItems(function () {
-      console.log('finished populating items');
-      generateInventory(function () {
-        console.log('finished populating inventory');
-      });
+  return generateUsers();
+})
+.then(() => {
+  console.log('finished populating users');
+  generateItems(function () {
+    console.log('finished populating items');
+    generateInventory(function () {
+      console.log('finished populating inventory');
     });
   });
 });

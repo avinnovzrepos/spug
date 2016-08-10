@@ -1,0 +1,9 @@
+{
+  "app_name": "spug",
+  "docs_path": "server/api/",
+  "api_endpoint": "/api/",
+  "messy": false,
+  "apis": {
+    "user": "server/api/user/user.mad"
+  }
+}

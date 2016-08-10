@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import _ from 'lodash';
-import {Schema} from 'mongoose';
+import { Schema } from 'mongoose';
 import { userRoles } from '../../../config/environment';
 import Plant from '../../plant/plant.model';
 import UserHistory from '../user-history/user-history.model';
@@ -12,7 +12,26 @@ import UserHistory from '../user-history/user-history.model';
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
 var UserSchema = new Schema({
-  name: String,
+  firstName: {
+    type: String,
+    required: true
+  },
+  middleInitial: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  mobileNumber  : {
+    type: String,
+    required: true
+  },
+  position  : {
+    type: String,
+    required: true
+  },
   email: {
     type: String,
     lowercase: true,
@@ -21,7 +40,7 @@ var UserSchema = new Schema({
   role: {
     type: String,
     lowercase: true,
-    default: 'manager',
+    default: 'limited',
     enum: userRoles
   },
   plant: {
@@ -35,6 +54,9 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+
+
+
   provider: {
     type: String,
     default: 'local'
@@ -88,6 +110,16 @@ UserSchema
 UserSchema
   .virtual('public')
   .get(function() {
+    _.extend(this.createdBy, {
+      salt: undefined,
+      password: undefined,
+      provider: undefined
+    });
+    _.extend(this.lastUpdatedBy, {
+      salt: undefined,
+      password: undefined,
+      provider: undefined
+    });
     return _.extend(this, {
       salt: undefined,
       password: undefined,
@@ -99,18 +131,53 @@ UserSchema
  * Validations
  */
 
+// Validate empty firstName
+UserSchema
+  .path('firstName')
+  .validate(function(firstName) {
+    return firstName.trim().length;
+  }, 'First name cannot cannot be blank');
+
+// Validate empty middleInitial
+UserSchema
+  .path('middleInitial')
+  .validate(function(middleInitial) {
+    return middleInitial.trim().length;
+  }, 'Middle initial cannot be blank');
+
+// Validate empty lastName
+UserSchema
+  .path('lastName')
+  .validate(function(lastName) {
+    return lastName.trim().length;
+  }, 'Last name cannot be blank');
+
+// Validate empty mobileNumber
+UserSchema
+  .path('mobileNumber')
+  .validate(function(mobileNumber) {
+    return mobileNumber.trim().length;
+  }, 'Mobile number cannot be blank');
+
+// Validate empty position
+UserSchema
+  .path('position')
+  .validate(function(position) {
+    return position.trim().length;
+  }, 'Last name cannot be blank');
+
 // Validate empty email
 UserSchema
   .path('email')
   .validate(function(email) {
-    return email.length;
+    return email.trim().length;
   }, 'Email cannot be blank');
 
 // Validate empty password
 UserSchema
   .path('password')
   .validate(function(password) {
-    return password.length;
+    return password.trim().length;
   }, 'Password cannot be blank');
 
 // Validate plant exists

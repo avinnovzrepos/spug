@@ -80,16 +80,22 @@ export function create(req, res, next) {
     .then(user => User.populate(user, 'plant'))
     .catch(handleError(res))
     .then(user => user && user.public)
-    .then(respondWithResult(res, 201));
+    .then(respondWithResult(res, 201))
+    .catch(handleError(res));
 }
 
 export function show(req, res) {
   return User.findById(req.params.id)
-    .populate('plant').exec()
+    .populate([
+      'plant',
+      'lastUpdatedBy',
+      'createdBy'
+    ]).exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(user => user && user.public)
-    .then(respondWithResult(res));
+    .then(respondWithResult(res))
+    .catch(handleError(res));
 }
 
 export function destroy(req, res) {
@@ -104,9 +110,6 @@ export function destroy(req, res) {
     )
     .then(saveUpdates({ active: false }))
     .catch(err => validationError(err))
-    .then(user => User.populate(user, 'plant'))
-    .catch(err => validationError(err))
-    .then(user => user && user.public)
     .then(respondWithResult(res, 204));
 }
 
@@ -118,9 +121,6 @@ export function changePassword(req, res, next) {
     .then(user => user.authenticate(String(req.body.oldPassword)) ? user : res.status(403).end())
     .then(saveUpdates({ password: String(req.body.newPassword) }))
     .catch(err => validationError(err))
-    .then(user => User.populate(user, 'plant'))
-    .catch(handleError(res))
-    .then(user => user && user.public)
     .then(respondWithResult(res, 204));
 }
 
@@ -170,7 +170,11 @@ export function update(req, res) {
     })
     .then(saveUpdates(req.body))
     .catch(validationError(res))
-    .then(user => User.populate(user, 'plant'))
+    .then(user => User.populate(user, [
+      'plant',
+      'createdBy',
+      'lastUpdatedBy'
+    ]))
     .catch(handleError(res))
     .then(user => user && user.public)
     .then(respondWithResult(res));

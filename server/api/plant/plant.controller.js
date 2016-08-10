@@ -165,11 +165,9 @@ export function byDepartment(req, res) {
   })
   .exec()
   .then(function (divisions) {
-    console.log(divisions);
     return divisions.map(function(division){ return division._id });
   })
   .then(function(divisions){
-    console.log(divisions);
     return Plant.find({
       active: true,
       division: {
