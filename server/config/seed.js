@@ -16,6 +16,7 @@ import Plant from '../api/plant/plant.model';
 
 import MeasurementUnit from '../api/item/measurement-unit/measurement-unit.model';
 import Classification from '../api/item/classification/classification.model';
+import StorageLevel from '../api/item/storage-level/storage-level.model';
 import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
@@ -90,6 +91,22 @@ function generateClassifications() {
       }, {
         code: 'W',
         name: 'Wear and Tear Spares'
+      });
+    });
+}
+
+function generateStorageLevels() {
+  StorageLevel.find({}).remove()
+    .then(() => {
+      return StorageLevel.create({
+        code: '1',
+        name: 'Level 1'
+      }, {
+        code: '2',
+        name: 'Level 2'
+      }, {
+        code: '3',
+        name: 'Level 3'
       });
     });
 }
@@ -335,6 +352,9 @@ generateMeasurementUnits(function () {
 });
 generateClassifications(function () {
   console.log('finished populating classifications');
+});
+generateStorageLevels(function () {
+  console.log('finished populating storage-levels');
 });
 generateSuppliers(function () {
   console.log('finished populating suppliers');
