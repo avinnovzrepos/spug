@@ -61,43 +61,6 @@ Thing.find({}).remove()
     });
   });
 
-
-function generateDepartments(callback) {
-  Department.find({}).remove()
-    .then(() => {
-      Department.create({
-        code: 'LOD',
-        name: 'Luzon Operations Department'
-      },{
-        code: 'VOD',
-        name: 'Visayas Operations Department'
-      },{
-        code: 'MOD',
-        name: 'Mindanao Operations Department'
-      }).then(function(){
-        if (callback) callback();
-      })
-    });
-}
-
-function generateDivisions(callback) {
-  Division.find({}).remove()
-    .then(() => {
-      Department.findOne({code: 'VOD'}).then(department => {
-        Division.create({
-          department: department,
-          code: 'WVOD',
-          name: 'Western Visayas Operations Division'
-        },{
-          department: department,
-          code: 'EVOD',
-          name: 'Eastern Visayas Operations Division'
-        })
-        if (callback) callback();
-      });
-    });
-}
-
 function generateMeasurementUnits(callback) {
   MeasurementUnit.find({}).remove()
     .then(() => {
@@ -180,36 +143,88 @@ function generateInventory(callback) {
     });
 }
 
-function generatePlants(callback) {
-  Plant.find({}).remove()
+
+function generateDepartments() {
+  return Department.find({}).remove()
     .then(() => {
-      Plant.create({
-        name: 'Central Office',
-        description: 'Metro manila central office',
+      return Department.create({
+        code: 'LOD',
+        name: 'Luzon Operations Department'
+      },{
+        code: 'VOD',
+        name: 'Visayas Operations Department'
+      },{
+        code: 'MOD',
+        name: 'Mindanao Operations Department'
+      });
+    });
+}
+
+function generateDivisions() {
+  return Division.find({}).remove()
+    .then(() => {
+      return Department.findOne({code: 'VOD'});
+    }).then(department => {
+      return Division.create({
+        department: department,
+        code: 'WVOD',
+        name: 'Western Visayas Operations Division'
+      },{
+        department: department,
+        code: 'EVOD',
+        name: 'Eastern Visayas Operations Division'
+      });
+    });;
+}
+
+function generatePlants(callback) {
+  return Plant.find({}).remove()
+    .then(function(){
+      return Division.findOne({code: 'EVOD'});
+    })
+    .then((division) => {
+      return Plant.create({
+        code: 'CAMXX',
+        name: 'Camotes Diesel Power Plant',
+        division: division,
         location: {
-          coordinates: [121.0223, 14.6091]
+          coordinates: [124.3787452, 10.680833]
         }
       },{
-        name: 'Region 3 Warehouse',
-        description: 'Central luzon warehouse',
+        code: 'ZUMXX',
+        name: 'Zumarraga Diesel Power Plant',
+        division: division,
         location: {
-          coordinates: [120.7120, 15.4828]
+          coordinates: [124.0981861, 11.7253023]
         }
       },{
-        name: 'Malolos Plant',
-        description: 'Malolos Bulacan plant',
+        code: 'BATXX',
+        name: 'Batag Diesel Power Plant',
+        division: division,
         location: {
-          coordinates: [120.8160, 14.8527]
+          coordinates: [124.2767536, 12.4039646]
         }
       },{
-        name: 'Calumpit Plant',
-        description: 'Calumpit Bulacan plant',
+        code: 'AMGLN',
+        name: 'ALMARGO MINI-GRID: LUNANG DDP',
+        division: division,
         location: {
-          coordinates: [120.7695, 14.9011]
+          coordinates: [124.2033952,  12.3751761]
         }
-      })
-      .then(() => {
-        if (callback) callback();
+      },{
+        code: 'AMGCR',
+        name: 'ALMARGO MINI-GRID: COSTA RICA DDP',
+        division: division,
+        location: {
+          coordinates: [124.2033952,  12.3751761]
+        }
+      },{
+        code: 'AMGBS',
+        name: 'ALMARGO MINI-GRID: BIASONG DDP',
+        division: division,
+        location: {
+          coordinates: [124.2033952,  12.3751761]
+        }
       });
     });
 }
@@ -287,12 +302,6 @@ function generateSuppliers(callback) {
     });
 }
 
-generateDepartments(function () {
-  console.log('finished populating departments');
-  generateDivisions(function () {
-    console.log('finished populating divisions');
-  });
-});
 generateMeasurementUnits(function () {
   console.log('finished populating measurement-units');
 });
@@ -305,9 +314,18 @@ generatePurchaseOrders(function () {
 generateReceiving(function () {
   console.log('finished populating receiving');
 });
-generatePlants(function () {
+
+generateDepartments().then(function(){
+  console.log('finished populating departments');
+  return generateDivisions();
+})
+.then(function(){
+  console.log('finished populating divisions');
+  return generatePlants();
+})
+.then(function () {
   console.log('finished populating plants');
-  generateUsers(function () {
+  return generateUsers(function () {
     console.log('finished populating users');
     generateItems(function () {
       console.log('finished populating items');
@@ -317,7 +335,6 @@ generatePlants(function () {
     });
   });
 });
-
 
 
 

@@ -100,6 +100,10 @@ export function update(req, res) {
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
+    .catch(handleError(res))
+    .then(division => Division.populate(division,  [
+      'department'
+    ]))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -111,5 +115,15 @@ export function destroy(req, res) {
     .then(handleEntityNotFound(res))
     .then(saveUpdates({ active: false }))
     .then(respondWithResult(res, 204))
+    .catch(handleError(res));
+}
+
+// Gets a list of Divisions of a Department
+export function byDepartment(req, res) {
+  return Division.find({
+      department: req.params.id,
+      active: true
+    }).exec()
+    .then(respondWithResult(res))
     .catch(handleError(res));
 }

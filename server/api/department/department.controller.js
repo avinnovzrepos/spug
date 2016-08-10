@@ -11,7 +11,6 @@
 
 import _ from 'lodash';
 import Department from './department.model';
-import Division from '../division/division.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -106,16 +105,5 @@ export function destroy(req, res) {
     .then(handleEntityNotFound(res))
     .then(saveUpdates({ active: false }))
     .then(respondWithResult(res, 204))
-    .catch(handleError(res));
-}
-
-// Gets a list of Divisions of a Department
-export function divisons(req, res) {
-  return Division.find({
-      department: req.params.id,
-      active: true
-    })
-    .populate('department').exec()
-    .then(respondWithResult(res))
     .catch(handleError(res));
 }

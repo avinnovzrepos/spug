@@ -11,6 +11,7 @@
 
 import _ from 'lodash';
 import Plant from './plant.model';
+import Division from '../division/division.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -69,14 +70,30 @@ export function index(req, res) {
       _id: {
         $nin: req.query.exclude ? req.query.exclude.split(',') : []
       }
-    }).exec()
+    })
+    .populate([
+      'division',
+      {
+        path: 'division',
+        populate: { path: 'department', model: 'Department' }
+      }
+    ])
+    .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
 // Gets a single Plant from the DB
 export function show(req, res) {
-  return Plant.findById(req.params.id).exec()
+  return Plant.findById(req.params.id)
+    .populate([
+      'division',
+      {
+        path: 'division',
+        populate: { path: 'department', model: 'Department' }
+      }
+    ])
+    .exec()
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
@@ -86,6 +103,14 @@ export function show(req, res) {
 // Creates a new Plant in the DB
 export function create(req, res) {
   return Plant.create(req.body)
+    .catch(handleError(res))
+    .then(plant => Plant.populate(plant,[
+      'division',
+      {
+        path: 'division',
+        populate: { path: 'department', model: 'Department' }
+      }
+    ]))
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
@@ -99,6 +124,14 @@ export function update(req, res) {
     .catch(handleError(res))
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
+    .catch(handleError(res))
+    .then(plant => Plant.populate(plant,[
+      'division',
+      {
+        path: 'division',
+        populate: { path: 'department', model: 'Department' }
+      }
+    ]))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -111,4 +144,41 @@ export function destroy(req, res) {
     .then(saveUpdates({ active: false }))
     .then(respondWithResult(res, 204))
     .catch(handleError(res));
+}
+
+// Gets a list of Plants of a specific Division
+export function byDivision(req, res) {
+  return Plant.find({
+      active: true,
+      division: req.params.id
+    })
+    .exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+// Gets a list of Plants of a specific Department
+export function byDepartment(req, res) {
+  return Division.find({
+    active: true,
+    department: req.params.id
+  })
+  .exec()
+  .then(function (divisions) {
+    console.log(divisions);
+    return divisions.map(function(division){ return division._id });
+  })
+  .then(function(divisions){
+    console.log(divisions);
+    return Plant.find({
+      active: true,
+      division: {
+        $in: divisions
+      }
+    })
+    .populate('division')
+    .exec()
+  })
+  .then(respondWithResult(res))
+  .catch(handleError(res));
 }

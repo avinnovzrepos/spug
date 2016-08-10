@@ -12,14 +12,15 @@ var router = express.Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/:id', auth.isAuthenticated(), controller.show);
+router.post('/', auth.hasRole('superadmin'), controller.create);
+router.put('/:id', auth.hasRole('superadmin'), controller.update);
+router.patch('/:id', auth.hasRole('superadmin'), controller.update);
+router.delete('/:id', auth.hasRole('superadmin'), controller.destroy);
+
 router.get('/:id/login-history', auth.isAuthenticated(), loginHistory.byPlant);
 router.get('/:id/inventory', auth.isAuthenticated(), inventory.byPlant);
 router.get('/:id/purchase-orders', auth.isAuthenticated(), purchaseOrder.byPlant);
 router.get('/:id/requests', auth.isAuthenticated(), request.toPlant);
 router.get('/:id/sent-requests', auth.isAuthenticated(), request.ofPlant);
-router.post('/', auth.hasRole('superadmin'), controller.create);
-router.put('/:id', auth.hasRole('superadmin'), controller.update);
-router.patch('/:id', auth.hasRole('superadmin'), controller.update);
-router.delete('/:id', auth.hasRole('superadmin'), controller.destroy);
 
 module.exports = router;
