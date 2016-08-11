@@ -41,7 +41,7 @@ ClassificationSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate measurement unit name');
+  }, 'Cannot have duplicate classification name');
 
 // Validate duplicate code
 ClassificationSchema
@@ -64,7 +64,7 @@ ClassificationSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate measurement unit code');
+  }, 'Cannot have duplicate classification code');
 
 // Validate empty name
 ClassificationSchema

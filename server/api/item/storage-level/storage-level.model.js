@@ -41,7 +41,7 @@ StorageLevelSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate measurement unit name');
+  }, 'Cannot have duplicate storage-level name');
 
 // Validate duplicate code
 StorageLevelSchema
@@ -64,7 +64,7 @@ StorageLevelSchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate measurement unit code');
+  }, 'Cannot have duplicate storage-level code');
 
 // Validate empty name
 StorageLevelSchema

@@ -41,7 +41,7 @@ UsageFrequencySchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate measurement unit name');
+  }, 'Cannot have duplicate usage frequency name');
 
 // Validate duplicate code
 UsageFrequencySchema
@@ -64,7 +64,7 @@ UsageFrequencySchema
       .catch(function(err) {
         throw err;
       });
-  }, 'Cannot have duplicate measurement unit code');
+  }, 'Cannot have duplicate usage-frequency code');
 
 // Validate empty name
 UsageFrequencySchema
