@@ -17,6 +17,7 @@ import Plant from '../api/plant/plant.model';
 import MeasurementUnit from '../api/item/measurement-unit/measurement-unit.model';
 import Classification from '../api/item/classification/classification.model';
 import StorageLevel from '../api/item/storage-level/storage-level.model';
+import UsageFrequency from '../api/item/usage-frequency/usage-frequency.model';
 import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
@@ -107,6 +108,22 @@ function generateStorageLevels() {
       }, {
         code: '3',
         name: 'Level 3'
+      });
+    });
+}
+
+function generateUsageFrequencies() {
+  UsageFrequency.find({}).remove()
+    .then(() => {
+      return UsageFrequency.create({
+        code: 'F',
+        name: 'Fast Moving'
+      }, {
+        code: 'S',
+        name: 'Slow Moving'
+      }, {
+        code: 'N',
+        name: 'Non Moving'
       });
     });
 }
@@ -356,6 +373,11 @@ generateClassifications(function () {
 generateStorageLevels(function () {
   console.log('finished populating storage-levels');
 });
+generateUsageFrequencies(function () {
+  console.log('finished populating usage-frequency');
+});
+
+
 generateSuppliers(function () {
   console.log('finished populating suppliers');
 });
