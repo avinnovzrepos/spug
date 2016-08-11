@@ -18,6 +18,7 @@ import MeasurementUnit from '../api/item/measurement-unit/measurement-unit.model
 import Classification from '../api/item/classification/classification.model';
 import StorageLevel from '../api/item/storage-level/storage-level.model';
 import UsageFrequency from '../api/item/usage-frequency/usage-frequency.model';
+import MaintenanceRequirement from '../api/item/maintenance-requirement/maintenance-requirement.model';
 import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
@@ -124,6 +125,25 @@ function generateUsageFrequencies() {
       }, {
         code: 'N',
         name: 'Non Moving'
+      });
+    });
+}
+
+function generateMaintenanceRequirements() {
+  MaintenanceRequirement.find({}).remove()
+    .then(() => {
+      return MaintenanceRequirement.create({
+        code: 'PMS05k',
+        description: 'For preventive maintenance activities every 5k hours'
+      }, {
+        code: 'PMS10k',
+        description: 'For preventive maintenance activities every 5k hours'
+      }, {
+        code: 'PMS15k',
+        description: 'For preventive maintenance activities every 5k hours'
+      }, {
+        code: 'PMS20k',
+        description: 'For preventive maintenance activities every 5k hours'
       });
     });
 }
@@ -374,6 +394,9 @@ generateStorageLevels(function () {
   console.log('finished populating storage-levels');
 });
 generateUsageFrequencies(function () {
+  console.log('finished populating usage-frequency');
+});
+generateMaintenanceRequirements(function () {
   console.log('finished populating usage-frequency');
 });
 
