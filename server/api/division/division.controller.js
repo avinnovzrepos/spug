@@ -9,86 +9,33 @@
 
 'use strict';
 
-import _ from 'lodash';
 import Division from './division.model';
-
-function respondWithResult(res, statusCode) {
-  statusCode = statusCode || 200;
-  return function(entity) {
-    if (entity) {
-      res.status(statusCode).json(entity);
-    }
-  };
-}
-
-function saveUpdates(updates) {
-  return function(entity) {
-    if (!entity) {
-      return null;
-    }
-    var updated = _.merge(entity, updates);
-    return updated.save()
-      .then(updated => {
-        return updated;
-      });
-  };
-}
-
-function removeEntity(res) {
-  return function(entity) {
-    if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
-    }
-  };
-}
-
-function handleEntityNotFound(res) {
-  return function(entity) {
-    if (!entity) {
-      res.status(404).end();
-      return null;
-    }
-    return entity;
-  };
-}
-
-function handleError(res, statusCode) {
-  statusCode = statusCode || 500;
-  return function(err) {
-    res.status(statusCode).send(err);
-  };
-}
+import * as helper from '../../components/helper';
 
 // Gets a list of Divisions
 export function index(req, res) {
   return Division.find({active: true})
     .populate('department').exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Gets a single Division from the DB
 export function show(req, res) {
   return Division.findById(req.params.id)
     .populate('department').exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.respondWithResult(res));
 }
 
 // Creates a new Division in the DB
 export function create(req, res) {
   return Division.create(req.body)
-    .catch(handleError(res))
-    .then(division => Division.populate(division,  [
-      'department'
-    ]))
-    .then(respondWithResult(res, 201))
-    .catch(handleError(res));
+    .catch(helper.validationError(res))
+    .then(division => Division.populate(division, 'department'))
+    .then(helper.respondWithResult(res, 201))
+    .catch(helper.handleError(res));
 }
 
 // Updates an existing Division in the DB
@@ -97,25 +44,23 @@ export function update(req, res) {
     delete req.body._id;
   }
   return Division.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates(req.body))
-    .catch(handleError(res))
-    .then(division => Division.populate(division,  [
-      'department'
-    ]))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.saveUpdates(req.body))
+    .catch(helper.validationError(res))
+    .then(division => Division.populate(division, 'department'))
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Deletes a Division from the DB
 export function destroy(req, res) {
   return Division.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates({ active: false }))
-    .then(respondWithResult(res, 204))
-    .catch(handleError(res));
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.saveUpdates({ active: false }))
+    .then(helper.respondWithResult(res, 204))
+    .catch(helper.handleError(res));
 }
 
 // Gets a list of Divisions of a Department
@@ -124,6 +69,6 @@ export function byDepartment(req, res) {
       department: req.params.id,
       active: true
     }).exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
