@@ -137,13 +137,13 @@ function generateMaintenanceRequirements() {
         description: 'For preventive maintenance activities every 5k hours'
       }, {
         code: 'PMS10k',
-        description: 'For preventive maintenance activities every 5k hours'
+        description: 'For preventive maintenance activities every 10k hours'
       }, {
         code: 'PMS15k',
-        description: 'For preventive maintenance activities every 5k hours'
+        description: 'For preventive maintenance activities every 15k hours'
       }, {
         code: 'PMS20k',
-        description: 'For preventive maintenance activities every 5k hours'
+        description: 'For preventive maintenance activities every 20k hours'
       });
     });
 }
