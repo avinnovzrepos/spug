@@ -18,6 +18,7 @@ export default function(app) {
   app.use('/api/classifications', require('./api/item/classification'));
   app.use('/api/usage-frequency', require('./api/item/usage-frequency'));
   app.use('/api/maintenance-requirements', require('./api/item/maintenance-requirement'));
+  app.use('/api/disciplines', require('./api/item/discipline'));
   app.use('/api/items', require('./api/item/item'));
 
   app.use('/api/inventory', require('./api/inventory/inventory'));

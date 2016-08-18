@@ -129,6 +129,23 @@ function generateUsageFrequencies() {
     });
 }
 
+
+function generateDisciplines() {
+  return Discipline.find({}).remove()
+    .then(() => {
+      return Discipline.create({
+        code: 'ME',
+        name: 'Mechanical Equipment'
+      }, {
+        code: 'EE',
+        name: 'Electrical Equipment'
+      }, {
+        code: 'IC',
+        name: 'Instrumentation and Control'
+      });
+    });
+}
+
 function generateMaintenanceRequirements() {
   MaintenanceRequirement.find({}).remove()
     .then(() => {
