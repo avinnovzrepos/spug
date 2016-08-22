@@ -5,6 +5,8 @@
 
 'use strict';
 
+import _ from 'lodash';
+
 import Department from '../api/department/department.model';
 import Division from '../api/division/division.model';
 
@@ -19,6 +21,7 @@ import Classification from '../api/item/classification/classification.model';
 import StorageLevel from '../api/item/storage-level/storage-level.model';
 import UsageFrequency from '../api/item/usage-frequency/usage-frequency.model';
 import MaintenanceRequirement from '../api/item/maintenance-requirement/maintenance-requirement.model';
+import Discipline from '../api/item/discipline/discipline.model';
 import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
@@ -66,7 +69,7 @@ Thing.find({}).remove()
   });
 
 function generateMeasurementUnits() {
-  MeasurementUnit.find({}).remove()
+  return MeasurementUnit.find({}).remove()
     .then(() => {
       return MeasurementUnit.create({
         code: 'KGS',
@@ -79,7 +82,7 @@ function generateMeasurementUnits() {
 }
 
 function generateClassifications() {
-  Classification.find({}).remove()
+  return Classification.find({}).remove()
     .then(() => {
       return Classification.create({
         code: 'C',
@@ -98,7 +101,7 @@ function generateClassifications() {
 }
 
 function generateStorageLevels() {
-  StorageLevel.find({}).remove()
+  return StorageLevel.find({}).remove()
     .then(() => {
       return StorageLevel.create({
         code: '1',
@@ -114,7 +117,7 @@ function generateStorageLevels() {
 }
 
 function generateUsageFrequencies() {
-  UsageFrequency.find({}).remove()
+  return UsageFrequency.find({}).remove()
     .then(() => {
       return UsageFrequency.create({
         code: 'F',
@@ -147,7 +150,7 @@ function generateDisciplines() {
 }
 
 function generateMaintenanceRequirements() {
-  MaintenanceRequirement.find({}).remove()
+  return MaintenanceRequirement.find({}).remove()
     .then(() => {
       return MaintenanceRequirement.create({
         code: 'PMS05k',
@@ -165,46 +168,55 @@ function generateMaintenanceRequirements() {
     });
 }
 
-function generateItems(callback) {
-  Item.find({}).remove()
+function generateItems() {
+  return Item.find({}).remove()
     .then(() => {
-      Item.create({
-        code: '111111',
-        name: 'SAMPLE MECHANICAL FROM SEED',
-        partNumber: 'SAMPLE PART NUMBER',
-        specification: 'SAMPLE SPECIFICATION',
-        unitOfMeasurement: 'kg',
-        unitCost: 100,
-        year: '2016',
-        categoryId: 'CATEGORY ID',
-        componentId: 'COMPONENT ID',
-        other: 0,
-
-        mechanical: 'M',
-        brand: 'SAMPLE BRAND',
-        capacity: 'SAMPLE CAPACITY',
-        mechanicalSpares: 'SAMPLE MECHANICAL SPARES'
-      },
-      {
-        code: '222222',
-        name: 'SAMPLE MECHANICAL FROM SEED 2',
-        partNumber: 'SAMPLE PART NUMBER 2',
-        specification: 'SAMPLE SPECIFICATION 2',
-        unitOfMeasurement: 'kg',
-        unitCost: 100,
-        year: '2016',
-        categoryId: 'CATEGORY ID',
-        componentId: 'COMPONENT ID',
-        other: 0,
-
-        mechanical: 'M',
-        brand: 'SAMPLE BRAND',
-        capacity: 'SAMPLE CAPACITY',
-        mechanicalSpares: 'SAMPLE MECHANICAL SPARES'
-      })
-      .then(() => {
-        if (callback) callback();
+      return MeasurementUnit.findOne({}).then((measurementUnit) => ({
+        measurementUnit: measurementUnit
+      }));
+    })
+    .then((meta) => {
+      return Classification.findOne({}).then((classification) => {
+        meta.classification = classification;
+        return meta;
       });
+    })
+    .then((meta) => {
+      return StorageLevel.findOne({}).then((storageLevel) => {
+        meta.storageLevel = storageLevel;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return UsageFrequency.findOne({}).then((usageFrequency) => {
+        meta.usageFrequency = usageFrequency;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return MaintenanceRequirement.findOne({}).then((maintenanceRequirement) => {
+        meta.maintenanceRequirement = maintenanceRequirement;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return Discipline.findOne({}).then((discipline) => {
+        meta.discipline = discipline;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return Item.create(
+        _.assign({
+          code: 'SAMPLE CODE',
+          description: 'SAMPLE DESCRIPTION',
+          specification: 'SAMPLE SPECIFICATION',
+          supplierLedgerCard: 'SAMPLE LEDGER CARD',
+          partItemNumber: 'SAMPLE PART ITEM NUMBER',
+          manufacturerPartNumber: 'SAMPLE MANUFACTURER PART NUMBER',
+          utilityPartNumber: 'SAMPLE UTILITY PART NUMBER'
+        }, meta)
+      );
     });
 }
 
@@ -401,23 +413,6 @@ function generateSuppliers(callback) {
     });
 }
 
-generateMeasurementUnits(function () {
-  console.log('finished populating measurement-units');
-});
-generateClassifications(function () {
-  console.log('finished populating classifications');
-});
-generateStorageLevels(function () {
-  console.log('finished populating storage-levels');
-});
-generateUsageFrequencies(function () {
-  console.log('finished populating usage-frequency');
-});
-generateMaintenanceRequirements(function () {
-  console.log('finished populating usage-frequency');
-});
-
-
 generateSuppliers(function () {
   console.log('finished populating suppliers');
 });
@@ -442,13 +437,40 @@ generateDepartments().then(() => {
 })
 .then(() => {
   console.log('finished populating users');
-  generateItems(function () {
-    console.log('finished populating items');
-    generateInventory(function () {
-      console.log('finished populating inventory');
-    });
+  return generateMeasurementUnits()
+})
+.then(() => {
+  console.log('finished populating measurement-units');
+  return generateClassifications()
+})
+.then(() => {
+  console.log('finished populating classifications');
+  return generateStorageLevels();
+})
+.then(() => {
+  console.log('finished populating storage-levels');
+  return generateUsageFrequencies();
+})
+.then(() => {
+  console.log('finished populating usage-frequency');
+  return generateMaintenanceRequirements();
+})
+.then(() => {
+  console.log('finished populating discipline');
+  return generateDisciplines();
+})
+.then(() => {
+  console.log('finished populating maintenance-requirement');
+  return generateItems();
+})
+.then(() => {
+  console.log('finished populating items');
+  return generateInventory(function () {
+    console.log('finished populating inventory');
   });
 });
+
+
 
 
 
