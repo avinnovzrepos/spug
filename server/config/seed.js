@@ -22,6 +22,8 @@ import StorageLevel from '../api/item/storage-level/storage-level.model';
 import UsageFrequency from '../api/item/usage-frequency/usage-frequency.model';
 import MaintenanceRequirement from '../api/item/maintenance-requirement/maintenance-requirement.model';
 import Discipline from '../api/item/discipline/discipline.model';
+// MECHANICAL
+import Genset from '../api/item/genset/genset.model';
 import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
@@ -168,6 +170,26 @@ function generateMaintenanceRequirements() {
     });
 }
 
+
+function generateGenset() {
+  return Genset.find({}).remove()
+    .then(() => {
+      return Genset.create({
+        brand: 'Perkins 12'
+      }, {
+        brand: 'Kubota 12',
+        model: 'GV-1120-60-B'
+      }, {
+        brand: 'Perkins 15',
+        model: 'D3.152'
+      }, {
+        brand: 'Perkins 20',
+        model: 'D3.152'
+      });
+    });
+}
+
+
 function generateItems() {
   return Item.find({}).remove()
     .then(() => {
@@ -206,6 +228,12 @@ function generateItems() {
       });
     })
     .then((meta) => {
+      return Genset.findOne({}).then((gensetMake) => {
+        meta.gensetMake = gensetMake;
+        return meta;
+      });
+    })
+    .then((meta) => {
       return Item.create(
         _.assign({
           code: 'SAMPLE CODE',
@@ -214,7 +242,9 @@ function generateItems() {
           supplierLedgerCard: 'SAMPLE LEDGER CARD',
           partItemNumber: 'SAMPLE PART ITEM NUMBER',
           manufacturerPartNumber: 'SAMPLE MANUFACTURER PART NUMBER',
-          utilityPartNumber: 'SAMPLE UTILITY PART NUMBER'
+          utilityPartNumber: 'SAMPLE UTILITY PART NUMBER',
+
+          componentNumber: 'SAMPLE COMPONENT NUMBER'
         }, meta)
       );
     });
@@ -461,6 +491,10 @@ generateDepartments().then(() => {
 })
 .then(() => {
   console.log('finished populating maintenance-requirement');
+  return generateGenset();
+})
+.then(() => {
+  console.log('finished populating genset');
   return generateItems();
 })
 .then(() => {

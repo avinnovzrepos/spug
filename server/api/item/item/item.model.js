@@ -7,6 +7,7 @@ import StorageLevel from '../storage-level/storage-level.model';
 import UsageFrequency from '../usage-frequency/usage-frequency.model';
 import MaintenanceRequirement from '../maintenance-requirement/maintenance-requirement.model';
 import Discipline from '../discipline/discipline.model';
+import Genset from '../genset/genset.model';
 
 var ItemSchema = new mongoose.Schema({
 
@@ -92,6 +93,14 @@ var ItemSchema = new mongoose.Schema({
   },
 
 
+  // MECHANICAL FIELDS
+  gensetMake: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Genset',
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
+    }
+  },
   active: {
     type: Boolean,
     default: true
@@ -214,6 +223,20 @@ ItemSchema
         throw err;
       });
   }, 'Item Discipline does not exist');
+
+// Validate gensetMake exists
+ItemSchema
+  .path('gensetMake')
+  .validate(function(gensetMake, respond) {
+    var id = gensetMake._id ? gensetMake._id : gensetMake;
+    return Genset.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'Item Genset Make does not exist');
 
 
 // Validate empty description
