@@ -93,6 +93,12 @@ var ItemSchema = new mongoose.Schema({
   },
 
 
+  componentNumber: {
+    type: String,
+    required: true
+  },
+
+
   // MECHANICAL FIELDS
   gensetMake: {
     type: mongoose.Schema.Types.ObjectId,
@@ -101,6 +107,55 @@ var ItemSchema = new mongoose.Schema({
       return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
     }
   },
+  // capacity: {
+  //   type: String,
+  //   required: function () {
+  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
+  //   }
+  // },
+  // category: {
+  //   type: String,
+  //   required: function () {
+  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
+  //   }
+  // },
+
+
+  // ELECTRICAL FIELDS
+  // facility: {
+  //   type: String,
+  //   required: function () {
+  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+  //   }
+  // },
+  // facilityType: {
+  //   type: String,
+  //   required: function () {
+  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+  //   }
+  // },
+  // electricalType: {
+  //   type: String,
+  //   required: function () {
+  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+  //   }
+  // },
+  // outVoltage: {
+  //   type: String,
+  //   required: function () {
+  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+  //   }
+  // },
+  // electricalCategory: {
+  //   type: String,
+  //   required: function () {
+  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+  //   }
+  // },
+
+
+
+
   active: {
     type: Boolean,
     default: true
@@ -280,5 +335,12 @@ ItemSchema
   .validate(function(utilityPartNumber) {
     return utilityPartNumber.trim().length;
   }, 'Utility part number cannot be empty');
+
+// Validate empty componentNumber
+ItemSchema
+  .path('componentNumber')
+  .validate(function(componentNumber) {
+    return componentNumber.trim().length;
+  }, 'Component number cannot be empty');
 
 export default mongoose.model('Item', ItemSchema);
