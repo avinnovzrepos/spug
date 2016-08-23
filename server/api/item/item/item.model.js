@@ -8,6 +8,7 @@ import UsageFrequency from '../usage-frequency/usage-frequency.model';
 import MaintenanceRequirement from '../maintenance-requirement/maintenance-requirement.model';
 import Discipline from '../discipline/discipline.model';
 import Genset from '../genset/genset.model';
+import Component from '../component/component.model';
 
 var ItemSchema = new mongoose.Schema({
 
@@ -93,8 +94,9 @@ var ItemSchema = new mongoose.Schema({
   },
 
 
-  componentNumber: {
-    type: String,
+  component: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Genset',
     required: true
   },
 
@@ -279,6 +281,20 @@ ItemSchema
       });
   }, 'Item Discipline does not exist');
 
+// Validate component exists
+ItemSchema
+  .path('component')
+  .validate(function(component, respond) {
+    var id = component._id ? component._id : component;
+    return Component.findById(id).exec()
+      .then(function(existing) {
+        return respond(!!existing);
+      })
+      .catch(function(err) {
+        throw err;
+      });
+  }, 'Item Component does not exist');
+
 // Validate gensetMake exists
 ItemSchema
   .path('gensetMake')
@@ -335,12 +351,5 @@ ItemSchema
   .validate(function(utilityPartNumber) {
     return utilityPartNumber.trim().length;
   }, 'Utility part number cannot be empty');
-
-// Validate empty componentNumber
-ItemSchema
-  .path('componentNumber')
-  .validate(function(componentNumber) {
-    return componentNumber.trim().length;
-  }, 'Component number cannot be empty');
 
 export default mongoose.model('Item', ItemSchema);

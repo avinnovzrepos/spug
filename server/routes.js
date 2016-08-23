@@ -19,6 +19,7 @@ export default function(app) {
   app.use('/api/usage-frequency', require('./api/item/usage-frequency'));
   app.use('/api/maintenance-requirements', require('./api/item/maintenance-requirement'));
   app.use('/api/disciplines', require('./api/item/discipline'));
+  app.use('/api/components', require('./api/item/component'));
   // MECHANICAL
   app.use('/api/gensets', require('./api/item/genset'));
   app.use('/api/items', require('./api/item/item'));

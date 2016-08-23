@@ -22,6 +22,7 @@ import StorageLevel from '../api/item/storage-level/storage-level.model';
 import UsageFrequency from '../api/item/usage-frequency/usage-frequency.model';
 import MaintenanceRequirement from '../api/item/maintenance-requirement/maintenance-requirement.model';
 import Discipline from '../api/item/discipline/discipline.model';
+import Component from '../api/item/component/component.model';
 // MECHANICAL
 import Genset from '../api/item/genset/genset.model';
 import Item from '../api/item/item/item.model';
@@ -170,8 +171,30 @@ function generateMaintenanceRequirements() {
     });
 }
 
+function generateComponents() {
+  return Component.find({}).remove()
+    .then(() => {
+      return Component.create({
+        code: 'LIMXX-01-PERK0163-001',
+        description: 'CRANKSHAFT'
+      }, {
+        code: 'LIMXX-01-PERK0163-002',
+        description: 'ENGINE CASE'
+      }, {
+        code: 'LIMXX-01-PERK0163-003',
+        description: 'RARE ENGINE LID'
+      }, {
+        code: 'LIMXX-01-PERK0163-004',
+        description: 'ENGINE COVER'
+      }, {
+        code: 'LIMXX-01-PERK0163-004',
+        description: 'DEAERATING ENGINE'
+      });
+    });
+}
 
-function generateGenset() {
+
+function generateGensets() {
   return Genset.find({}).remove()
     .then(() => {
       return Genset.create({
@@ -230,6 +253,12 @@ function generateItems() {
     .then((meta) => {
       return Genset.findOne({}).then((gensetMake) => {
         meta.gensetMake = gensetMake;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return Component.findOne({}).then((component) => {
+        meta.component = component;
         return meta;
       });
     })
@@ -491,10 +520,14 @@ generateDepartments().then(() => {
 })
 .then(() => {
   console.log('finished populating maintenance-requirement');
-  return generateGenset();
+  return generateGensets();
 })
 .then(() => {
   console.log('finished populating genset');
+  return generateComponents();
+})
+.then(() => {
+  console.log('finished populating component');
   return generateItems();
 })
 .then(() => {
