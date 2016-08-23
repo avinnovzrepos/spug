@@ -245,8 +245,8 @@ function generateItems() {
       });
     })
     .then((meta) => {
-      return Discipline.findOne({}).then((discipline) => {
-        meta.discipline = discipline;
+      return Discipline.find({}).then((disciplines) => {
+        meta.disciplines = disciplines;
         return meta;
       });
     })
@@ -272,11 +272,31 @@ function generateItems() {
           partItemNumber: 'SAMPLE PART ITEM NUMBER',
           manufacturerPartNumber: 'SAMPLE MANUFACTURER PART NUMBER',
           utilityPartNumber: 'SAMPLE UTILITY PART NUMBER',
+          discipline: meta.disciplines[0],
 
           capacity: 'SAMPLE CAPACITY',
           category: 'SAMPLE CAATEGORY'
         }, meta)
-      );
+      ).then(() => {
+        return Item.create(
+          _.assign({
+            code: 'SAMPLE CODE 2',
+            description: 'SAMPLE DESCRIPTION',
+            specification: 'SAMPLE SPECIFICATION',
+            supplierLedgerCard: 'SAMPLE LEDGER CARD',
+            partItemNumber: 'SAMPLE PART ITEM NUMBER',
+            manufacturerPartNumber: 'SAMPLE MANUFACTURER PART NUMBER',
+            utilityPartNumber: 'SAMPLE UTILITY PART NUMBER',
+            discipline: meta.disciplines[1],
+
+            facility: 'SAMPLE FACILITY',
+            facilityType: 'SAMPLE FACILITY TYPE',
+            electricalType: 'SAMPLE ELECTRICAL TYPE',
+            outVoltage: 'SAMPLE OUT VOLTAGE',
+            electricalCategory: 'SAMPLE ELECTRICAL CAATEGORY',
+          }, meta)
+        );
+      });
     });
 }
 
@@ -499,40 +519,40 @@ generateDepartments().then(() => {
   console.log('finished populating users');
   return generateMeasurementUnits()
 })
-.then(() => {
-  console.log('finished populating measurement-units');
-  return generateClassifications()
-})
-.then(() => {
-  console.log('finished populating classifications');
-  return generateStorageLevels();
-})
-.then(() => {
-  console.log('finished populating storage-levels');
-  return generateUsageFrequencies();
-})
-.then(() => {
-  console.log('finished populating usage-frequency');
-  return generateMaintenanceRequirements();
-})
-.then(() => {
-  console.log('finished populating discipline');
-  return generateDisciplines();
-})
-.then(() => {
-  console.log('finished populating maintenance-requirement');
-  return generateGensets();
-})
-.then(() => {
-  console.log('finished populating genset');
-  return generateComponents();
-})
+// .then(() => {
+//   console.log('finished populating measurement-units');
+//   return generateClassifications()
+// })
+// .then(() => {
+//   console.log('finished populating classifications');
+//   return generateStorageLevels();
+// })
+// .then(() => {
+//   console.log('finished populating storage-levels');
+//   return generateUsageFrequencies();
+// })
+// .then(() => {
+//   console.log('finished populating usage-frequency');
+//   return generateMaintenanceRequirements();
+// })
+// .then(() => {
+//   console.log('finished populating discipline');
+//   return generateDisciplines();
+// })
+// .then(() => {
+//   console.log('finished populating maintenance-requirement');
+//   return generateGensets();
+// })
+// .then(() => {
+//   console.log('finished populating genset');
+//   return generateComponents();
+// })
 .then(() => {
   console.log('finished populating component');
   return generateItems();
 })
 .then(() => {
-  console.log('finished populating items');
+  console.log('finished populating mechanical items');
   return generateInventory(function () {
     console.log('finished populating inventory');
   });

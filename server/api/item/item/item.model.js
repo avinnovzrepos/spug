@@ -124,36 +124,36 @@ var ItemSchema = new mongoose.Schema({
 
 
   // ELECTRICAL FIELDS
-  // facility: {
-  //   type: String,
-  //   required: function () {
-  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
-  //   }
-  // },
-  // facilityType: {
-  //   type: String,
-  //   required: function () {
-  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
-  //   }
-  // },
-  // electricalType: {
-  //   type: String,
-  //   required: function () {
-  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
-  //   }
-  // },
-  // outVoltage: {
-  //   type: String,
-  //   required: function () {
-  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
-  //   }
-  // },
-  // electricalCategory: {
-  //   type: String,
-  //   required: function () {
-  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
-  //   }
-  // },
+  facility: {
+    type: String,
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+    }
+  },
+  facilityType: {
+    type: String,
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+    }
+  },
+  electricalType: {
+    type: String,
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+    }
+  },
+  outVoltage: {
+    type: String,
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+    }
+  },
+  electricalCategory: {
+    type: String,
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('electrical') >= 0;
+    }
+  },
 
 
 
@@ -351,5 +351,54 @@ ItemSchema
   .validate(function(utilityPartNumber) {
     return utilityPartNumber.trim().length;
   }, 'Utility part number cannot be empty');
+
+// Validate empty capacity
+ItemSchema
+  .path('capacity')
+  .validate(function(capacity) {
+    return capacity.trim().length;
+  }, 'Capacity cannot be empty');
+
+// Validate empty category
+ItemSchema
+  .path('category')
+  .validate(function(category) {
+    return category.trim().length;
+  }, 'Category cannot be empty');
+
+// Validate empty facility
+ItemSchema
+  .path('facility')
+  .validate(function(facility) {
+    return facility.trim().length;
+  }, 'Facility cannot be empty');
+
+// Validate empty facility type
+ItemSchema
+  .path('facilityType')
+  .validate(function(facilityType) {
+    return facilityType.trim().length;
+  }, 'Facility type cannot be empty');
+
+// Validate empty electrical type
+ItemSchema
+  .path('electricalType')
+  .validate(function(electricalType) {
+    return electricalType.trim().length;
+  }, 'Electrical type cannot be empty');
+
+// Validate empty outVoltage
+ItemSchema
+  .path('outVoltage')
+  .validate(function(outVoltage) {
+    return outVoltage.trim().length;
+  }, 'Out Voltage cannot be empty');
+
+// Validate empty electricalCategory
+ItemSchema
+  .path('electricalCategory')
+  .validate(function(electricalCategory) {
+    return electricalCategory.trim().length;
+  }, 'Electrical Category cannot be empty');
 
 export default mongoose.model('Item', ItemSchema);
