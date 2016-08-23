@@ -109,18 +109,18 @@ var ItemSchema = new mongoose.Schema({
       return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
     }
   },
-  // capacity: {
-  //   type: String,
-  //   required: function () {
-  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
-  //   }
-  // },
-  // category: {
-  //   type: String,
-  //   required: function () {
-  //     return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
-  //   }
-  // },
+  capacity: {
+    type: String,
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
+    }
+  },
+  category: {
+    type: String,
+    required: function () {
+      return this.discipline.name && this.discipline.name.toLowerCase().indexOf('mechanical') >= 0;
+    }
+  },
 
 
   // ELECTRICAL FIELDS

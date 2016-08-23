@@ -273,7 +273,8 @@ function generateItems() {
           manufacturerPartNumber: 'SAMPLE MANUFACTURER PART NUMBER',
           utilityPartNumber: 'SAMPLE UTILITY PART NUMBER',
 
-          componentNumber: 'SAMPLE COMPONENT NUMBER'
+          capacity: 'SAMPLE CAPACITY',
+          category: 'SAMPLE CAATEGORY'
         }, meta)
       );
     });
