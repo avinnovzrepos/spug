@@ -96,7 +96,7 @@ var ItemSchema = new mongoose.Schema({
 
   component: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Genset',
+    ref: 'Component',
     required: true
   },
 

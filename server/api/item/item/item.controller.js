@@ -9,80 +9,60 @@
 
 'use strict';
 
-import _ from 'lodash';
 import Item from './item.model';
-
-function respondWithResult(res, statusCode) {
-  statusCode = statusCode || 200;
-  return function(entity) {
-    if (entity) {
-      res.status(statusCode).json(entity);
-    }
-  };
-}
-
-function saveUpdates(updates) {
-  return function(entity) {
-    if (!entity) {
-      return null;
-    }
-    var updated = _.merge(entity, updates);
-    return updated.save()
-      .then(updated => {
-        return updated;
-      });
-  };
-}
-
-function removeEntity(res) {
-  return function(entity) {
-    if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
-    }
-  };
-}
-
-function handleEntityNotFound(res) {
-  return function(entity) {
-    if (!entity) {
-      res.status(404).end();
-      return null;
-    }
-    return entity;
-  };
-}
-
-function handleError(res, statusCode) {
-  statusCode = statusCode || 500;
-  return function(err) {
-    res.status(statusCode).send(err);
-  };
-}
+import * as helper from '../../../components/helper';
 
 // Gets a list of Items
 export function index(req, res) {
-  return Item.find({active: true}).exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+  return Item.find({active: true})
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Gets a single Item from the DB
 export function show(req, res) {
-  return Item.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+  return Item.findById(req.params.id)
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.respondWithResult(res));
 }
 
 // Creates a new Item in the DB
 export function create(req, res) {
   return Item.create(req.body)
-    .then(respondWithResult(res, 201))
-    .catch(handleError(res));
+    .catch(helper.validationError(res))
+    .then(item => Item.populate(item, [
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]))
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Updates an existing Item in the DB
@@ -91,19 +71,30 @@ export function update(req, res) {
     delete req.body._id;
   }
   return Item.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates(req.body))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.saveUpdates(req.body))
+    .catch(helper.validationError(res))
+    .then(item => Item.populate(item, [
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]))
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Deletes a Item from the DB
 export function destroy(req, res) {
   return Item.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates({ active: false }))
-    .then(respondWithResult(res, 204))
-    .catch(handleError(res));
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.saveUpdates({ active: false }))
+    .then(helper.respondWithResult(res, 204))
+    .catch(helper.handleError(res));
 }
