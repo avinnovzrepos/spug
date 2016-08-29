@@ -98,3 +98,22 @@ export function destroy(req, res) {
     .then(helper.respondWithResult(res, 204))
     .catch(helper.handleError(res));
 }
+
+// Get Item by usageFrequency
+export function usageFrequency(req, res) {
+  return Item.find({
+      usageFrequency: req.params.id
+    })
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.respondWithResult(res));
+}
