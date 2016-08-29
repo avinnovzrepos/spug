@@ -137,6 +137,25 @@ export function measurementUnit(req, res) {
     .then(helper.respondWithResult(res));
 }
 
+// Get Item by storageLevel
+export function storageLevel(req, res) {
+  return Item.find({
+      storageLevel: req.params.id
+    })
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.respondWithResult(res));
+}
+
 // Get Item by usageFrequency
 export function usageFrequency(req, res) {
   return Item.find({
