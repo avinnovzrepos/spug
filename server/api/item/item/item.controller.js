@@ -194,3 +194,21 @@ export function maintenanceRequirement(req, res) {
     .then(helper.respondWithResult(res));
 }
 
+// Get Item by discipline
+export function discipline(req, res) {
+  return Item.find({
+      discipline: req.params.id
+    })
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.respondWithResult(res));
+}
