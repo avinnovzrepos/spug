@@ -10,7 +10,7 @@ class NavbarController {
   isCollapsed = true;
   //end-non-standard
 
-  constructor(Auth, $cookieStore, $scope, $rootScope, $state) {
+  constructor(Auth, $cookieStore, $scope, $rootScope, $state, Breadcrumb) {
     this.isLoggedIn = Auth.isLoggedIn;
     this.isAdmin = Auth.isAdmin;
     this.getCurrentUser = Auth.getCurrentUser;
@@ -21,6 +21,7 @@ class NavbarController {
     this.mobileView = 992;
     this.$rootScope.toggle = true;
     this.$state = $state;
+    this.Breadcrumb = Breadcrumb;
   }
 
   logout() {

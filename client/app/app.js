@@ -12,7 +12,11 @@ angular.module('spugApp', [
   'ui.bootstrap',
   'validation.match',
   'uiGmapgoogle-maps',
-  'ngCsv'
+  'ngCsv',
+  'ui.grid',
+  'ui.grid.resizeColumns',
+  'ui.grid.autoResize',
+   'ui.grid.moveColumns'
 ])
   .config(function($urlRouterProvider, $locationProvider, $stateProvider) {
     $urlRouterProvider

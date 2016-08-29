@@ -111,7 +111,7 @@
         Dashboard
       </div>
       <div class="breadcrumb-links">
-        Home / Dashboard
+        <span ng-repeat="crurmb in nav.Breadcrumb.get()"> / <a href="{{crumb.url}}">{{crurmb.breadcrumb.title}}</a></span>
       </div>
     </div>
   </div>

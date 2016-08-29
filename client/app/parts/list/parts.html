@@ -1,10 +1,10 @@
 <div class="spug-container">
   <div class="clearfix">
     <h3>
-      Users
-      <button class="btn btn-sm btn-primary pull-right" ui-sref="signup">
-        <span class="fa fa-plus"></span>
+      Parts
+      <button class="btn btn-primary" ui-sref="item({itemType: 'mechanical'})">
         Add
+        <span class="fa fa-plus"> </span>
       </button>
     </h3>
     <div class="has-feedback">
@@ -14,8 +14,7 @@
     </div>
   </div>
   <div class="widget">
-    <div ui-grid="admin.gridOptions" class="grid" ui-grid-resize-columns ui-grid-auto-resize ui-grid-move-columns></div>
+    <div ui-grid="parts.gridOptions" class="grid" ui-grid-resize-columns ui-grid-auto-resize ui-grid-move-columns></div>
   </div>
 </div>
-
 

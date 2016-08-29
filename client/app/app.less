@@ -41,20 +41,19 @@ body {
   }
 }
 
+.no-padding, {
+  padding: 0px !important;
+}
+
+.no-left-padding {
+  padding-left: 0px !important;
+}
+
 /* inject:less */
-@import 'acquisition-list/acquisition-list.less';
-@import 'acquisition/acquisition.less';
 @import 'admin/admin.less';
-@import 'history-list/history-list.less';
-@import 'inventory-list/inventory-list.less';
-@import 'inventory/inventory.less';
-@import 'item-list/item-list.less';
-@import 'item/item.less';
 @import 'main/main.less';
-@import 'plants-list/plants-list.less';
-@import 'plants/plants.less';
-@import 'requisition-list/requisition-list.less';
-@import 'requisition/requisition.less';
+@import 'parts/form/parts.form.less';
+@import 'parts/list/parts.less';
 @import '../components/footer/footer.less';
 @import '../components/modal/modal.less';
 @import '../components/oauth-buttons/oauth-buttons.less';

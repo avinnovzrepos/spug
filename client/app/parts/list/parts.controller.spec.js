@@ -1,16 +1,16 @@
 'use strict';
 
-describe('Component: PlantsComponent', function () {
+describe('Component: PartsComponent', function () {
 
   // load the controller's module
   beforeEach(module('spugApp'));
 
-  var PlantsComponent, scope;
+  var PartsComponent, scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($componentController, $rootScope) {
     scope = $rootScope.$new();
-    PlantsComponent = $componentController('PlantsComponent', {
+    PartsComponent = $componentController('PartsComponent', {
       $scope: scope
     });
   }));

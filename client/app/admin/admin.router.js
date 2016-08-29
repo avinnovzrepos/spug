@@ -13,7 +13,10 @@ angular.module('spugApp.admin')
             controllerAs: 'admin'
           }
         },
-        authenticate: 'admin'
-
+        authenticate: 'admin',
+        breadcrumb: {
+          title: 'User Management',
+          main: true
+        }
       });
   });

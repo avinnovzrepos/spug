@@ -1,19 +1,19 @@
 'use strict';
 
 angular.module('spugApp')
-  .config(function($stateProvider) {
+  .config(function ($stateProvider) {
     $stateProvider
-      .state('main', {
-        url: '/',
+      .state('parts.form', {
+        url: '/parts/form',
         parent: 'internal',
-        authenticate: true,
         views: {
           'container@': {
-            template: '<main></main>'
+            template: '<parts-form></parts-form>'
           }
         },
+        authenticate: true,
         breadcrumb: {
-          title: 'Home',
+          title: 'Spare Parts Database',
           main: true
         }
       });

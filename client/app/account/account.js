@@ -36,7 +36,11 @@ angular.module('spugApp')
             controllerAs: 'vm'
           }
         },
-        authenticate: true
+        authenticate: true,
+        breadcrumb: {
+          title: 'Users Form',
+          main: false
+        }
       })
       .state('settings', {
         url: '/settings',
@@ -46,7 +50,7 @@ angular.module('spugApp')
         authenticate: true
       });
   })
-  .run(function($rootScope) {
+  .run(function($rootScope, Breadcrumb) {
     $rootScope.$on('$stateChangeStart', function(event, next, nextParams, current) {
 
       if (next.name === 'logout' && current && current.name && !current.authenticate) {
@@ -55,6 +59,7 @@ angular.module('spugApp')
 
       if(next.parent) {
         $rootScope.layoutBg = true;
+        Breadcrumb.set({ url: next.url, breadcrumb: next.breadcrumb });
       } else {
         $rootScope.layoutBg = false;
       }
