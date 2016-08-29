@@ -231,3 +231,22 @@ export function component(req, res) {
     .catch(helper.handleError(res))
     .then(helper.respondWithResult(res));
 }
+
+// Get Item by gensetMake
+export function gensetMake(req, res) {
+  return Item.find({
+      gensetMake: req.params.id
+    })
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.respondWithResult(res));
+}
