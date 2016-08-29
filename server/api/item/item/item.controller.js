@@ -174,3 +174,23 @@ export function usageFrequency(req, res) {
     .catch(helper.handleError(res))
     .then(helper.respondWithResult(res));
 }
+
+// Get Item by maintenanceRequirement
+export function maintenanceRequirement(req, res) {
+  return Item.find({
+      maintenanceRequirement: req.params.id
+    })
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.respondWithResult(res));
+}
+
