@@ -9,12 +9,13 @@
 
 'use strict';
 
+import _ from 'lodash';
 import Item from './item.model';
 import * as helper from '../../../components/helper';
 
 // Gets a list of Items
 export function index(req, res) {
-  return Item.find({active: true})
+  return Item.find(_.assign({active: true}, req.query))
     .populate([
       'classification',
       'measurementUnit',

@@ -18,7 +18,7 @@ router.patch('/:id', auth.hasRole('superadmin'), controller.update);
 router.delete('/:id', auth.hasRole('superadmin'), controller.destroy);
 
 router.get('/:id/login-history', auth.isAuthenticated(), loginHistory.byPlant);
-router.get('/:id/inventory', auth.isAuthenticated(), inventory.byPlant);
+router.get('/:id/inventory', auth.isAuthenticated(), inventory.plant);
 router.get('/:id/purchase-orders', auth.isAuthenticated(), purchaseOrder.byPlant);
 router.get('/:id/requests', auth.isAuthenticated(), request.toPlant);
 router.get('/:id/sent-requests', auth.isAuthenticated(), request.ofPlant);
