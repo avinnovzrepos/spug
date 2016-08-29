@@ -99,6 +99,25 @@ export function destroy(req, res) {
     .catch(helper.handleError(res));
 }
 
+// Get Item by Classification
+export function classification(req, res) {
+  return Item.find({
+      classification: req.params.id
+    })
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.respondWithResult(res));
+}
+
 // Get Item by usageFrequency
 export function usageFrequency(req, res) {
   return Item.find({
