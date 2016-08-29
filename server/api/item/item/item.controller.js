@@ -212,3 +212,22 @@ export function discipline(req, res) {
     .catch(helper.handleError(res))
     .then(helper.respondWithResult(res));
 }
+
+// Get Item by component
+export function component(req, res) {
+  return Item.find({
+      component: req.params.id
+    })
+    .populate([
+      'classification',
+      'measurementUnit',
+      'storageLevel',
+      'usageFrequency',
+      'maintenanceRequirement',
+      'discipline',
+      'component',
+      'gensetMake'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.respondWithResult(res));
+}
