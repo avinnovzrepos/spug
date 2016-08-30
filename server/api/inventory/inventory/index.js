@@ -14,6 +14,6 @@ router.put('/:id', auth.isAuthenticated(), controller.update);
 router.patch('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
-router.get('/:inventoryId/history', auth.hasRole('admin'), inventoryHistory.byInventory);
+router.get('/:id/history', auth.hasRole('admin'), inventoryHistory.inventory);
 
 module.exports = router;
