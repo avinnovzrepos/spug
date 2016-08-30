@@ -469,12 +469,8 @@ function generateUsers() {
     });
 }
 
-function generatePurchaseOrders(callback) {
-  PurchaseOrder.find({}).remove()
-    .then(() => {
-      // TODO
-      if (callback) callback();
-    });
+function generatePurchaseOrders() {
+  return PurchaseOrder.find({}).remove();
 }
 
 function generateReceiving(callback) {
@@ -496,7 +492,7 @@ function generateSuppliers(callback) {
 generateSuppliers(function () {
   console.log('finished populating suppliers');
 });
-generatePurchaseOrders(function () {
+generatePurchaseOrders().then(function(){
   console.log('finished populating purchase-orders');
 });
 generateReceiving(function () {

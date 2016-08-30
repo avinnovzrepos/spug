@@ -11,58 +11,7 @@
 
 import _ from 'lodash';
 import PurchaseOrder from './purchase-order.model';
-import Item from '../item/item/item.model';
-
-function respondWithResult(res, statusCode) {
-  statusCode = statusCode || 200;
-  return function(entity) {
-    if (entity) {
-      res.status(statusCode).json(entity);
-    }
-  };
-}
-
-function saveUpdates(updates) {
-  return function(entity) {
-    if (!entity) {
-      return null;
-    }
-    var updated = _.merge(entity, updates);
-    return updated.save()
-      .then(updated => {
-        return updated;
-      });
-  };
-}
-
-function removeEntity(res) {
-  return function(entity) {
-    if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
-    }
-  };
-}
-
-function handleEntityNotFound(res) {
-  return function(entity) {
-    if (!entity) {
-      res.status(404).end();
-      return null;
-    }
-    return entity;
-  };
-}
-
-function handleError(res, statusCode) {
-  statusCode = statusCode || 500;
-  return function(err) {
-    console.log(err)
-    res.status(statusCode).send(err);
-  };
-}
+import * as helper from '../../components/helper';
 
 // Gets a list of PurchaseOrders
 export function index(req, res) {
@@ -75,26 +24,33 @@ export function index(req, res) {
   }
   return PurchaseOrder.find(query)
     .populate([
-      { path: 'createdBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      {
+        path: 'createdBy',
+        select: 'email lastName firstName'
+      }
     ])
-    .sort("-createdAt").exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .exec()
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Gets a single PurchaseOrder from the DB
 export function show(req, res) {
-  return PurchaseOrder.findById(req.params.id).populate([
-      { path: 'createdBy', select: 'name email role plant' },
+  return PurchaseOrder.findById(req.params.id)
+    .populate([
       'plant',
-      'items.item'
-    ]).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+      'items.item',
+      {
+        path: 'createdBy',
+        select: 'email lastName firstName'
+      }
+    ])
+    .exec()
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.respondWithResult(res));
 }
 
 // Creates a new PurchaseOrder in the DB
@@ -102,14 +58,17 @@ export function create(req, res) {
   req.body.createdBy = req.user;
   req.body.plant = req.user.role === 'superadmin' ? req.body.plant : req.user.plant;
   return PurchaseOrder.create(req.body)
-    .catch(handleError(res))
+    .catch(helper.validationError(res))
     .then(purchaseOrder => PurchaseOrder.populate(purchaseOrder, [
-      { path: 'createdBy', select: 'name email role plant' },
       'plant',
-      'items.item']
-    ))
-    .then(respondWithResult(res, 201))
-    .catch(handleError(res));
+      'items.item',
+      {
+        path: 'createdBy',
+        select: 'email lastName firstName'
+      }
+    ]))
+    .then(helper.respondWithResult(res, 201))
+    .catch(helper.handleError(res));
 }
 
 // Updates an existing PurchaseOrder in the DB
@@ -118,31 +77,34 @@ export function update(req, res) {
     delete req.body._id;
   }
   return PurchaseOrder.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates(req.body))
-    .catch(handleError(res))
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.saveUpdates(req.body))
+    .catch(helper.validationError(res))
     .then(purchaseOrder => PurchaseOrder.populate(purchaseOrder, [
-      { path: 'createdBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      {
+        path: 'createdBy',
+        select: 'email lastName firstName'
+      }
     ]))
-    .catch(handleError(res))
-    .then(respondWithResult(res));
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Deletes a PurchaseOrder from the DB
 export function destroy(req, res) {
   return PurchaseOrder.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates({ active: false }))
-    .catch(handleError(res))
-    .then(respondWithResult(res, 204))
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.saveUpdates({ active: false }))
+    .then(helper.respondWithResult(res, 204))
+    .catch(helper.handleError(res));
 }
 
 // Gets a list of PurchaseOrders of a specific user
-export function byUser(req, res) {
+export function user(req, res) {
   var query = {
     createdBy: req.params.id,
     active: true
@@ -155,17 +117,20 @@ export function byUser(req, res) {
   }
   return PurchaseOrder.find(query)
     .populate([
-      { path: 'createdBy', select: 'name email role plant' },
       'plant',
-      'items.item'
+      'items.item',
+      {
+        path: 'createdBy',
+        select: 'email lastName firstName'
+      }
     ])
     .sort("-createdAt").exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Gets a list of PurchaseOrders of a specific plant
-export function byPlant(req, res) {
+export function plant(req, res) {
   var query = {
     plant: req.params.id,
     active: true
@@ -183,21 +148,21 @@ export function byPlant(req, res) {
       'items.item'
     ])
     .sort("-createdAt").exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 // Declines a PurchaseOrder
 export function decline(req, res) {
   return PurchaseOrder.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates({ status: 'declined' }))
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
+    .then(helper.saveUpdates({ status: 'declined' }))
     .then(purchaseOrder => PurchaseOrder.populate(purchaseOrder, [
       { path: 'createdBy', select: 'name email role plant' },
       'plant',
       'items.item'
     ]))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
