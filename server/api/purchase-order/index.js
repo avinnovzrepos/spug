@@ -2,7 +2,7 @@
 
 var express = require('express');
 var controller = require('./purchase-order.controller');
-var receiving = require('../receiving/receiving.controller');
+var Receiving = require('../receiving/receiving.controller');
 import * as auth from '../../auth/auth.service';
 
 var router = express.Router();
@@ -16,6 +16,6 @@ router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
 router.get('/user/:id', auth.isAuthenticated(), controller.user);
 router.post('/:id/decline', auth.isAuthenticated(), controller.decline);
-router.post('/:purchaseOrderId/receive', auth.isAuthenticated(), receiving.create);
+router.post('/:purchaseOrderId/receive', auth.isAuthenticated(), Receiving.create);
 
 module.exports = router;

@@ -143,7 +143,7 @@ export function plant(req, res) {
   }
   return PurchaseOrder.find(query)
     .populate([
-      { path: 'createdBy', select: 'name email role plant' },
+      { path: 'createdBy', select: 'lastName firstName email role plant' },
       'plant',
       'items.item'
     ])
@@ -159,7 +159,7 @@ export function decline(req, res) {
     .then(helper.handleEntityNotFound(res))
     .then(helper.saveUpdates({ status: 'declined' }))
     .then(purchaseOrder => PurchaseOrder.populate(purchaseOrder, [
-      { path: 'createdBy', select: 'name email role plant' },
+      { path: 'createdBy', select: 'lastName firstName email role plant' },
       'plant',
       'items.item'
     ]))
