@@ -147,13 +147,16 @@ ReceivingSchema.pre('save', function (next) {
         if (self.isNew) {
           next();
         } else {
-          this.constructor.findById(self.id).then(receiving => {
-            self.previousValue = receiving.items;
-            self.isDeleted = !receiving.active;
-            next();
-          });
+          return this.constructor.findById(self.id);
         }
       })
+      .then(receiving => {
+        if(receiving) {
+          self.previousValue = receiving.items;
+          self.isDeleted = !receiving.active;
+          next();
+        }
+      });
   } else if (self.request) {
     Request.findById(self.request._id ? self.request : self.request)
       .then(request => {
@@ -161,18 +164,21 @@ ReceivingSchema.pre('save', function (next) {
         if (self.isNew) {
           next();
         } else {
-          this.constructor.findById(self.id).then(receiving => {
-            self.previousValue = receiving.items;
-            self.isDeleted = !receiving.active;
-            next();
-          });
+          return this.constructor.findById(self.id);
         }
       })
+      .then(receiving => {
+        if(receiving) {
+          self.previousValue = receiving.items;
+          self.isDeleted = !receiving.active;
+          next();
+        }
+      });
   }
 
 });
 
-var addInInventory = function (self, callback) {
+var addInInventory = function (self) {
   self.items.forEach(function (receivingItem, index) {
     Inventory.findOne({
       item: receivingItem.item,
@@ -182,43 +188,26 @@ var addInInventory = function (self, callback) {
         inventory.receiving = true;
         inventory.value = inventory.value + receivingItem.quantity;
         inventory.lastUpdatedBy = self.receivedBy;
-        inventory.save().then(function (saved) {
-          if (index == self.items.length - 1) {
-            if (self.purchaseOrder) {
-              self.purchaseOrder.status = 'received';
-              self.purchaseOrder.save().then(function () {
-                // NOTHING TODO
-              });
-            } else if (self.request) {
-              self.request.status = 'received';
-              self.request.save().then(function () {
-                // NOTHING TODO
-              });
-            }
-          }
-        })
+        return inventory.save();
       } else {
-        Inventory.create({
+        return Inventory.create({
           createdBy: self.receivedBy,
           plant: self.receivedBy.plant,
           item: receivingItem.item,
           value: receivingItem.quantity,
           receiving: true
-        }).then(function (saved) {
-          if (index == self.items.length - 1) {
-            if (self.purchaseOrder) {
-              self.purchaseOrder.status = 'received';
-              self.purchaseOrder.save().then(function () {
-                // NOTHING TODO
-              });
-            } else if (self.request) {
-              self.request.status = 'received';
-              self.request.save().then(function () {
-                // NOTHING TODO
-              });
-            }
-          }
         });
+      }
+    })
+    .then(function (saved) {
+      if (index == self.items.length - 1) {
+        if (self.purchaseOrder) {
+          self.purchaseOrder.status = 'received';
+          return self.purchaseOrder.save();
+        } else if (self.request) {
+          self.request.status = 'received';
+          return self.request.save();
+        }
       }
     });
   });
@@ -234,43 +223,31 @@ var revertInventory = function (self, callback) {
         inventory.receiving = true;
         inventory.value = inventory.value - receivingItem.quantity;
         inventory.lastUpdatedBy = self.receivedBy;
-        inventory.save().then(function (saved) {
-          if (index == self.items.length - 1) {
-            if (self.purchaseOrder) {
-              self.purchaseOrder.status = 'pending';
-              self.purchaseOrder.save().then(function () {
-                // NOTHING TODO
-              });
-            } else if (self.request) {
-              self.request.status = 'pending';
-              self.request.save().then(function () {
-                // NOTHING TODO
-              });
-            }
-          }
-        })
+        return inventory.save();
       } else {
-        Inventory.create({
+        return Inventory.create({
           createdBy: self.receivedBy,
           plant: self.receivedBy.plant,
           item: receivingItem.item,
           value: receivingItem.quantity,
           receiving: true
-        }).then(function (saved) {
-          if (index == self.items.length - 1) {
-            if (self.purchaseOrder) {
-              self.purchaseOrder.status = 'pending';
-              self.purchaseOrder.save().then(function () {
-                // NOTHING TODO
-              });
-            } else if (self.request) {
-              self.request.status = 'pending';
-              self.request.save().then(function () {
-                // NOTHING TODO
-              });
-            }
-          }
         });
+      }
+    })
+    .then(function (saved) {
+      if (index == self.items.length - 1) {
+        if (self.purchaseOrder) {
+          self.purchaseOrder.status = 'pending';
+          return self.purchaseOrder.save();
+        } else if (self.request) {
+          self.request.status = 'pending';
+          return self.request.save();
+        }
+      }
+    })
+    .then(function() {
+      if (index === self.previousValue.length - 1) {
+        callback();
       }
     });
   });
