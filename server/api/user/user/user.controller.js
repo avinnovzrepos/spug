@@ -185,6 +185,18 @@ export function me(req, res, next) {
     .then(helper.respondWithResult(res));
 }
 
+
+// Gets a list of Users of a specific Plant
+export function plant(req, res) {
+  return User.find({
+    active: true,
+    plant: req.params.id
+  }, '-salt -password')
+  .exec()
+  .then(helper.respondWithResult(res))
+  .catch(helper.handleError(res));
+}
+
 /**
  * Authentication callback
  */
