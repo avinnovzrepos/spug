@@ -1,71 +1,25 @@
 'use strict';
 
 import User from './user.model';
-import _ from 'lodash';
-
-function respondWithResult(res, statusCode) {
-  statusCode = statusCode || 200;
-  return function(entity) {
-    if (entity) {
-      res.status(statusCode).json(entity);
-    }
-  };
-}
-
-function saveUpdates(updates) {
-  return function(entity) {
-    if (!entity) {
-      return null;
-    }
-    var updated = _.merge(entity , updates);
-    return updated.save()
-      .then(updated => {
-        return updated;
-      });
-  };
-}
-
-function removeEntity(res) {
-  return function(entity) {
-    if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
-    }
-  };
-}
-
-function handleEntityNotFound(res) {
-  return function(entity) {
-    if (!entity) {
-      res.status(404).end();
-      return null;
-    }
-    return entity;
-  };
-}
-
-function validationError(res, statusCode) {
-  statusCode = statusCode || 422;
-  return function(err) {
-    console.log(err)
-    res.status(statusCode).json(err);
-  }
-}
-
-function handleError(res, statusCode) {
-  statusCode = statusCode || 500;
-  return function(err) {
-    res.status(statusCode).send(err);
-  };
-}
+import * as helper from '../../../components/helper';
 
 export function index(req, res) {
   return User.find({active: true}, '-salt -password')
-    .populate('plant').exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+    .populate([
+      {
+        path: 'plant',
+        populate: {
+          path: 'division',
+          model: 'Division',
+          populate: {
+            path: 'department',
+            model: 'Department'
+          }
+        }
+      }
+    ]).exec()
+    .then(helper.respondWithResult(res))
+    .catch(helper.handleError(res));
 }
 
 export function create(req, res, next) {
@@ -76,52 +30,72 @@ export function create(req, res, next) {
 
   req.body.createdBy = req.user;
   User.create(req.body)
-    .catch(validationError(res))
-    .then(user => User.populate(user, 'plant'))
-    .catch(handleError(res))
+    .catch(helper.validationError(res))
+    .then(user => User.populate(user, [
+      {
+        path: 'plant',
+        populate: {
+          path: 'division',
+          model: 'Division',
+          populate: {
+            path: 'department',
+            model: 'Department'
+          }
+        }
+      }
+    ]))
+    .catch(helper.handleError(res))
     .then(user => user && user.public)
-    .then(respondWithResult(res, 201));
+    .then(helper.respondWithResult(res, 201));
 }
 
 export function show(req, res) {
   return User.findById(req.params.id)
-    .populate('plant').exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
+    .populate([
+      {
+        path: 'plant',
+        populate: {
+          path: 'division',
+          model: 'Division',
+          populate: {
+            path: 'department',
+            model: 'Department'
+          }
+        }
+      },
+      'lastUpdatedBy',
+      'createdBy'
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
     .then(user => user && user.public)
-    .then(respondWithResult(res));
+    .then(helper.respondWithResult(res));
 }
 
 export function destroy(req, res) {
   req.body.lastUpdatedBy = req.user;
   return User.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
     // admin cannot delete another admin and superuser
     .then(user => (req.user.role === 'admin' && ['admin', 'superadmin'].indexOf(user.role) >= 0) ?
       res.status(403).end() :
       user
     )
-    .then(saveUpdates({ active: false }))
-    .catch(err => validationError(err))
-    .then(user => User.populate(user, 'plant'))
-    .catch(err => validationError(err))
-    .then(user => user && user.public)
-    .then(respondWithResult(res, 204));
+    .then(helper.saveUpdates({ active: false }))
+    .then(helper.respondWithResult(res, 204))
+    .catch(helper.handleError(res));
 }
 
 export function changePassword(req, res, next) {
   req.body.lastUpdatedBy = req.user;
   return User.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
     .then(user => user.authenticate(String(req.body.oldPassword)) ? user : res.status(403).end())
-    .then(saveUpdates({ password: String(req.body.newPassword) }))
-    .catch(err => validationError(err))
-    .then(user => User.populate(user, 'plant'))
-    .catch(handleError(res))
-    .then(user => user && user.public)
-    .then(respondWithResult(res, 204));
+    .then(helper.saveUpdates({ password: String(req.body.newPassword) }))
+    .then(helper.respondWithResult(res, 204))
+    .catch(helper.validationError(res));
 }
 
 /**
@@ -135,8 +109,8 @@ export function update(req, res) {
     delete req.body.password;
   }
   return User.findById(req.params.id).exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
     .then(user => {
       if (req.body.role && (req.body.role !== user.role)) {
         switch (req.user.role) {
@@ -168,21 +142,59 @@ export function update(req, res) {
       }
       return user;
     })
-    .then(saveUpdates(req.body))
-    .catch(validationError(res))
-    .then(user => User.populate(user, 'plant'))
-    .catch(handleError(res))
+    .then(helper.saveUpdates(req.body))
+    .catch(helper.validationError(res))
+    .then(user => User.populate(user, [
+      {
+        path: 'plant',
+        populate: {
+          path: 'division',
+          model: 'Division',
+          populate: {
+            path: 'department',
+            model: 'Department'
+          }
+        }
+      },
+      'createdBy',
+      'lastUpdatedBy'
+    ]))
+    .catch(helper.handleError(res))
     .then(user => user && user.public)
-    .then(respondWithResult(res));
+    .then(helper.respondWithResult(res));
 }
 
 export function me(req, res, next) {
   return User.findById(req.user._id)
-    .populate('plant').exec()
-    .catch(handleError(res))
-    .then(handleEntityNotFound(res))
+    .populate([
+      {
+        path: 'plant',
+        populate: {
+          path: 'division',
+          model: 'Division',
+          populate: {
+            path: 'department',
+            model: 'Department'
+          }
+        }
+      }
+    ]).exec()
+    .catch(helper.handleError(res))
+    .then(helper.handleEntityNotFound(res))
     .then(user => user && user.public)
-    .then(respondWithResult(res));
+    .then(helper.respondWithResult(res));
+}
+
+
+// Gets a list of Users of a specific Plant
+export function plant(req, res) {
+  return User.find({
+    active: true,
+    plant: req.params.id
+  }, '-salt -password')
+  .exec()
+  .then(helper.respondWithResult(res))
+  .catch(helper.handleError(res));
 }
 
 /**

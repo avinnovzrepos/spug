@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 
 import Plant from '../plant/plant.model';
-import Item from '../item/item.model';
+import Item from '../item/item/item.model';
 import User from '../user/user/user.model';
 
 var statuses = [

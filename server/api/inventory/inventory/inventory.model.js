@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 import InventoryHistory from '../inventory-history/inventory-history.model';
 import Plant from '../../plant/plant.model';
-import Item from '../../item/item.model';
+import Item from '../../item/item/item.model';
 import User from '../../user/user/user.model';
 
 var InventorySchema = new mongoose.Schema({
@@ -18,10 +18,6 @@ var InventorySchema = new mongoose.Schema({
     required: true
   },
   value: {
-    type: Number,
-    default: 0
-  },
-  critical: {
     type: Number,
     default: 0
   },

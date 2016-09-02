@@ -8,6 +8,6 @@ var router = express.Router();
 
 router.get('/', auth.hasRole('superadmin'), controller.index);
 router.get('/:id', auth.hasRole('superadmin'), controller.show);
-router.get('/inventory/:inventoryId', auth.hasRole('superadmin'), controller.byInventory);
+router.get('/inventory/:id', auth.hasRole('superadmin'), controller.inventory);
 
 module.exports = router;

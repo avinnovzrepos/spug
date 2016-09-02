@@ -1,0 +1,74 @@
+{
+  "name": "User",
+  "description": "User is the individual that controls and uses the system.",
+  "endpoints": [
+    {
+      "endpoint": "/api/users",
+      "method": "GET",
+      "description": "Returns the list of users",
+      "request": {
+        "query": {}
+      },
+      "response": [
+        {
+          "provider": "local",
+          "name": "Test User",
+          "email": "test@example.com",
+          "_id": "57603a2f234e8e996194b199",
+          "__v": 0,
+          "role": "user"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/users/{id}",
+      "method": "GET",
+      "description": "Returns the details of a user",
+      "request": {
+        "params": {
+          "id": "Id of the user"
+        }
+      },
+      "response": {
+        "name": "Test User",
+        "role": "user"
+      }
+    },
+    {
+      "endpoint": "/api/users",
+      "method": "POST",
+      "description": "Creates a new user",
+      "request": {
+        "data": {}
+      },
+      "response": {
+        "id": "2"
+      }
+    },
+    {
+      "endpoint": "/api/users/{id}",
+      "method": "PUT",
+      "description": "Updates an existing user",
+      "request": {
+        "params": {
+          "id": "Id of an existing user"
+        },
+        "data": {}
+      },
+      "response": {
+        "id": "2"
+      }
+    },
+    {
+      "endpoint": "/api/users/{id}",
+      "method": "DELETE",
+      "description": "Deletes a user",
+      "request": {
+        "params": {
+          "id": "Id of the user to be deleted"
+        }
+      },
+      "response": {}
+    }
+  ]
+}

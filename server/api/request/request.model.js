@@ -2,7 +2,7 @@
 
 import mongoose from 'mongoose';
 import Plant from '../plant/plant.model';
-import Item from '../item/item.model';
+import Item from '../item/item/item.model';
 import Notification from '../notification/notification.model';
 import User from '../user/user/user.model';
 import Inventory from '../inventory/inventory/inventory.model';

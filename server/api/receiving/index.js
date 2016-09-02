@@ -12,7 +12,6 @@ router.put('/:id', auth.isAuthenticated(), controller.update);
 router.patch('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
-router.get('/plant/:id', auth.isAuthenticated(), controller.byPlant);
-router.get('/user/:id', auth.isAuthenticated(), controller.byUser);
+router.get('/user/:id', auth.isAuthenticated(), controller.user);
 
 module.exports = router;

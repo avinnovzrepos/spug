@@ -5,14 +5,27 @@
 
 'use strict';
 
+import _ from 'lodash';
+
+import Department from '../api/department/department.model';
+import Division from '../api/division/division.model';
+
 import User from '../api/user/user/user.model';
 import UserHistory from '../api/user/user-history/user-history.model';
 import LoginHistory from '../api//user/login-history/login-history.model';
 
 import Plant from '../api/plant/plant.model';
 
-import MeasurementUnit from '../api/measurement-unit/measurement-unit.model';
-import Item from '../api/item/item.model';
+import MeasurementUnit from '../api/item/measurement-unit/measurement-unit.model';
+import Classification from '../api/item/classification/classification.model';
+import StorageLevel from '../api/item/storage-level/storage-level.model';
+import UsageFrequency from '../api/item/usage-frequency/usage-frequency.model';
+import MaintenanceRequirement from '../api/item/maintenance-requirement/maintenance-requirement.model';
+import Discipline from '../api/item/discipline/discipline.model';
+import Component from '../api/item/component/component.model';
+// MECHANICAL
+import Genset from '../api/item/genset/genset.model';
+import Item from '../api/item/item/item.model';
 
 import Inventory from '../api/inventory/inventory/inventory.model';
 import InventoryHistory from '../api/inventory/inventory-history/inventory-history.model';
@@ -58,61 +71,231 @@ Thing.find({}).remove()
     });
   });
 
-function generateMeasurementUnits(callback) {
-  MeasurementUnit.find({}).remove()
+function generateMeasurementUnits() {
+  return MeasurementUnit.find({}).remove()
     .then(() => {
-      MeasurementUnit.create({
-        name: 'kg(s)',
-        description: 'Kilograms'
+      return MeasurementUnit.create({
+        code: 'KGS',
+        name: 'Kilograms'
       },{
-        name: 'pc(s)',
-        description: 'Pieces'
-      })
-      .then(() => {
-        if (callback) callback();
+        code: 'PCS',
+        name: 'Pieces'
       });
     });
 }
 
-function generateItems(callback) {
-  Item.find({}).remove()
+function generateClassifications() {
+  return Classification.find({}).remove()
     .then(() => {
-      Item.create({
-        code: '111111',
-        name: 'SAMPLE MECHANICAL FROM SEED',
-        partNumber: 'SAMPLE PART NUMBER',
-        specification: 'SAMPLE SPECIFICATION',
-        unitOfMeasurement: 'kg',
-        unitCost: 100,
-        year: '2016',
-        categoryId: 'CATEGORY ID',
-        componentId: 'COMPONENT ID',
-        other: 0,
+      return Classification.create({
+        code: 'C',
+        name: 'Capital Spares'
+      }, {
+        code: 'S',
+        name: 'Security Spares'
+      }, {
+        code: 'O',
+        name: 'Overhaul Spares'
+      }, {
+        code: 'W',
+        name: 'Wear and Tear Spares'
+      });
+    });
+}
 
-        mechanical: 'M',
-        brand: 'SAMPLE BRAND',
-        capacity: 'SAMPLE CAPACITY',
-        mechanicalSpares: 'SAMPLE MECHANICAL SPARES'
-      },
-      {
-        code: '222222',
-        name: 'SAMPLE MECHANICAL FROM SEED 2',
-        partNumber: 'SAMPLE PART NUMBER 2',
-        specification: 'SAMPLE SPECIFICATION 2',
-        unitOfMeasurement: 'kg',
-        unitCost: 100,
-        year: '2016',
-        categoryId: 'CATEGORY ID',
-        componentId: 'COMPONENT ID',
-        other: 0,
+function generateStorageLevels() {
+  return StorageLevel.find({}).remove()
+    .then(() => {
+      return StorageLevel.create({
+        code: '1',
+        name: 'Level 1'
+      }, {
+        code: '2',
+        name: 'Level 2'
+      }, {
+        code: '3',
+        name: 'Level 3'
+      });
+    });
+}
 
-        mechanical: 'M',
-        brand: 'SAMPLE BRAND',
-        capacity: 'SAMPLE CAPACITY',
-        mechanicalSpares: 'SAMPLE MECHANICAL SPARES'
-      })
-      .then(() => {
-        if (callback) callback();
+function generateUsageFrequencies() {
+  return UsageFrequency.find({}).remove()
+    .then(() => {
+      return UsageFrequency.create({
+        code: 'F',
+        name: 'Fast Moving'
+      }, {
+        code: 'S',
+        name: 'Slow Moving'
+      }, {
+        code: 'N',
+        name: 'Non Moving'
+      });
+    });
+}
+
+
+function generateDisciplines() {
+  return Discipline.find({}).remove()
+    .then(() => {
+      return Discipline.create({
+        code: 'ME',
+        name: 'Mechanical Equipment'
+      }, {
+        code: 'EE',
+        name: 'Electrical Equipment'
+      }, {
+        code: 'IC',
+        name: 'Instrumentation and Control'
+      });
+    });
+}
+
+function generateMaintenanceRequirements() {
+  return MaintenanceRequirement.find({}).remove()
+    .then(() => {
+      return MaintenanceRequirement.create({
+        code: 'PMS05k',
+        description: 'For preventive maintenance activities every 5k hours'
+      }, {
+        code: 'PMS10k',
+        description: 'For preventive maintenance activities every 10k hours'
+      }, {
+        code: 'PMS15k',
+        description: 'For preventive maintenance activities every 15k hours'
+      }, {
+        code: 'PMS20k',
+        description: 'For preventive maintenance activities every 20k hours'
+      });
+    });
+}
+
+function generateComponents() {
+  return Component.find({}).remove()
+    .then(() => {
+      return Component.create({
+        code: 'LIMXX-01-PERK0163-001',
+        description: 'CRANKSHAFT'
+      }, {
+        code: 'LIMXX-01-PERK0163-002',
+        description: 'ENGINE CASE'
+      }, {
+        code: 'LIMXX-01-PERK0163-003',
+        description: 'RARE ENGINE LID'
+      }, {
+        code: 'LIMXX-01-PERK0163-004',
+        description: 'ENGINE COVER'
+      }, {
+        code: 'LIMXX-01-PERK0163-004',
+        description: 'DEAERATING ENGINE'
+      });
+    });
+}
+
+
+function generateGensets() {
+  return Genset.find({}).remove()
+    .then(() => {
+      return Genset.create({
+        brand: 'Perkins 12'
+      }, {
+        brand: 'Kubota 12',
+        model: 'GV-1120-60-B'
+      }, {
+        brand: 'Perkins 15',
+        model: 'D3.152'
+      }, {
+        brand: 'Perkins 20',
+        model: 'D3.152'
+      });
+    });
+}
+
+
+function generateItems() {
+  return Item.find({}).remove()
+    .then(() => {
+      return MeasurementUnit.findOne({}).then((measurementUnit) => ({
+        measurementUnit: measurementUnit
+      }));
+    })
+    .then((meta) => {
+      return Classification.findOne({}).then((classification) => {
+        meta.classification = classification;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return StorageLevel.findOne({}).then((storageLevel) => {
+        meta.storageLevel = storageLevel;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return UsageFrequency.findOne({}).then((usageFrequency) => {
+        meta.usageFrequency = usageFrequency;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return MaintenanceRequirement.findOne({}).then((maintenanceRequirement) => {
+        meta.maintenanceRequirement = maintenanceRequirement;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return Discipline.find({}).then((disciplines) => {
+        meta.disciplines = disciplines;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return Genset.findOne({}).then((gensetMake) => {
+        meta.gensetMake = gensetMake;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return Component.findOne({}).then((component) => {
+        meta.component = component;
+        return meta;
+      });
+    })
+    .then((meta) => {
+      return Item.create(
+        _.assign({
+          code: 'SAMPLE CODE',
+          description: 'SAMPLE DESCRIPTION',
+          specification: 'SAMPLE SPECIFICATION',
+          supplierLedgerCard: 'SAMPLE LEDGER CARD',
+          partItemNumber: 'SAMPLE PART ITEM NUMBER',
+          manufacturerPartNumber: 'SAMPLE MANUFACTURER PART NUMBER',
+          utilityPartNumber: 'SAMPLE UTILITY PART NUMBER',
+          discipline: meta.disciplines[0],
+
+          capacity: 'SAMPLE CAPACITY',
+          category: 'SAMPLE CAATEGORY'
+        }, meta)
+      ).then(() => {
+        return Item.create(
+          _.assign({
+            code: 'SAMPLE CODE 2',
+            description: 'SAMPLE DESCRIPTION',
+            specification: 'SAMPLE SPECIFICATION',
+            supplierLedgerCard: 'SAMPLE LEDGER CARD',
+            partItemNumber: 'SAMPLE PART ITEM NUMBER',
+            manufacturerPartNumber: 'SAMPLE MANUFACTURER PART NUMBER',
+            utilityPartNumber: 'SAMPLE UTILITY PART NUMBER',
+            discipline: meta.disciplines[1],
+
+            facility: 'SAMPLE FACILITY',
+            facilityType: 'SAMPLE FACILITY TYPE',
+            electricalType: 'SAMPLE ELECTRICAL TYPE',
+            outVoltage: 'SAMPLE OUT VOLTAGE',
+            electricalCategory: 'SAMPLE ELECTRICAL CAATEGORY',
+          }, meta)
+        );
       });
     });
 }
@@ -140,46 +323,154 @@ function generateInventory(callback) {
     });
 }
 
-function generatePlants(callback) {
-  Plant.find({}).remove()
+
+function generateDepartments() {
+  return Department.find({}).remove()
     .then(() => {
-      Plant.create({
-        name: 'Central Office',
-        description: 'Metro manila central office',
-        location: {
-          coordinates: [121.0223, 14.6091]
-        }
+      return Department.create({
+        code: 'LOD',
+        name: 'Luzon Operations Department'
       },{
-        name: 'Region 3 Warehouse',
-        description: 'Central luzon warehouse',
-        location: {
-          coordinates: [120.7120, 15.4828]
-        }
+        code: 'VOD',
+        name: 'Visayas Operations Department'
       },{
-        name: 'Malolos Plant',
-        description: 'Malolos Bulacan plant',
-        location: {
-          coordinates: [120.8160, 14.8527]
-        }
-      },{
-        name: 'Calumpit Plant',
-        description: 'Calumpit Bulacan plant',
-        location: {
-          coordinates: [120.7695, 14.9011]
-        }
-      })
-      .then(() => {
-        if (callback) callback();
+        code: 'MOD',
+        name: 'Mindanao Operations Department'
       });
     });
 }
 
-function generatePurchaseOrders(callback) {
-  PurchaseOrder.find({}).remove()
+function generateDivisions() {
+  return Division.find({}).remove()
     .then(() => {
-      // TODO
-      if (callback) callback();
+      return Department.findOne({code: 'VOD'});
+    }).then(department => {
+      return Division.create({
+        department: department,
+        code: 'WVOD',
+        name: 'Western Visayas Operations Division'
+      },{
+        department: department,
+        code: 'EVOD',
+        name: 'Eastern Visayas Operations Division'
+      });
+    });;
+}
+
+function generatePlants(callback) {
+  return Plant.find({}).remove()
+    .then(() => {
+      return Division.findOne({code: 'EVOD'});
+    })
+    .then((division) => {
+      return Plant.create({
+        code: 'CAMXX',
+        name: 'Camotes Diesel Power Plant',
+        division: division,
+        location: {
+          coordinates: [124.3787452, 10.680833]
+        }
+      },{
+        code: 'ZUMXX',
+        name: 'Zumarraga Diesel Power Plant',
+        division: division,
+        location: {
+          coordinates: [124.0981861, 11.7253023]
+        }
+      },{
+        code: 'BATXX',
+        name: 'Batag Diesel Power Plant',
+        division: division,
+        location: {
+          coordinates: [124.2767536, 12.4039646]
+        }
+      },{
+        code: 'AMGLN',
+        name: 'ALMARGO MINI-GRID: LUNANG DDP',
+        division: division,
+        location: {
+          coordinates: [124.2033952,  12.3751761]
+        }
+      },{
+        code: 'AMGCR',
+        name: 'ALMARGO MINI-GRID: COSTA RICA DDP',
+        division: division,
+        location: {
+          coordinates: [124.2033952,  12.3751761]
+        }
+      },{
+        code: 'AMGBS',
+        name: 'ALMARGO MINI-GRID: BIASONG DDP',
+        division: division,
+        location: {
+          coordinates: [124.2033952,  12.3751761]
+        }
+      });
     });
+}
+
+function generateUsers() {
+  return User.find({}).remove()
+    .then(plant => {
+      return User.create({
+        role: 'superadmin',
+        firstName: 'Jose',
+        middleInitial: 'P',
+        lastName: 'Rizal',
+        position: 'Senior IT/IS Specialist',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'superadmin@spug.com',
+        password: 'superadmin'
+      });
+    })
+    .then((superadmin) => {
+      return Plant.find({})
+        .then(plants => ({
+          superadmin: superadmin,
+          plants: plants
+        }));
+    })
+    .then(({superadmin, plants}) => {
+      return User.create({
+        role: 'admin',
+        firstName: 'Antonio',
+        middleInitial: 'P',
+        lastName: 'Luna',
+        position: 'Division Manager',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'admin@spug.com',
+        plant: plants[0],
+        password: 'admin',
+        createdBy: superadmin,
+        lastUpdatedBy: superadmin
+      }, {
+        firstName: 'Juan',
+        middleInitial: 'P',
+        lastName: 'Luna',
+        position: 'Plant Manager',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'plant1@spug.com',
+        plant: plants[0],
+        password: 'plant',
+        createdBy: superadmin,
+        lastUpdatedBy: superadmin
+      }, {
+        firstName: 'Andres',
+        middleInitial: 'P',
+        lastName: 'Bonifacio',
+        position: 'Plant Manager',
+        mobileNumber: '09xx-xxx-xxxx',
+        email: 'plant2@spug.com',
+        plant: plants[1],
+        password: 'plant',
+        createdBy: superadmin,
+        lastUpdatedBy: superadmin
+      });
+    });
+}
+
+function generatePurchaseOrders() {
+  return PurchaseOrder.find({}).remove();
 }
 
 function generateReceiving(callback) {
@@ -190,55 +481,6 @@ function generateReceiving(callback) {
     });
 }
 
-function generateUsers(callback) {
-  Plant.find({}).then(plants => {
-    User.find({}).remove()
-      .then(() => {
-        User.create({
-          role: 'superadmin',
-          name: 'Test Super Admin',
-          email: 'superadmin@spug.com',
-          password: 'superadmin'
-        })
-        .then((user) => {
-          User.create({
-            role: 'plant',
-            plant: plants[3]._id,
-            name: 'Test Plant 1',
-            email: 'plant1@spug.com',
-            password: 'plant1',
-            createdBy: user
-          }, {
-            role: 'plant',
-            plant: plants[2]._id,
-            name: 'Test Manager',
-            email: 'plant@spug.com',
-            password: 'plant',
-            createdBy: user
-          }, {
-            role: 'warehouse',
-            plant: plants[1]._id,
-            name: 'Test Warehouse',
-            email: 'warehouse@spug.com',
-            password: 'warehouse',
-            createdBy: user
-          }, {
-            role: 'admin',
-            plant: plants[0]._id,
-            name: 'Test Admin',
-            email: 'admin@spug.com',
-            password: 'admin',
-            createdBy: user
-          })
-          .then(() => {
-            if (callback) callback();
-          });
-        });
-      });
-  });
-}
-
-
 function generateSuppliers(callback) {
   Supplier.find({}).remove()
     .then(() => {
@@ -247,30 +489,71 @@ function generateSuppliers(callback) {
     });
 }
 
-generateMeasurementUnits(function () {
-  console.log('finished populating measurement-units');
-});
 generateSuppliers(function () {
   console.log('finished populating suppliers');
 });
-generatePurchaseOrders(function () {
+generatePurchaseOrders().then(function(){
   console.log('finished populating purchase-orders');
 });
 generateReceiving(function () {
   console.log('finished populating receiving');
 });
-generatePlants(function () {
+
+generateDepartments().then(() => {
+  console.log('finished populating departments');
+  return generateDivisions();
+})
+.then(() => {
+  console.log('finished populating divisions');
+  return generatePlants();
+})
+.then(() => {
   console.log('finished populating plants');
-  generateUsers(function () {
-    console.log('finished populating users');
-    generateItems(function () {
-      console.log('finished populating items');
-      generateInventory(function () {
-        console.log('finished populating inventory');
-      });
-    });
+  return generateUsers();
+})
+.then(() => {
+  console.log('finished populating users');
+  return generateMeasurementUnits()
+})
+// .then(() => {
+//   console.log('finished populating measurement-units');
+//   return generateClassifications()
+// })
+// .then(() => {
+//   console.log('finished populating classifications');
+//   return generateStorageLevels();
+// })
+// .then(() => {
+//   console.log('finished populating storage-levels');
+//   return generateUsageFrequencies();
+// })
+// .then(() => {
+//   console.log('finished populating usage-frequency');
+//   return generateMaintenanceRequirements();
+// })
+// .then(() => {
+//   console.log('finished populating discipline');
+//   return generateDisciplines();
+// })
+// .then(() => {
+//   console.log('finished populating maintenance-requirement');
+//   return generateGensets();
+// })
+// .then(() => {
+//   console.log('finished populating genset');
+//   return generateComponents();
+// })
+.then(() => {
+  console.log('finished populating component');
+  return generateItems();
+})
+.then(() => {
+  console.log('finished populating mechanical items');
+  return generateInventory(function () {
+    console.log('finished populating inventory');
   });
 });
+
 
 
 
