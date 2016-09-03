@@ -10,9 +10,6 @@
             <div class="col-md-6 no-left-padding">
               <select class="form-control">
                 <option>Equipment Category</option>
-                <option>Mechanical</option>
-                <option>Electrical</option>
-                <option>Instrumentation & Control Parts</option>
               </select>
               <label for="Measurement">
                 <small> Equipment Discipline </small>
@@ -27,11 +24,7 @@
             <input type="text" class="form-control" placeholder="Part Item No." ng-model="partsCtrl.item.partNo">
             <label for="partNo"> <small> Part Item Number (PIN) </small> </label>
           </div>
-          <div class="form-group col-md-6">
-            <input type="text" class="form-control" id="slc" placeholder="SLC">
-            <label for="slc"> <small> Suplliers Ledger Card (SLC) </small> </label>
-          </div>
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-offset-6 col-md-6">
             <input type="text" class="form-control" id="mpn" placeholder="Manufacturers Part No">
             <label for="mpn"> <small> Manufacturers Part Number (MPN) </small> </label>
           </div>
@@ -58,7 +51,7 @@
             <label for="mpn"> <small> Max Stock Level </small> </label>
           </div>
           <div class="col-md-6">
-            <select class="form-control" ng-options="uom._id as uom.name for uom in partsCtrl.uoms track by uom._id "  ng-model="form.measurementUnit">
+            <select class="form-control">
               <option>MeasurementID</option>
             </select>
             <label for="Measurement">
@@ -66,15 +59,15 @@
             </label>
           </div>
           <div class="col-md-6">
-            <select class="form-control" ng-options="storageLevel._id as storageLevel.name for storageLevel in partsCtrl.storageLevels track by storageLevel._id" ng-model="form.storageLevel">
-              <option> StorageLevelID </option>
+            <select class="form-control">
+              <option>StorageLevelID</option>
             </select>
             <label for="Measurement">
               <small> Storage Level </small>
             </label>
           </div>
           <div class="col-md-6">
-            <select class="form-control" ng-options="classification._id as classification.name for classification in partsCtrl.classifications track by classification._id" ng-model="form.classification">
+            <select class="form-control">
               <option>ClassificationID</option>
             </select>
             <label for="Measurement">
@@ -82,7 +75,7 @@
             </label>
           </div>
           <div class="col-md-6">
-            <select class="form-control" ng-options="usageFrequency._id as usageFrequency.name for usageFrequency in partsCtrl.usageFrequencies track by usageFrequency._id" ng-model="form.usageFrequency">
+            <select class="form-control">
               <option>UsageFreqID</option>
             </select>
             <label for="Measurement">
@@ -90,15 +83,15 @@
             </label>
           </div>
           <div class="col-md-6">
-            <select class="form-control" ng-options="storageLevel._id as storageLevel.name for storageLevel in partsCtrl.storageLevels track by storageLevel._id" ng-model="form.storageLevel">
-              <option> StorageLevelID </option>
+            <select class="form-control">
+              <option>StorageLevelID</option>
             </select>
             <label for="Measurement">
               <small> Storage Level </small>
             </label>
           </div>
           <div class="col-md-6">
-            <select class="form-control" ng-options="maintananceRequirement._id as maintananceRequirement.code for maintananceRequirement in partsCtrl.maintananceRequirements track by maintananceRequirement._id" ng-model="form.maintananceRequirement">
+            <select class="form-control">
               <option>MaintFreqID</option>
             </select>
             <label for="Measurement">
@@ -208,30 +201,6 @@
             </select>
           </div>
           <!-- End Mechanical Additional Form -->
-        </div>
-      </div>
-      <div class="panel panel-primary">
-        <div class="panel-heading">
-          <h3 class="panel-title">
-            File Upload
-          </h3>
-        </div>
-        <div class="panel-body">
-          <div style="padding: 50px; height: 100%;" class="text-center" ngf-drop="bcodeCtrl.uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" 
-          ngf-pattern="'image/*,application/pdf'">
-            <span class="text-muted">
-              Drop Images or PDFs files here
-            </span> </br>
-            <span class="text-center">
-              <b>
-                OR
-              </b>
-            </span> <br>
-            <button class="btn btn-primary" ngf-select ng-model="file" name="file" ngf-pattern="'image/*'"
-              ngf-accept="'image/*'" ngf-max-size="20MB" ngf-min-height="100" 
-              ngf-resize="{width: 100, height: 100}"> Select File </button>
-          </div>
-          <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
         </div>
       </div>
     </div>

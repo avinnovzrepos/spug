@@ -1,22 +1,22 @@
 'use strict';
 (function(){
 
-class PartsComponent {
-  constructor(API) {
-    this.API = API;
+class DeliveryComponent {
+  constructor() {
+    this.message = 'Hello';
 
     this.gridOptions = {
       enableColumnResizing: true,
       enableGridMenu: true,
       columnDefs: [
         { field: 'code', displayName: 'STOCK CODE' },
-        { field: 'supplierLedgerCard', displayName: 'SLC' },
-        { field: 'description', displayName: 'DESCRIPTION' },
-        { field: 'partItemNumber', displayName: 'PIN' },
-        { field: 'manufacturerPartNumber', displayName: 'MPN' },
-        { field: 'utilityPartNumber', displayName: 'UPN' },
+        { field: 'slo', displayName: 'SLO' },
+        { field: 'name', displayName: 'DESCRIPTION' },
+        { field: 'pin', displayName: 'PIN' },
+        { field: 'pin', displayName: 'MPN' },
+        { field: 'pin', displayName: 'UPN' },
         { field: 'pin', displayName: 'EQUIPMENT CATEGORY' },
-        { field: 'measurementUnit.code', displayName: 'MEASUREMENT' },
+        { field: 'unitOfMeasurement', displayName: 'MEASUREMENT' },
         { field: 'pin', displayName: 'BEGINNING INVENTORY' },
         { field: 'pin', displayName: 'DRAWING', cellTemplate: ' <div class="text-center clearfix"> <img src="http://placehold.it/30x30"> </div>' },
         { field: 'null', displayName: ' ',
@@ -34,25 +34,14 @@ class PartsComponent {
         },
       ]
     };
+    
   }
-
-  $onInit() {
-    const setItems = (data) => {
-      console.log(data);
-      this.gridOptions.data = data;
-    };
-
-    this.API.doGet('items', setItems);
-  }
-
-
 }
 
 angular.module('spugApp')
-  .component('parts', {
-    templateUrl: 'app/parts/list/parts.html',
-    controller: PartsComponent,
-    controllerAs: 'parts'
+  .component('delivery', {
+    templateUrl: 'app/delivery/list/delivery.html',
+    controller: DeliveryComponent
   });
 
 })();

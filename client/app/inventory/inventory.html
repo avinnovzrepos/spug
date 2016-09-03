@@ -1,0 +1,21 @@
+<div class="spug-container">
+  <div class="clearfix">
+    <h3>
+      Spare Parts Inventory
+    </h3>
+    <div class="has-feedback">
+      <input type="text" class="form-control" id="search" aria-describedby="search" placeholder="search">
+      <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true" style="top: 0px;"></span>
+      <label class="small">  <a href=""> Advance Search </a> </label>
+    </div>
+  </div>
+  <div class="widget">
+    <div ui-grid="$ctrl.gridOptions" class="grid" ui-grid-resize-columns ui-grid-auto-resize ui-grid-move-columns></div>
+  </div>
+  <button class="btn btn-lg btn-primary" ui-sref="delivery"> Delivery </button>
+  <button class="btn btn-lg btn-primary"> Transfer </button>
+  <button class="btn btn-lg btn-primary"> Withdraw </button>
+  <button class="btn btn-lg btn-primary"> Order </button>
+  <button class="btn btn-lg btn-danger pull-right"> Print </button>
+</div>
+

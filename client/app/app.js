@@ -16,7 +16,8 @@ angular.module('spugApp', [
   'ui.grid',
   'ui.grid.resizeColumns',
   'ui.grid.autoResize',
-   'ui.grid.moveColumns'
+  'ui.grid.moveColumns',
+  'ngFileUpload'
 ])
   .config(function($urlRouterProvider, $locationProvider, $stateProvider) {
     $urlRouterProvider

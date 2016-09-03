@@ -1,0 +1,33 @@
+<div class="spug-container">
+  <div class="clearfix">
+    <div class="has-feedback">
+      <input type="text" class="form-control" id="search" aria-describedby="search" placeholder="search">
+      <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true" style="top: 0px;"></span>
+      <label class="small">  <a href=""> Advance Search </a> </label>
+    </div>
+  </div>
+  <div class="widget">
+    <div ui-grid="$ctrl.gridOptions" class="grid"
+      aui-grid-resize-columns ui-grid-auto-resize ui-grid-move-columns style="height: 150px;">
+    </div>
+  </div>
+  <div class="text-center">
+    <button class="btn btn-danger">Add</button>
+  </div>
+  <div class="widget">
+    <form class="form-inline">
+      <input type="text" class="form-control" placeholder="Purchase Order">
+      <input type="date" class="form-control" placeholder="Purchase Order Date">
+      <input type="date" class="form-control" placeholder="Delivery Date">
+      <input type="number" class="form-control" placeholder="Total Amount">
+      <input type="number" class="form-control" placeholder="Total Number of Items">
+    </form>
+    <div ui-grid="$ctrl.gridOptions" class="grid" 
+      ui-grid-resize-columns ui-grid-auto-resize ui-grid-move-columns style="height: 200px;">
+    </div>
+    <input type="text" class="form-control" placeholder="Remarks">
+    <button class="btn btn-primary"> Print </button>
+    <button class="btn btn-primary"> Save </button>
+  </div>
+</div>
+

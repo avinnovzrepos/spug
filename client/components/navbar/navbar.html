@@ -12,16 +12,16 @@
       <a ui-sref="main">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
     </li>
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
-      <a ui-sref="item-list"> Items <span class="menu-icon fa fa-table"></span></a>
+      <a ui-sref="parts"> Parts <span class="menu-icon fa fa-table"></span></a>
     </li>
-    <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
+    <!-- <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="plants-list"> Plants <span class="menu-icon fa fa-map-signs"></span></a>
-    </li>
+    </li> -->
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="admin"> Users <span class="menu-icon fa fa-users"></span></a>
     </li>
-    <li class="sidebar-list" ng-if="nav.getCurrentUser().role !== 'superadmin'">
-      <a ui-sref="inventory-list"> Inventory <span class="menu-icon fa fa-cube"></span></a>
+    <li class="sidebar-list">
+      <a ui-sref="inventory"> Inventory <span class="menu-icon fa fa-cube"></span></a>
     </li>
     <li class="sidebar-list" ng-if="nav.getCurrentUser().role === 'superadmin'">
       <a ui-sref="history-list"> History <span class="menu-icon fa fa-history"></span></a>
